@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# git pre-commit hook that checks for staged files that were modified.
+
+# exit on error
+set -e
+
+cached=$(git status --porcelain | sed -n 's/^[AM]M //p')
+
+# everything is fine
+if ! [[ -n $cached ]]; then
+    exit 0
+fi
+
+# GNU and BSD versions of xargs behave differently.
+if xargs --version >/dev/null 2>&1; then
+    flag="-l" # GNU
+else
+    flag="-L1" # BSD
+fi
+
+printf "The following files have been modified after they have been staged:\n\n"
+printf "$cached"
+printf "\n\nAborting commit. Please stage the modified files and commit again or skip"
+printf " checking with --no-verify (not recommended).\n"
+
+exit 1

@@ -1,0 +1,8 @@
+cmd: "make"
+name: "dafault"
+args:
+sh: true,
+cwd: /media/philip/Data1/Zeugs/Uni/GI/GI_Build
+targets:
+  run:
+      cmd: "./bui.global-illu"
