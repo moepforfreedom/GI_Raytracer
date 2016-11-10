@@ -27,6 +27,8 @@ class RayTracer {
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for
         for (int y = 0; y < h; ++y) {
+          if(_running)
+          {
             for (int x = 0; x < w; ++x) {
                 // TODO Implement this
                 #pragma omp critical
@@ -35,6 +37,7 @@ class RayTracer {
                 }
                 usleep(1);
             }
+          }
         }
     }
 
