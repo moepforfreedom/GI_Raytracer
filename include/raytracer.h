@@ -10,7 +10,6 @@
 #include "entities.h"
 #include "image.h"
 #include "octree.h"
-#include <unistd.h>
 
 class RayTracer {
   public:
@@ -25,17 +24,24 @@ class RayTracer {
         _image = std::make_shared<Image>(w, h);
 
         // The structure of the for loop should remain for incremental rendering.
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int y = 0; y < h; ++y) {
           if(_running)
           {
             for (int x = 0; x < w; ++x) {
                 // TODO Implement this
+
+                  //simultate an expensive operation for performance testing
+                  for(int j = 0; j < 10000; j++)
+                  {
+                    double a = 2;
+                    a = a*a;
+                  }
+
                 #pragma omp critical
                 {
                 _image->setPixel(x, y, {1*((double)y/h), 1*((double)x/w), 0});
                 }
-                usleep(1);
             }
           }
         }
