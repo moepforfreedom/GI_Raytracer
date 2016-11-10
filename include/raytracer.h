@@ -41,19 +41,12 @@ class RayTracer {
 				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*_camera.up + (sensorHalfHeight*((double)y / h - .5))*cameraRight;
 				glm::dvec3 color(0, 0, 0);
 
-				glm::dvec3 hit;
+				glm::dvec3 hit, minHit, minNorm;
 				glm::dvec3 norm;
-
-				Entity* current;
 
 				bool intersected = false;
 
 				Ray ray(_camera.pos, glm::normalize(pixelPos - _camera.pos));
-
-				/*if ((pow(glm::dot(ray.dir, (ray.origin - glm::dvec3(0, 0, 0))), 2) - pow(glm::length(ray.origin - glm::dvec3(0, 0, 0)), 2) + 4) >= 0)
-					color = glm::dvec3(0, 1, 0);
-				else
-					color = glm::dvec3(1, 0, 0);*/
 
                 //simultate an expensive operation for performance testing
 				/*for (int j = 0; j < 10000; j++)
@@ -66,18 +59,35 @@ class RayTracer {
 
 				std::vector<Entity*>::iterator it = objects.begin();
 
+				Entity* current;
+
 				while (it != objects.end())
 				{		
-					current = *it;
-					if (intersected = current->intersect(ray, hit, norm))
-						break;
+					Entity* tmp = *it;
+					if (tmp->intersect(ray, hit, norm))
+					{
+						if (it == objects.begin() || glm::length(hit - _camera.pos) < glm::length(minHit - _camera.pos))
+						{
+							current = tmp;
+							minHit = hit;
+							minNorm = norm;
+							intersected = true;
+						}
+					}
 					++it;
 				}
 				
-				if(intersected)
-					color = glm::dvec3(0, 1, 0);
+				if (intersected)
+				{
+					double l = glm::dot(minNorm, glm::normalize(_light - _camera.pos));
+
+					if (l < 0)
+						l = 0;
+
+					color = current->material.color * l;
+				}
 				else
-					color = glm::dvec3(1, 0, 0);
+					color = glm::dvec3(0, 0, 0);
 
                 #pragma omp critical
                 {

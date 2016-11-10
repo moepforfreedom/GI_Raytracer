@@ -46,7 +46,7 @@ struct sphere: Entity
 			if (-dot + sqrt(r) < -dot - sqrt(r))
 				intersect = ray.origin + ray.dir*(-dot + sqrt(r));
 			else
-				intersect = ray.origin - ray.dir*(-dot + sqrt(r));
+				intersect = ray.origin + ray.dir*(-dot - sqrt(r));
 
 			normal = glm::normalize(intersect - pos);
 
