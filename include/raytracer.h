@@ -10,6 +10,7 @@
 #include "entities.h"
 #include "image.h"
 #include "octree.h"
+#include "omp.h"
 
 class RayTracer {
   public:
@@ -23,8 +24,10 @@ class RayTracer {
         // TODO Implement this
         _image = std::make_shared<Image>(w, h);
 
+        //double hfov = atan(camera.sensorDiag/2*camera.focalDist);
+
         // The structure of the for loop should remain for incremental rendering.
-        //#pragma omp parallel for
+        #pragma omp parallel for schedule(dynamic, 10)
         for (int y = 0; y < h; ++y) {
           if(_running)
           {
@@ -34,8 +37,10 @@ class RayTracer {
                   //simultate an expensive operation for performance testing
                   for(int j = 0; j < 10000; j++)
                   {
-                    double a = 2;
+                    int a = j;
                     a = a*a;
+                    if(omp_get_thread_num() < 3)
+                      a = a*a*a*a*a*a*a*a*a*a*a*a*a;
                   }
 
                 #pragma omp critical
