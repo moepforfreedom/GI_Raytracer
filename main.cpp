@@ -8,7 +8,7 @@
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
 
-    Camera camera({10, 0, 0});
+	Camera camera({ 10, 0, 0 }, {0, 0, 0});
     glm::dvec3 light{10, 10, 10};
 
     RayTracer raytracer(camera, light);
@@ -17,6 +17,8 @@ int main(int argc, char** argv) {
     Octree scene({-20, -20, -20}, {20, 20, 20});
     // TODO Add objects to the scene
     // scene.push_back(...);
+
+	scene.push_back(&sphere(glm::dvec3(0, 0, 0), 2, Material(glm::dvec3(1, 0, 0))));
 
     raytracer.setScene(&scene);
 

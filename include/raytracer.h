@@ -24,11 +24,11 @@ class RayTracer {
         // TODO Implement this
         _image = std::make_shared<Image>(w, h);
 
-        double sensorWidth = _camera.sensorDiag;
-        double sensorHeight = _camera.sensorDiag;
+        double sensorHalfWidth = (_camera.sensorDiag*w)/(sqrt((double)w*w + h*h));
+        double sensorHalfHeight = sensorHalfWidth * ((double)h/w);
 
-        double hfov = atan(_camera.sensorDiag/2*_camera.focalDist);
-        double vfov = atan(_camera.sensorDiag/2*_camera.focalDist);
+		glm::dvec3 screenCenter = _camera.pos + _camera.focalDist*_camera.forward;
+		glm::dvec3 cameraRight = glm::cross(_camera.forward, _camera.up);
 
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10)
@@ -38,18 +38,50 @@ class RayTracer {
             for (int x = 0; x < w; ++x) {
                 // TODO Implement this
 
-                  //simultate an expensive operation for performance testing
-                  for(int j = 0; j < 10000; j++)
-                  {
-                    int a = j;
-                    a = a*a;
-                    if(omp_get_thread_num() < 3)
-                      a = a*a*a*a*a*a*a*a*a*a*a*a*a;
-                  }
+				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*_camera.up + (sensorHalfHeight*((double)y / h - .5))*cameraRight;
+				glm::dvec3 color(0, 0, 0);
+
+				glm::dvec3 hit;
+				glm::dvec3 norm;
+
+				Entity* current;
+
+				bool intersected = false;
+
+				Ray ray(_camera.pos, glm::normalize(pixelPos - _camera.pos));
+
+				/*if ((pow(glm::dot(ray.dir, (ray.origin - glm::dvec3(0, 0, 0))), 2) - pow(glm::length(ray.origin - glm::dvec3(0, 0, 0)), 2) + 4) >= 0)
+					color = glm::dvec3(0, 1, 0);
+				else
+					color = glm::dvec3(1, 0, 0);*/
+
+                //simultate an expensive operation for performance testing
+				/*for (int j = 0; j < 10000; j++)
+				{
+					int a = j;
+					a = a*a;
+				}*/
+
+				std::vector<Entity*> objects = _scene->intersect(ray);
+
+				std::vector<Entity*>::iterator it = objects.begin();
+
+				while (it != objects.end())
+				{		
+					current = *it;
+					if (intersected = current->intersect(ray, hit, norm))
+						break;
+					++it;
+				}
+				
+				if(intersected)
+					color = glm::dvec3(0, 1, 0);
+				else
+					color = glm::dvec3(1, 0, 0);
 
                 #pragma omp critical
                 {
-                _image->setPixel(x, y, {1*((double)y/h), 1*((double)x/w), 0});
+					_image->setPixel(x, y, color);// {1 * ((double)y / h), 1 * ((double)x / w), 0});
                 }
             }
           }
