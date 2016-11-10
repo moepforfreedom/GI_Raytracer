@@ -24,7 +24,11 @@ class RayTracer {
         // TODO Implement this
         _image = std::make_shared<Image>(w, h);
 
-        //double hfov = atan(camera.sensorDiag/2*camera.focalDist);
+        double sensorWidth = _camera.sensorDiag;
+        double sensorHeight = _camera.sensorDiag;
+
+        double hfov = atan(_camera.sensorDiag/2*_camera.focalDist);
+        double vfov = atan(_camera.sensorDiag/2*_camera.focalDist);
 
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10)

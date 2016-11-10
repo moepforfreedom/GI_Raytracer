@@ -23,6 +23,8 @@ struct Entity {
     Material material;
 };
 
+
+
 // TODO Implement implicit sphere
 // TODO Implement implicit cone
 
