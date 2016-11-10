@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QTimer>
 #include <QWidget>
+#include <QCloseEvent>
 
 #include "image.h"
 #include "raytracer.h"
@@ -22,6 +23,10 @@ class Viewer : public QWidget {
     }
 
     ~Viewer() {
+        stop_raytrace();
+    }
+
+    void stop_raytrace() {
         if (_raytracer.running()) {
             _raytracer.stop();
             _thread.join();
@@ -35,7 +40,7 @@ class Viewer : public QWidget {
 
     void resizeEvent(QResizeEvent*) { restart_raytrace(); }
 
-    const QImage& getImage() const { return _raytracer.getImage()._image; }
+    QImage getImage() const { return _raytracer.getImage()->_image; }
 
   private:
     void restart_raytrace() {
