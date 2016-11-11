@@ -9,7 +9,7 @@
 /// A base class for all entities in the scene.
 struct Entity {
 
-    constexpr Entity() : material(Material(glm::dvec3(1, 0, 0))) {}
+    constexpr Entity() : material(Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))) {}
     constexpr Entity(const Material& material) : material(material) {}
 
     /// Check if a ray intersects the object. The arguments intersect and normal will contain the

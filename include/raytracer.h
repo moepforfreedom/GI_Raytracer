@@ -31,7 +31,7 @@ class RayTracer {
 		glm::dvec3 cameraRight = glm::cross(_camera.forward, _camera.up);
 
         // The structure of the for loop should remain for incremental rendering.
-        #pragma omp parallel for schedule(dynamic, 10)
+        #pragma omp parallel for schedule(dynamic, 10) //OpenMP
         for (int y = 0; y < h; ++y) {
           if(_running)
           {
@@ -84,14 +84,14 @@ class RayTracer {
 					if (l < 0)
 						l = 0;
 
-					color = current->material.color * l;
+					color = glm::clamp(current->material.color * l + current->material.emissive, 0.0, 1.0);
 				}
 				else
 					color = glm::dvec3(0, 0, 0);
 
                 #pragma omp critical
                 {
-					_image->setPixel(x, y, color);// {1 * ((double)y / h), 1 * ((double)x / w), 0});
+					_image->setPixel(x, y, color);
                 }
             }
           }
