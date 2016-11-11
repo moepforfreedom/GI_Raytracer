@@ -62,11 +62,11 @@ class RayTracer {
 				Entity* current;
 
 				while (it != objects.end())
-				{		
+				{
 					Entity* tmp = *it;
 					if (tmp->intersect(ray, hit, norm))
 					{
-						if (it == objects.begin() || glm::length(hit - _camera.pos) < glm::length(minHit - _camera.pos))
+						if (!intersected || glm::length(hit - _camera.pos) < glm::length(minHit - _camera.pos))
 						{
 							current = tmp;
 							minHit = hit;
@@ -76,7 +76,6 @@ class RayTracer {
 					}
 					++it;
 				}
-				
 				if (intersected)
 				{
 					double l = glm::dot(minNorm, glm::normalize(_light - _camera.pos));
@@ -84,7 +83,7 @@ class RayTracer {
 					if (l < 0)
 						l = 0;
 
-					color = glm::clamp(current->material.color * l + current->material.emissive, 0.0, 1.0);
+					color = glm::clamp(current->material.color*l + current->material.emissive, 0.0, 1.0);
 				}
 				else
 					color = glm::dvec3(0, 0, 0);

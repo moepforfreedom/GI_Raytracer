@@ -5,6 +5,7 @@
 #include "bbox.h"
 #include "material.h"
 #include "ray.h"
+#include <iostream>
 
 /// A base class for all entities in the scene.
 struct Entity {
@@ -41,15 +42,23 @@ struct sphere: Entity
 
 		if (r < 0)
 			return false;
+
+		double t_1 = -1*dot - sqrt(r);
+		double t_2 = -1*dot + sqrt(r);
+
+		//std::cout << t_1 << ", " << t_2 << ": ";
+
+		if (t_1 < 0 && t_2 < 0)
+			return false;
 		else
 		{
-			if (-dot + sqrt(r) < -dot - sqrt(r))
-				intersect = ray.origin + ray.dir*(-dot + sqrt(r));
+			if ((t_1 < t_2 && t_1 > 0) || t_2 < 0)
+				intersect = ray.origin + ray.dir*t_1;
 			else
-				intersect = ray.origin + ray.dir*(-dot - sqrt(r));
+				intersect = ray.origin + ray.dir*t_2;
 
 			normal = glm::normalize(intersect - pos);
-
+			//std::cout << "intersection\n";
 			return true;
 		}
 	}

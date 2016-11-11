@@ -12,7 +12,7 @@ find_package(Qt5Widgets)
 find_package(Threads)
 
 set(SOURCES main.cpp)
-set(HEADERS include/gui.h include/image.h include/ray.h include/entities.h include/camera.h include/raytracer.h include/viewer.h include/octree.h include/bbox.h include/material.h)
+set(HEADERS include/gui.h include/image.h include/ray.h include/entities.h include/camera.h include/raytracer.h include/viewer.h include/octree.h include/bbox.h include/material.h include/util.h)
 
 add_executable(global-illu ${SOURCES} ${HEADERS})
 include_directories(global-illu include 3rd_party)

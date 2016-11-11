@@ -13,9 +13,15 @@ class Octree {
   public:
     Octree(glm::dvec3 min, glm::dvec3 max) : _root(Node({min, max})) {}
 
+	std::vector<Entity*> tmp_entities;
+
     /// Store an entity in the correct position of the octree.
     void push_back(Entity* object) {
         // TODO Implement this
+
+		glm::dvec3 d = object->boundingBox().min - _root._bbox.min;
+
+		//if (d.x < 0) _root._bbox.min.x = d.x;
         _root._entities.push_back(object);
     }
 
