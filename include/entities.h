@@ -85,7 +85,7 @@ struct cone : Entity
 	{
 
 		double t_1, t_2, thit, phi;
-		double phiMax = 180;
+		double phiMax = 360;
 		glm::dvec3 phit;
 
 		//coefficients for quadratic equation
@@ -103,7 +103,7 @@ struct cone : Entity
 		if (discrim < 0)
 			return false;
 
-		double rootDiscrim = sqrtf(discrim);
+		double rootDiscrim = sqrt(discrim);
 
 		// Compute quadratic t values
 		double q;
@@ -129,7 +129,6 @@ struct cone : Entity
 
 			normal = glm::normalize(intersect - pos);
 			//std::cout << "intersection\n";
-			//return true;
 		}
 
 		phit = ray.origin + ray.dir*thit;
@@ -138,8 +137,8 @@ struct cone : Entity
 		if (phi < 0.)
 			phi += 2.f*M_PI;
 
-		// Test cone intersection against clipping parameters
-		 if (phit.z < 0 || phit.z > height)// || phi > phiMax) 
+		// Test cone intersection against clipping plane
+		 if (phit.z < 0 || phit.z > height || phi > phiMax) 
 		 {
 			 if (thit == t_1) 
 				 return false;
@@ -161,6 +160,21 @@ struct cone : Entity
 		}
 
 		 intersect = ray.origin + ray.dir*thit;
+
+		 // Find parametric representation of cone hit
+		 double u = phi / phiMax;
+		 double v = phit.z / height;
+
+		 // Compute cone $\dpdu$ and $\dpdv$
+		 glm::dvec3 dpdu(-phiMax * phit.y, phiMax * phit.x, 0);
+		 glm::dvec3 dpdv(-phit.x / (1.f - v),- phit.y / (1.f - v), height);
+
+		 // Compute cone $\dndu$ and $\dndv$
+		 glm::dvec3 d2Pduu = -phiMax * phiMax * glm::dvec3(phit.x, phit.y, 0.);
+		 glm::dvec3 d2Pduv = phiMax / (1.f - v) * glm::dvec3(-phit.y, -phit.x, 0.);
+		 glm::dvec3 d2Pdvv(0, 0, 0);
+
+		 normal = glm::normalize(glm::cross(dpdu, dpdv));
 
 		 return true;
 	}
