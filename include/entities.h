@@ -1,6 +1,8 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "bbox.h"
 #include "material.h"
@@ -76,13 +78,22 @@ struct cone : Entity
 {
 	double rad, height;
 
-	cone(glm::dvec3 position, double radius, double height, const Material& material) : Entity(material), rad(radius), height(height)
+	glm::dmat3x3 rot;
+
+	cone(glm::dvec3 position, glm::dvec3 rotation, double radius, double height, const Material& material) : Entity(material), rad(radius), height(height)
 	{
 		pos = position;
+
+		rot = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z); 
 	}
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
 	{
+		glm::dvec3 tmpOrigin = ray.origin*rot;// (glm::dvec4(ray.origin, 1)*rot);
+		glm::dvec3 tmpDir = ray.dir*rot;// (glm::dvec4(ray.dir, 1)*rot);
+
+		glm::dvec3 origin = ray.origin*rot + pos;
+		glm::dvec3 dir = ray.dir*rot;
 
 		double t_1, t_2, thit, phi;
 		double phiMax = 360;
@@ -91,12 +102,12 @@ struct cone : Entity
 		//coefficients for quadratic equation
 		double k = pow(rad / height, 2);
 
-		double A = ray.dir.x * ray.dir.x + ray.dir.y * ray.dir.y -
-				   k * ray.dir.z * ray.dir.z;
-		double B = 2 * (ray.dir.x * ray.origin.x + ray.dir.y * ray.origin.y -
-		          k * ray.dir.z * (ray.origin.z - height));
-		double C = ray.origin.x * ray.origin.x + ray.origin.y * ray.origin.y -
-				  k * (ray.origin.z - height) * (ray.origin.z - height);
+		double A = dir.x * dir.x + dir.y * dir.y -
+				   k * dir.z * dir.z;
+		double B = 2 * (dir.x * origin.x + dir.y * origin.y -
+		          k * dir.z * (origin.z - height));
+		double C = origin.x * origin.x + origin.y * origin.y -
+				  k * (origin.z - height) * (origin.z - height);
 
 		double discrim = B * B - 4.f * A * C;
 
@@ -123,15 +134,15 @@ struct cone : Entity
 		else
 		{
 			if ((t_1 < t_2 && t_1 > 0) || t_2 < 0)
-				thit = t_1;// intersect = ray.origin + ray.dir*t_1;
+				thit = t_1;// intersect = origin + dir*t_1;
 			else
-				thit = t_2;// intersect = ray.origin + ray.dir*t_2;
+				thit = t_2;// intersect = origin + dir*t_2;
 
 			normal = glm::normalize(intersect - pos);
 			//std::cout << "intersection\n";
 		}
 
-		phit = ray.origin + ray.dir*thit;
+		phit = origin + dir*thit;
 		phi = atan2f(phit.y, phit.x);
 
 		if (phi < 0.)
@@ -149,7 +160,7 @@ struct cone : Entity
 				return false;*/
 
 			// Compute cone inverse mapping
-			phit = ray.origin + ray.dir*thit;
+			phit = origin + dir*thit;
 			phi = atan2f(phit.y, phit.x);
 
 			if (phi < 0.)
@@ -159,7 +170,7 @@ struct cone : Entity
 				return false;
 		}
 
-		 intersect = ray.origin + ray.dir*thit;
+		 intersect = glm::inverse(rot) * (origin + dir*thit) - pos;
 
 		 // Find parametric representation of cone hit
 		 double u = phi / phiMax;

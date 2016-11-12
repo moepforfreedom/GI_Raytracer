@@ -24,6 +24,8 @@ class RayTracer {
         // TODO Implement this
         _image = std::make_shared<Image>(w, h);
 
+		//_camera.pos.z += .0125;
+
         double sensorHalfWidth = (_camera.sensorDiag*w)/(sqrt((double)w*w + h*h));
         double sensorHalfHeight = sensorHalfWidth * ((double)h/w);
 
