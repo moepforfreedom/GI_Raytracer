@@ -181,14 +181,9 @@ struct cone : Entity
 		 double u = phi / phiMax;
 		 double v = phit.z / height;
 
-		 // Compute cone $\dpdu$ and $\dpdv$
+		 // Compute cone tangent vectors
 		 glm::dvec3 dpdu(-phiMax * phit.y, phiMax * phit.x, 0);
 		 glm::dvec3 dpdv(-phit.x / (1.f - v),- phit.y / (1.f - v), height);
-
-		 // Compute cone $\dndu$ and $\dndv$
-		 glm::dvec3 d2Pduu = -phiMax * phiMax * glm::dvec3(phit.x, phit.y, 0.);
-		 glm::dvec3 d2Pduv = phiMax / (1.f - v) * glm::dvec3(-phit.y, -phit.x, 0.);
-		 glm::dvec3 d2Pdvv(0, 0, 0);
 
 		 normal = glm::normalize(glm::cross(dpdu, dpdv));
 
@@ -200,6 +195,8 @@ struct cone : Entity
 		glm::dvec3 verts[8];
 		glm::dvec3 min(INFINITY, INFINITY, INFINITY), max(-INFINITY, -INFINITY, -INFINITY); //TODO: change this somehow
 
+
+		//vertices of bounding box in object space
 		verts[0] = rad*glm::dvec3(-1, -1, 0);
 		verts[1] = rad*glm::dvec3(-1, 1, 0);
 		verts[2] = rad*glm::dvec3(1, -1, 0);
@@ -208,6 +205,7 @@ struct cone : Entity
 		for (int j = 0; j < 4; j++)
 			verts[4+j] = verts[j] + glm::dvec3(0, 0, height);
 
+		//transform into world space and compute axis aligned bounding box TODO: find a more space efficient solution
 		for (int i = 0; i < 8; i++)
 		{
 			verts[i] = verts[i]*glm::inverse(rot) + pos;
@@ -229,6 +227,30 @@ struct cone : Entity
 		}
 
 		return BoundingBox(min, max);
+
+	}
+};
+
+struct vertex
+{
+	glm::dvec3 pos;
+	glm::dvec3 norm;
+	glm::dvec2 texCoord;
+
+	vertex(glm::dvec3 position, glm::dvec3 normal, glm::dvec2 uv)
+	{
+		pos = position;
+		norm = normal;
+		texCoord = uv;
+	}
+};
+
+struct triangle: Entity
+{
+	glm::dmat3x3 rot;
+
+	triangle(vertex v1, vertex v2, vertex v3, const Material& material) : Entity(material)
+	{
 
 	}
 };
