@@ -24,7 +24,10 @@ class RayTracer {
         // TODO Implement this
         _image = std::make_shared<Image>(w, h);
 
-		//_camera.pos.z += .0125;
+
+		glm::dmat3x3 crot = glm::eulerAngleXYZ(0.0, 0.02, 0.0);
+		//_camera.pos =  _camera.pos*crot;
+		//_camera.forward = _camera.forward*crot;
 
         double sensorHalfWidth = (_camera.sensorDiag*w)/(sqrt((double)w*w + h*h));
         double sensorHalfHeight = sensorHalfWidth * ((double)h/w);

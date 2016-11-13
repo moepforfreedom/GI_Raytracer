@@ -76,27 +76,29 @@ struct sphere: Entity
 
 struct cone : Entity
 {
-	double rad, height;
+	double rad, height, posX;
 
 	glm::dmat3x3 rot;
 
 	cone(glm::dvec3 position, glm::dvec3 rotation, double radius, double height, const Material& material) : Entity(material), rad(radius), height(height)
 	{
-		pos = position;
 
-		rot = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z); 
+		pos = position;		
+
+		rot = glm::inverse(glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z)); 
 	}
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
 	{
-		glm::dvec3 tmpOrigin = ray.origin*rot;// (glm::dvec4(ray.origin, 1)*rot);
-		glm::dvec3 tmpDir = ray.dir*rot;// (glm::dvec4(ray.dir, 1)*rot);
+		//instead of transforming the cylinder, apply the inverse transform to the ray
+		glm::dvec3 tmpOrigin = ray.origin*rot;
+		glm::dvec3 tmpDir = ray.dir*rot;
 
-		glm::dvec3 origin = ray.origin*rot + pos;
+		glm::dvec3 origin = (ray.origin - pos)*rot;
 		glm::dvec3 dir = ray.dir*rot;
 
 		double t_1, t_2, thit, phi;
-		double phiMax = 360;
+		double phiMax = 2*M_PI; //can be used for radial clipping
 		glm::dvec3 phit;
 
 		//coefficients for quadratic equation
@@ -127,20 +129,24 @@ struct cone : Entity
 		t_1 = q / A;
 		t_2 = C / q;
 
-		//if (t_1 > t_2)
-
+		//both intersection points are behind ray origin
 		if (t_1 < 0 && t_2 < 0)
 			return false;
-		else
-		{
-			if ((t_1 < t_2 && t_1 > 0) || t_2 < 0)
-				thit = t_1;// intersect = origin + dir*t_1;
-			else
-				thit = t_2;// intersect = origin + dir*t_2;
 
-			normal = glm::normalize(intersect - pos);
-			//std::cout << "intersection\n";
+		if (t_1 > t_2)
+		{
+			double tmp = t_1;
+			t_1 = t_2;
+			t_2 = tmp;
 		}
+		
+		thit = t_1;
+
+		//one intersection point is behind ray origin
+		if (t_1 < 0)
+			thit = t_2;
+		else if (t_2 < 0)
+			thit = t_1;	
 
 		phit = origin + dir*thit;
 		phi = atan2f(phit.y, phit.x);
@@ -149,15 +155,12 @@ struct cone : Entity
 			phi += 2.f*M_PI;
 
 		// Test cone intersection against clipping plane
-		 if (phit.z < 0 || phit.z > height || phi > phiMax) 
+		if (phit.z < 0 || phit.z > height || phi > phiMax) 
 		 {
-			 if (thit == t_1) 
+			 if (thit == t_2) 
 				 return false;
 
-			 thit = t_1;
-
-			/*if (t1 > ray.maxt)
-				return false;*/
+			 thit = t_2;
 
 			// Compute cone inverse mapping
 			phit = origin + dir*thit;
@@ -170,7 +173,9 @@ struct cone : Entity
 				return false;
 		}
 
-		 intersect = glm::inverse(rot) * (origin + dir*thit) - pos;
+		 //std::cout << t_1 << ", " << t_2 << "\n";
+
+		 intersect = ray.origin + thit*ray.dir;
 
 		 // Find parametric representation of cone hit
 		 double u = phi / phiMax;
@@ -192,7 +197,39 @@ struct cone : Entity
 
 	virtual BoundingBox boundingBox() const
 	{
-		return BoundingBox(pos + rad*glm::dvec3(-1, -1, -1), (pos + rad*glm::dvec3(1, 1, 1)));
+		glm::dvec3 verts[8];
+		glm::dvec3 min(INFINITY, INFINITY, INFINITY), max(-INFINITY, -INFINITY, -INFINITY); //TODO: change this somehow
+
+		verts[0] = rad*glm::dvec3(-1, -1, 0);
+		verts[1] = rad*glm::dvec3(-1, 1, 0);
+		verts[2] = rad*glm::dvec3(1, -1, 0);
+		verts[3] = rad*glm::dvec3(1, 1, 0);
+
+		for (int j = 0; j < 4; j++)
+			verts[4+j] = verts[j] + glm::dvec3(0, 0, height);
+
+		for (int i = 0; i < 8; i++)
+		{
+			verts[i] = verts[i]*glm::inverse(rot) + pos;
+
+			if (verts[i].x < min.x)
+				min.x = verts[i].x;
+			if (verts[i].x > max.x)
+				max.x = verts[i].x;
+
+			if (verts[i].y < min.y)
+				min.y = verts[i].y;
+			if (verts[i].y > max.y)
+				max.y = verts[i].y;
+
+			if (verts[i].z < min.z)
+				min.z = verts[i].z;
+			if (verts[i].z > max.z)
+				max.z = verts[i].z;
+		}
+
+		return BoundingBox(min, max);
+
 	}
 };
 
