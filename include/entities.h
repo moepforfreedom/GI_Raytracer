@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/component_wise.hpp>
 
 #include "bbox.h"
 #include "material.h"
@@ -201,12 +202,13 @@ struct cone : Entity
 		verts[1] = rad*glm::dvec3(-1, 1, 0);
 		verts[2] = rad*glm::dvec3(1, -1, 0);
 		verts[3] = rad*glm::dvec3(1, 1, 0);
+		verts[4] = glm::dvec3(0, 0, height);
 
-		for (int j = 0; j < 4; j++)
-			verts[4+j] = verts[j] + glm::dvec3(0, 0, height);
+		/*for (int j = 0; j < 4; j++)
+			verts[4+j] = verts[j] + glm::dvec3(0, 0, height);*/
 
 		//transform into world space and compute axis aligned bounding box TODO: find a more space efficient solution
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			verts[i] = verts[i]*glm::inverse(rot) + pos;
 
@@ -322,6 +324,24 @@ struct triangle: Entity
 		}
 
 		return BoundingBox(min, max);
+	}
+};
+
+struct sphereMesh : Entity
+{
+	double rad;
+	const Octree* scene;
+
+	sphereMesh(const Octree* octree, glm::dvec3 position, double radius, int htris, int vtris, const Material& material) : Entity(material), rad(radius)
+	{
+		pos = position;
+		scene = octree;
+
+	}
+
+	virtual BoundingBox boundingBox() const
+	{
+		return BoundingBox(pos + rad*glm::dvec3(-1, -1, -1), (pos + rad*glm::dvec3(1, 1, 1)));
 	}
 };
 
