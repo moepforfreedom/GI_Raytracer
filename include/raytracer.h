@@ -27,13 +27,15 @@ class RayTracer {
 
 		glm::dmat3x3 crot = glm::eulerAngleXYZ(0.0, 0.02, 0.0);
 		_camera.pos =  _camera.pos*crot;
-		_camera.forward = _camera.forward*crot;
+		_camera.forward = glm::normalize(glm::dvec3(0, 0, 0) - _camera.pos);
 
         double sensorHalfWidth = (_camera.sensorDiag*w)/(sqrt((double)w*w + h*h));
         double sensorHalfHeight = sensorHalfWidth * ((double)h/w);
 
 		glm::dvec3 screenCenter = _camera.pos + _camera.focalDist*_camera.forward;
-		glm::dvec3 cameraRight = glm::cross(_camera.forward, _camera.up);
+		glm::dvec3 cameraRight =  glm::cross(_camera.forward, _camera.up);
+
+		std::cout << cameraRight.x << ", " << cameraRight.y << ", " << cameraRight.z << ", " << "\n";
 
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10) //OpenMP
@@ -43,7 +45,7 @@ class RayTracer {
             for (int x = 0; x < w; ++x) {
                 // TODO Implement this
 
-				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*_camera.up + (sensorHalfHeight*((double)y / h - .5))*cameraRight;
+				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*cameraRight + (sensorHalfHeight*((double)y / h - .5))*_camera.up;
 				glm::dvec3 color(0, 0, 0);
 
 				glm::dvec3 hit, minHit, minNorm;

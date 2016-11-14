@@ -298,7 +298,30 @@ struct triangle: Entity
 
 	virtual BoundingBox boundingBox() const
 	{
-		return BoundingBox(glm::dvec3(-1, -1, -1), glm::dvec3(1, 1, 1));
+		glm::dvec3 min, max;
+		for (int i = 0; i < 3; i++)
+		{
+			//vertices[i] = verts[i] * glm::inverse(rot) + pos;
+
+			glm::dvec3 vpos = vertices[i]->pos;
+
+			if (vpos.x < min.x)
+				min.x = vpos.x;
+			if (vpos.x > max.x)
+				max.x = vpos.x;
+
+			if (vpos.y < min.y)
+				min.y = vpos.y;
+			if (vpos.y > max.y)
+				max.y = vpos.y;
+
+			if (vpos.z < min.z)
+				min.z = vpos.z;
+			if (vpos.z > max.z)
+				max.z = vpos.z;
+		}
+
+		return BoundingBox(min, max);
 	}
 };
 

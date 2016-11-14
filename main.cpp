@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 	Camera camera({ 10, 0, 0 }, {0, 0, 0});
     glm::dvec3 light{10, 10, 10};
 
-	camera.up = glm::dvec3(0, 0, 1.0);
+	camera.up = glm::dvec3(0, 1.0, 0);
 
     RayTracer raytracer(camera, light);
 
