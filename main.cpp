@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 		scene.push_back(new sphere(b.max, .05, Material(glm::dvec3(0, 0, 1), glm::dvec3(.125, 0, 0))));
 		scene.push_back(a);
 	}
-
+	scene.push_back(&triangle(&vertex(glm::dvec3(0, 0, 0), glm::dvec2(0, 0)), &vertex(glm::dvec3(0, 3, 0), glm::dvec2(0, 0)), &vertex(glm::dvec3(0, 0, 3), glm::dvec2(0, 0)), Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 0, 0))));
 	scene.push_back(&cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(glm::dvec3(1, 0, 0), glm::dvec3(.125, 0, 0))));
 	scene.push_back(&sphere(glm::dvec3(0, 0, 0), 32, Material(glm::dvec3(0.25, 0.25, .25), glm::dvec3(.125, 0.125, .125))));
 

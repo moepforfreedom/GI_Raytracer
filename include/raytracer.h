@@ -26,8 +26,8 @@ class RayTracer {
 
 
 		glm::dmat3x3 crot = glm::eulerAngleXYZ(0.0, 0.02, 0.0);
-		//_camera.pos =  _camera.pos*crot;
-		//_camera.forward = _camera.forward*crot;
+		_camera.pos =  _camera.pos*crot;
+		_camera.forward = _camera.forward*crot;
 
         double sensorHalfWidth = (_camera.sensorDiag*w)/(sqrt((double)w*w + h*h));
         double sensorHalfHeight = sensorHalfWidth * ((double)h/w);
@@ -83,7 +83,7 @@ class RayTracer {
 				}
 				if (intersected)
 				{
-					double l = glm::dot(minNorm, glm::normalize(_light - _camera.pos));
+					double l = glm::dot(minNorm , glm::normalize(_light - minHit));
 
 					if (l < 0)
 						l = 0;
