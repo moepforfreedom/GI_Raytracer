@@ -239,11 +239,11 @@ struct vertex
 	glm::dvec3 norm = {0, 0, 0};
 	glm::dvec2 texCoord;
 
-	vertex(glm::dvec3 position, glm::dvec2 uv)
+	vertex(glm::dvec3 position, glm::dvec3 normal)
 	{
 		pos = position;
-		//norm = normal;
-		texCoord = uv;
+		norm = normal;
+		//texCoord = uv;
 	}
 };
 
@@ -285,14 +285,37 @@ struct triangle: Entity
 		if (glm::dot(glm::cross((vertices[0]->pos - vertices[2]->pos), (intersect - vertices[2]->pos)), norm) < 0)
 			return false;
 
+		//Interpolate normal if vertex normals are set
 		if (glm::length(vertices[0]->norm) > 0 && glm::length(vertices[1]->norm) > 0 && glm::length(vertices[2]->norm) > 0)
 		{
-			glm::dvec3 dist(1.0 / glm::length(vertices[0]->pos - intersect), 1.0 / glm::length(vertices[1]->pos - intersect), 1.0 / glm::length(vertices[2]->pos - intersect));
+			glm::dvec3 U = vertices[0]->pos - vertices[1]->pos;
+			glm::dvec3 V = vertices[2]->pos - vertices[1]->pos;
+			glm::dvec3 N = intersect - vertices[1]->pos;
 
-			normal = glm::normalize(vertices[0]->norm * dist.x + vertices[1]->norm * dist.y + vertices[2]->norm * dist.z);
+			glm::dvec3 dist(glm::length(U), glm::length(V), glm::length(N));
+
+			N = glm::normalize(N);
+			U = glm::normalize(U);
+
+			double cost = glm::dot(N, U);
+			if (cost < 0) cost = 0;
+			if (cost > 1) cost = 1;
+
+			double a = acos(cost);
+
+			double distY = 0, distX = 0;
+			distX = dist.z * cos(a);
+			distY = dist.z * sin(a);
+
+			double u = distX / dist.x;
+			double v = distY / dist.y;
+
+			normal = -((1.0 - (u + v)) * glm::normalize(vertices[1]->norm) + glm::normalize(vertices[0]->norm) * u + glm::normalize(vertices[2]->norm) * v);
+
+			//std::cout << normal.x << ", " << normal.y << ", " << normal.z << "\n";
 		}
 		else
-		normal = norm;
+			normal = norm;
 
 		return true;
 
@@ -330,12 +353,11 @@ struct triangle: Entity
 struct sphereMesh : Entity
 {
 	double rad;
-	const Octree* scene;
 
-	sphereMesh(const Octree* octree, glm::dvec3 position, double radius, int htris, int vtris, const Material& material) : Entity(material), rad(radius)
+	sphereMesh(glm::dvec3 position, double radius, int htris, int vtris, const Material& material) : Entity(material), rad(radius)
 	{
 		pos = position;
-		scene = octree;
+		//scene = o;
 
 	}
 
