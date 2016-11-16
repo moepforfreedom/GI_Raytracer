@@ -24,10 +24,26 @@ void Octree::push_back(Entity* object) {
 
 	_root._entities.push_back(object);
 
-	if (_root._entities.size() > 876)
+	if (_root._entities.size() > 875)
 	{
 		std::cout << "subdividing root...\n";
 		_root.partition();
+
+		Node* current = &_root;
+
+		while (!current->is_leaf())
+		{
+
+			for (int i = 0; i < 8; i++)
+			{
+				glm::dvec3 minPos = current->_children[i]->_bbox.min;
+				glm::dvec3 maxPos = current->_children[i]->_bbox.max;
+
+				_root._entities.push_back(new sphere(maxPos, .5, Material(glm::dvec3(1*(1.0/i), 0, 0), glm::dvec3(1, 0, 0))));
+			}
+
+			current = current->_children[0].get();
+		}
 	}
 }
 

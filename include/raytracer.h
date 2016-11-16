@@ -29,11 +29,15 @@ class RayTracer {
 		_camera.pos =  _camera.pos*crot;
 		_camera.forward = glm::normalize(glm::dvec3(0, 0, 0) - _camera.pos);
 
+		_camera.up = glm::dvec3(0, 1.0, 0);
+		_camera.right = glm::normalize(glm::cross(_camera.up, _camera.forward));
+		_camera.up = glm::cross(_camera.forward, _camera.right);
+
         double sensorHalfWidth = (_camera.sensorDiag*w)/(sqrt((double)w*w + h*h));
         double sensorHalfHeight = sensorHalfWidth * ((double)h/w);
 
 		glm::dvec3 screenCenter = _camera.pos + _camera.focalDist*_camera.forward;
-		glm::dvec3 cameraRight =  glm::cross(_camera.forward, _camera.up);
+		glm::dvec3 cameraRight =  glm::normalize(glm::cross(_camera.forward, _camera.up));
 
 		std::cout << cameraRight.x << ", " << cameraRight.y << ", " << cameraRight.z << ", " << "\n";
 
