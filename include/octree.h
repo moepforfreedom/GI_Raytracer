@@ -33,6 +33,7 @@ class Octree {
 
 		bool is_leaf() const;
 
+		int depth;
         BoundingBox _bbox;
         std::vector<Entity*> _entities;
         std::array<std::unique_ptr<Node>, 8> _children;

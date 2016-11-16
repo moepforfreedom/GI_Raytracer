@@ -22,6 +22,11 @@ int main(int argc, char** argv) {
     // TODO Add objects to the scene
     // scene.push_back(...);
 
+	BoundingBox a(glm::dvec3(-1, -1, -1), glm::dvec3(1, 1, 1));
+	BoundingBox b(glm::dvec3(1.01, 1.01, 1.01), glm::dvec3(2, 2, 2));
+
+	std::cout << "bbox intersection test: " << a.intersect(b) << "\n";
+
 	/*scene.push_back(&sphere(glm::dvec3(0, 0, 0), 1, Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))));*/
 	scene.push_back(&sphere(glm::dvec3(5, .5, 0), .5, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 0, 0))));
 	scene.push_back(&sphere(glm::dvec3(6, .5, .75), .25, Material(glm::dvec3(0, 0, 1), glm::dvec3(.125, 0, 0))));
@@ -42,7 +47,7 @@ int main(int argc, char** argv) {
 
 	scene.push_back(&coneMesh(&scene, glm::dvec3(3, 0, 0), glm::dvec3(0.5, -.5, 0.0), 1.5, 3.0, 16, Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))));
 
-	scene.push_back(&sphereMesh(&scene, glm::dvec3(0, 0, -2), 1.5, 3, Material(glm::dvec3(1, 0, 1), glm::dvec3(0, 0, 0))));
+	scene.push_back(&sphereMesh(&scene, glm::dvec3(0, 0, -5), 1.5, 3, Material(glm::dvec3(1, 0, 1), glm::dvec3(0, 0, 0))));
 
 	scene.push_back(&quadMesh(&scene, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 0), glm::dvec3(0, 0, 1), glm::dvec3(0, 1, .5), Material(glm::dvec3(0, 0, 1), glm::dvec3(0, 0, 0))));
 

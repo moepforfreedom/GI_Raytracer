@@ -324,7 +324,7 @@ struct triangle: Entity
 
 	virtual BoundingBox boundingBox() const
 	{
-		glm::dvec3 min, max;
+		glm::dvec3 min(INFINITY, INFINITY, INFINITY), max(-INFINITY, -INFINITY, -INFINITY);
 		for (int i = 0; i < 3; i++)
 		{
 			//vertices[i] = verts[i] * glm::inverse(rot) + pos;
@@ -424,7 +424,7 @@ struct sphereMesh : Entity
 
 	virtual BoundingBox boundingBox() const
 	{
-		return BoundingBox(pos + rad*glm::dvec3(-1, -1, -1), (pos + rad*glm::dvec3(1, 1, 1)));
+		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0));
 	}
 };
 
