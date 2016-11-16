@@ -10,6 +10,7 @@
 #include "ray.h"
 #include "util.h"
 #include <iostream>
+#include "octree.h"
 
 /// A base class for all entities in the scene.
 struct Entity 
@@ -197,7 +198,7 @@ struct cone : Entity
 		glm::dvec3 min(INFINITY, INFINITY, INFINITY), max(-INFINITY, -INFINITY, -INFINITY); //TODO: change this somehow
 
 		
-		//vertices of bounding box in object space
+		//vertices of bounding pyramid in object space
 		verts[0] = rad*glm::dvec3(-1, -1, 0);
 		verts[1] = rad*glm::dvec3(-1, 1, 0);
 		verts[2] = rad*glm::dvec3(1, -1, 0);
@@ -350,20 +351,104 @@ struct triangle: Entity
 	}
 };
 
+
+//Mesh objects only generate triangles and add them to the scene, intersection/bbox tests are performed on the triangle objects
 struct sphereMesh : Entity
 {
 	double rad;
+	const Octree* scene;
 
-	sphereMesh(glm::dvec3 position, double radius, int htris, int vtris, const Material& material) : Entity(material), rad(radius)
+	sphereMesh(const Octree* o, glm::dvec3 position, double radius, int htris, int vtris, const Material& material) : Entity(material), rad(radius)
 	{
 		pos = position;
-		//scene = o;
+		scene = o;
+		
+	}
 
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	{
+		return false;
 	}
 
 	virtual BoundingBox boundingBox() const
 	{
 		return BoundingBox(pos + rad*glm::dvec3(-1, -1, -1), (pos + rad*glm::dvec3(1, 1, 1)));
+	}
+};
+
+struct coneMesh : Entity
+{
+	double rad, height;
+	Octree* scene;
+	glm::dmat3x3 rot;
+
+	coneMesh(Octree* o, glm::dvec3 position, glm::dvec3 rotation, double radius, double height, int tris, const Material& material) : Entity(material), rad(radius), height(height)
+	{
+		pos = position;
+		scene = o;
+		rot = glm::inverse(glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z));
+
+		glm::dmat3x3 baseRot = glm::eulerAngleXYZ(0.0, 0.0, 2 * M_PI / tris);
+
+		vertex top(glm::dvec3(0, 0, height), glm::dvec3(0, 1, 0));
+		vertex base(glm::dvec3(0, 0, 0), glm::dvec3(0, -1, 0));
+
+		glm::dvec3 last(rad, 0, 0);
+
+		for (int i = 0; i < tris; i++)
+		{
+			glm::dvec3 next = baseRot*last;
+
+			scene->push_back(new triangle(new vertex(last, last), new vertex(next, next), new vertex(glm::dvec3(0, 0, height), last), material));
+
+			last = next;
+		}
+	}
+
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	{
+		return false;
+	}
+
+	virtual BoundingBox boundingBox() const
+	{
+		glm::dvec3 verts[8];
+		glm::dvec3 min(INFINITY, INFINITY, INFINITY), max(-INFINITY, -INFINITY, -INFINITY); //TODO: change this somehow
+
+
+		//vertices of bounding pyramid in object space
+		verts[0] = rad*glm::dvec3(-1, -1, 0);
+		verts[1] = rad*glm::dvec3(-1, 1, 0);
+		verts[2] = rad*glm::dvec3(1, -1, 0);
+		verts[3] = rad*glm::dvec3(1, 1, 0);
+		verts[4] = glm::dvec3(0, 0, height);
+
+		/*for (int j = 0; j < 4; j++)
+		verts[4+j] = verts[j] + glm::dvec3(0, 0, height);*/
+
+		//transform into world space and compute axis aligned bounding box TODO: find a more space efficient solution
+		for (int i = 0; i < 5; i++)
+		{
+			verts[i] = verts[i] * glm::inverse(rot) + pos;
+
+			if (verts[i].x < min.x)
+				min.x = verts[i].x;
+			if (verts[i].x > max.x)
+				max.x = verts[i].x;
+
+			if (verts[i].y < min.y)
+				min.y = verts[i].y;
+			if (verts[i].y > max.y)
+				max.y = verts[i].y;
+
+			if (verts[i].z < min.z)
+				min.z = verts[i].z;
+			if (verts[i].z > max.z)
+				max.z = verts[i].z;
+		}
+
+		return BoundingBox(min, max);
+
 	}
 };
 

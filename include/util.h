@@ -1,5 +1,4 @@
 #include <glm/glm.hpp>
-//#include "entities.h"
 #define M_PI 3.1415926535 
 
 
