@@ -1,5 +1,11 @@
 #include <glm/glm.hpp>
-#define M_PI 3.1415926535897 
+#define M_PI 3.1415926535897
+
+//squared vector length
+inline double vecLengthSquared(glm::dvec3 vec)
+{
+	return vec.x*vec.x + vec.y*vec.y + vec.z*vec.z;
+}
 
 
 /*BoundingBox MeshBbox(std::vector<triangle*> tris)

@@ -73,7 +73,7 @@ class RayTracer {
 					Entity* tmp = *it;
 					if (tmp->intersect(ray, hit, norm))
 					{
-						if (!intersected || glm::length(hit - _camera.pos) < glm::length(minHit - _camera.pos))
+						if (!intersected ||vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos))
 						{
 							current = tmp;
 							minHit = hit;

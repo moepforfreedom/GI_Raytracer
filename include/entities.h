@@ -298,7 +298,7 @@ struct triangle: Entity
 			return false;
 
 		//Interpolate normal if vertex normals are set
-		if (glm::length(vertices[0]->norm) > 0 && glm::length(vertices[1]->norm) > 0 && glm::length(vertices[2]->norm) > 0)
+		if (vecLengthSquared(vertices[0]->norm) > 0 && vecLengthSquared(vertices[1]->norm) > 0 && vecLengthSquared(vertices[2]->norm) > 0)
 		{
 
 			glm::dvec3 d1 = intersect - vertices[0]->pos;
