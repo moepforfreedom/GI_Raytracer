@@ -246,6 +246,11 @@ struct vertex
 		norm = glm::normalize(normal);
 		//texCoord = uv;
 	}
+
+	vertex(glm::dvec3 position)
+	{
+		pos = position;
+	}
 };
 
 struct triangle: Entity
@@ -303,7 +308,6 @@ struct triangle: Entity
 
 
 			normal = a1*vertices[0]->norm + a2*vertices[1]->norm + a3*vertices[2]->norm;
-
 		}
 		else
 			normal = norm;
@@ -492,6 +496,25 @@ struct coneMesh : Entity
 
 		return BoundingBox(min, max);
 
+	}
+};
+
+struct quadMesh : Entity
+{
+	quadMesh(Octree* o, glm::dvec3 v1, glm::dvec3 v2, glm::dvec3 v3, glm::dvec3 v4, const Material& material)
+	{
+		o->push_back(new triangle(new vertex(v1), new vertex(v2), new vertex(v3), material));
+		o->push_back(new triangle(new vertex(v3), new vertex(v2), new vertex(v4), material));
+	}
+
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	{
+		return false;
+	}
+
+	virtual BoundingBox boundingBox() const
+	{
+		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0));
 	}
 };
 
