@@ -243,7 +243,7 @@ struct vertex
 	vertex(glm::dvec3 position, glm::dvec3 normal)
 	{
 		pos = position;
-		norm = normal;
+		norm = glm::normalize(normal);
 		//texCoord = uv;
 	}
 };
@@ -289,31 +289,21 @@ struct triangle: Entity
 		//Interpolate normal if vertex normals are set
 		if (glm::length(vertices[0]->norm) > 0 && glm::length(vertices[1]->norm) > 0 && glm::length(vertices[2]->norm) > 0)
 		{
-			glm::dvec3 U = vertices[0]->pos - vertices[1]->pos;
-			glm::dvec3 V = vertices[2]->pos - vertices[1]->pos;
-			glm::dvec3 N = intersect - vertices[1]->pos;
 
-			glm::dvec3 dist(glm::length(U), glm::length(V), glm::length(N));
+			glm::dvec3 d1 = intersect - vertices[0]->pos;
+			glm::dvec3 d2 = intersect - vertices[1]->pos;
+			glm::dvec3 d3 = intersect - vertices[2]->pos;
 
-			N = glm::normalize(N);
-			U = glm::normalize(U);
 
-			double cost = glm::dot(N, U);
-			if (cost < 0) cost = 0;
-			if (cost > 1) cost = 1;
+			double area = glm::length(glm::cross(vertices[0]->pos - vertices[1]->pos, vertices[0]->pos - vertices[2]->pos));
 
-			double a = acos(cost);
+			double a1 = glm::length(glm::cross(d2, d3)) / area;
+			double a2 = glm::length(glm::cross(d3, d1)) / area;
+			double a3 = glm::length(glm::cross(d1, d2)) / area;
 
-			double distY = 0, distX = 0;
-			distX = dist.z * cos(a);
-			distY = dist.z * sin(a);
 
-			double u = distX / dist.x;
-			double v = distY / dist.y;
+			normal = a1*vertices[0]->norm + a2*vertices[1]->norm + a3*vertices[2]->norm;
 
-			normal = -((1.0 - (u + v)) * glm::normalize(vertices[1]->norm) + glm::normalize(vertices[0]->norm) * u + glm::normalize(vertices[2]->norm) * v);
-
-			//std::cout << normal.x << ", " << normal.y << ", " << normal.z << "\n";
 		}
 		else
 			normal = norm;
@@ -505,10 +495,10 @@ struct coneMesh : Entity
 	}
 };
 
-// TODO Implement implicit sphere
-// TODO Implement implicit cone
+// TODO Implement implicit sphere - done
+// TODO Implement implicit cone - done
 
-// TODO Implement triangle
-// TODO Implement explicit sphere (triangles)
+// TODO Implement triangle - done
+// TODO Implement explicit sphere (triangles) - done
 // TODO Implement explicit quad (triangles)
 // TODO Implement explicit cube (triangles)
