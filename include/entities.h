@@ -240,11 +240,17 @@ struct vertex
 	glm::dvec3 norm = {0, 0, 0};
 	glm::dvec2 texCoord;
 
+	vertex(glm::dvec3 position, glm::dvec3 normal, glm::dvec2 uv)
+	{
+		pos = position;
+		norm = glm::normalize(normal);
+		texCoord = uv;
+	}
+
 	vertex(glm::dvec3 position, glm::dvec3 normal)
 	{
 		pos = position;
 		norm = glm::normalize(normal);
-		//texCoord = uv;
 	}
 
 	vertex(glm::dvec3 position)
@@ -518,10 +524,57 @@ struct quadMesh : Entity
 	}
 };
 
+struct boxMesh : Entity
+{
+	glm::dmat3x3 rot;
+
+	boxMesh(Octree* o, glm::dvec3 position, glm::dvec3 size, glm::dvec3 rotation, const Material& material)
+	{
+		pos = position;
+		rot = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
+
+		std::vector<std::array<glm::dvec3, 3>> tris;
+
+		tris.push_back({ glm::dvec3(-1, -1, -1), glm::dvec3(-1, 1, -1), glm::dvec3(1, -1, -1)  });
+		tris.push_back({ glm::dvec3(-1, 1, -1) , glm::dvec3(1, 1, -1), glm::dvec3(1, -1, -1) });
+
+		tris.push_back({ glm::dvec3(-1, -1, -1), glm::dvec3(-1, -1, 1) , glm::dvec3(-1, 1, -1) });
+		tris.push_back({ glm::dvec3(-1, -1, 1), glm::dvec3(-1, 1, 1) , glm::dvec3(-1, 1, -1) });
+
+		tris.push_back({ glm::dvec3(-1, -1, -1) ,glm::dvec3(1, -1, -1), glm::dvec3(-1, -1, 1) });
+		tris.push_back({ glm::dvec3(-1, -1, 1) ,glm::dvec3(1, -1, -1), glm::dvec3(1, -1, 1) });
+
+		tris.push_back({ glm::dvec3(-1, -1, 1), glm::dvec3(1, -1, 1), glm::dvec3(-1, 1, 1) });
+		tris.push_back({ glm::dvec3(1, -1, 1), glm::dvec3(1, 1, 1), glm::dvec3(-1, 1, 1) });
+
+		tris.push_back({ glm::dvec3(-1, 1, 1), glm::dvec3(1, 1, 1), glm::dvec3(1, 1, -1) });
+		tris.push_back({ glm::dvec3(-1, 1, 1), glm::dvec3(1, 1, -1), glm::dvec3(-1, 1, -1) });
+
+		tris.push_back({ glm::dvec3(1, -1, -1), glm::dvec3(1, 1, -1), glm::dvec3(1, -1, 1) });
+		tris.push_back({ glm::dvec3(1, -1, 1), glm::dvec3(1, 1, -1), glm::dvec3(1, 1, 1) });
+
+
+		for (int i = 0; i < 12; i++)
+		{
+			o->push_back(new triangle(new vertex(rot*(glm::normalize(tris[i][0])*size) + pos), new vertex(rot*(glm::normalize(tris[i][1])*size) + pos), new vertex(rot*(glm::normalize(tris[i][2])*size) + pos), material));
+		}
+	}
+
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	{
+		return false;
+	}
+
+	virtual BoundingBox boundingBox() const
+	{
+		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0));
+	}
+};
+
 // TODO Implement implicit sphere - done
 // TODO Implement implicit cone - done
 
 // TODO Implement triangle - done
 // TODO Implement explicit sphere (triangles) - done
-// TODO Implement explicit quad (triangles)
-// TODO Implement explicit cube (triangles)
+// TODO Implement explicit quad (triangles) - done
+// TODO Implement explicit cube (triangles) - done
