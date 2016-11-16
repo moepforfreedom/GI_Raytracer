@@ -400,6 +400,7 @@ struct coneMesh : Entity
 			glm::dvec3 next = baseRot*last;
 
 			scene->push_back(new triangle(new vertex(last, last), new vertex(next, next), new vertex(glm::dvec3(0, 0, height), last), material));
+			scene->push_back(new triangle(new vertex(last, glm::dvec3(0, 0, -1)), new vertex(next, glm::dvec3(0, 0, -1)), new vertex(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, -1)), material));
 
 			last = next;
 		}
