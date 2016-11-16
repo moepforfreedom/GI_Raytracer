@@ -9,7 +9,7 @@
 #include "bbox.h"
 
 
-class Entity;
+struct Entity;
 
 class Octree {
   public:

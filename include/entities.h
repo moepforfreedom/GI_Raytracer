@@ -151,7 +151,7 @@ struct cone : Entity
 			thit = t_1;	
 
 		phit = origin + dir*thit;
-		phi = atan2f(phit.y, phit.x);
+		phi = atan2(phit.y, phit.x);
 
 		if (phi < 0.)
 			phi += 2.f*M_PI;
@@ -166,7 +166,7 @@ struct cone : Entity
 
 			// Compute cone inverse mapping
 			phit = origin + dir*thit;
-			phi = atan2f(phit.y, phit.x);
+			phi = atan2(phit.y, phit.x);
 
 			if (phi < 0.)
 				phi += 2.f*M_PI;
@@ -356,13 +356,65 @@ struct triangle: Entity
 struct sphereMesh : Entity
 {
 	double rad;
-	const Octree* scene;
+	Octree* scene;
 
-	sphereMesh(const Octree* o, glm::dvec3 position, double radius, int htris, int vtris, const Material& material) : Entity(material), rad(radius)
+	sphereMesh(Octree* o, glm::dvec3 position, double radius, int subdivs, const Material& material) : Entity(material), rad(radius)
 	{
 		pos = position;
 		scene = o;
-		
+
+		std::vector<std::array<glm::dvec3, 3>> tris;
+		std::vector<std::array<glm::dvec3, 3>> tmp;
+
+		//Idea: create octahedron, then subdivide and normalize to approximate a sphere
+		tris.push_back({ glm::dvec3(-1, 0, 0), glm::dvec3(0, -1, 0) , glm::dvec3(0, 0, -1) });
+		tris.push_back({ glm::dvec3(0, -1, 0), glm::dvec3(1, 0, 0) , glm::dvec3(0, 0, -1) });
+		tris.push_back({ glm::dvec3(1, 0, 0), glm::dvec3(0, 1, 0) , glm::dvec3(0, 0, -1) });
+		tris.push_back({ glm::dvec3(0, 1, 0), glm::dvec3(-1, 0, 0) , glm::dvec3(0, 0, -1) });
+
+		tris.push_back({ glm::dvec3(-1, 0, 0), glm::dvec3(0, -1, 0) , glm::dvec3(0, 0, 1) });
+		tris.push_back({ glm::dvec3(0, -1, 0), glm::dvec3(1, 0, 0) , glm::dvec3(0, 0, 1) });
+		tris.push_back({ glm::dvec3(1, 0, 0), glm::dvec3(0, 1, 0) , glm::dvec3(0, 0, 1) });
+		tris.push_back({ glm::dvec3(0, 1, 0), glm::dvec3(-1, 0, 0) , glm::dvec3(0, 0, 1) });
+
+		for (int j = 0; j < subdivs; j++)
+		{
+
+			for (int i = 0; i < tris.size(); i++)
+			{
+
+				//subdivide each triangle into 4 triangles
+				/**
+				*      v2
+				*     /   \
+				*    a --- b
+				*   /  \ /  \
+				*  v1---c---v3
+				*/
+
+				glm::dvec3 v1 = glm::normalize(tris[i][0]);
+				glm::dvec3 v2 = glm::normalize(tris[i][1]);
+				glm::dvec3 v3 = glm::normalize(tris[i][2]);
+
+				glm::dvec3 a = glm::normalize(glm::mix(v1, v2, .5));
+				glm::dvec3 b = glm::normalize(glm::mix(v2, v3, .5));
+				glm::dvec3 c = glm::normalize(glm::mix(v1, v3, .5));
+
+				tmp.push_back({ v1, a, c });
+				tmp.push_back({ a, v2, b });
+				tmp.push_back({ a, b,  c });
+				tmp.push_back({ c, b, v3 });
+
+			}
+
+			tris = tmp;
+		}
+
+		for (int i = 0; i < tmp.size(); i++)
+		{
+			scene->push_back(new triangle(new vertex(rad*tmp[i][0] + pos, tmp[i][0]), new vertex(rad*tmp[i][1] + pos, tmp[i][1]), new vertex(rad*tmp[i][2] + pos, tmp[i][2]), material));
+		}
+
 	}
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
@@ -386,7 +438,7 @@ struct coneMesh : Entity
 	{
 		pos = position;
 		scene = o;
-		rot = glm::inverse(glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z));
+		rot = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
 
 		glm::dmat3x3 baseRot = glm::eulerAngleXYZ(0.0, 0.0, 2 * M_PI / tris);
 
@@ -399,8 +451,8 @@ struct coneMesh : Entity
 		{
 			glm::dvec3 next = baseRot*last;
 
-			scene->push_back(new triangle(new vertex(last, last), new vertex(next, next), new vertex(glm::dvec3(0, 0, height), last), material));
-			scene->push_back(new triangle(new vertex(last, glm::dvec3(0, 0, -1)), new vertex(next, glm::dvec3(0, 0, -1)), new vertex(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, -1)), material));
+			scene->push_back(new triangle(new vertex(rot*last + pos, rot*last), new vertex(rot*next + pos, rot*next), new vertex(rot*glm::dvec3(0, 0, height) + pos, rot*last), material));
+			scene->push_back(new triangle(new vertex(rot*last + pos, rot*glm::dvec3(0, 0, -1)), new vertex(rot*next + pos, rot*glm::dvec3(0, 0, -1)), new vertex(glm::dvec3(0, 0, 0) + pos, rot*glm::dvec3(0, 0, -1)), material));
 
 			last = next;
 		}
