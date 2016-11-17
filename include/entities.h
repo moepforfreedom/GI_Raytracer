@@ -278,7 +278,7 @@ struct triangle: Entity
 	{
 		double dot = glm::dot(ray.dir, norm);
 
-		if (dot <= 0.0001 && dot >= -0.0001)
+		if (dot <= EPSILON && dot >= -EPSILON)
 			return false;
 
 		double t = glm::dot((vertices[0]->pos - ray.origin), norm) / dot;
@@ -339,9 +339,9 @@ struct triangle: Entity
 			if (vpos.z > max.z)	max.z = vpos.z;
 
       //special cases for axis aligned triangles
-      if(max.x <= min.x) max.x += 0.0001;
-      if(max.y <= min.y) max.y += 0.0001;
-      if(max.z <= min.z) max.z += 0.0001;
+      if(max.x <= min.x) max.x += EPSILON;
+      if(max.y <= min.y) max.y += EPSILON;
+      if(max.z <= min.z) max.z += EPSILON;
 
       /*std::cout << "bbox min: " << min.x << ", " << min.y << ", " << min.z << "\n";
       std::cout << "bbox max: " << max.x << ", " << max.y << ", " << max.z << "\n";*/

@@ -1,6 +1,9 @@
 #include <glm/glm.hpp>
+#ifndef M_PI
 #define M_PI 3.1415926535897
-#define MAX_ENTITIES_PER_LEAF 3
+#endif
+#define MAX_ENTITIES_PER_LEAF 10
+#define EPSILON 0.0001
 
 //squared vector length
 inline double vecLengthSquared(glm::dvec3 vec)
