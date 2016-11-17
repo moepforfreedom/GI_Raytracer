@@ -13,7 +13,7 @@
 #include "octree.h"
 
 /// A base class for all entities in the scene.
-struct Entity 
+struct Entity
 {
 
     constexpr Entity() : material(Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))) {}
@@ -27,7 +27,7 @@ struct Entity
     virtual BoundingBox boundingBox() const = 0;
 
     glm::dvec3 pos = {0, 0, 0};
-	glm::dvec3 rot = {0, 0, 0};
+    glm::dvec3 rot = {0, 0, 0};
     Material material;
 };
 
@@ -37,7 +37,7 @@ struct sphere: Entity
 
 	sphere(glm::dvec3 position, double radius, const Material& material) : Entity(material), rad(radius)
 	{
-		pos = position;		
+		pos = position;
 	}
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
@@ -85,9 +85,9 @@ struct cone : Entity
 	cone(glm::dvec3 position, glm::dvec3 rotation, double radius, double height, const Material& material) : Entity(material), rad(radius), height(height)
 	{
 
-		pos = position;		
+		pos = position;
 
-		rot = glm::inverse(glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z)); 
+		rot = glm::inverse(glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z));
 	}
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
@@ -141,14 +141,14 @@ struct cone : Entity
 			t_1 = t_2;
 			t_2 = tmp;
 		}
-		
+
 		thit = t_1;
 
 		//one intersection point is behind ray origin
 		if (t_1 < 0)
 			thit = t_2;
 		else if (t_2 < 0)
-			thit = t_1;	
+			thit = t_1;
 
 		phit = origin + dir*thit;
 		phi = atan2(phit.y, phit.x);
@@ -157,9 +157,9 @@ struct cone : Entity
 			phi += 2.f*M_PI;
 
 		// Test cone intersection against clipping plane
-		if (phit.z < 0 || phit.z > height || phi > phiMax) 
+		if (phit.z < 0 || phit.z > height || phi > phiMax)
 		 {
-			 if (thit == t_2) 
+			 if (thit == t_2)
 				 return false;
 
 			 thit = t_2;
@@ -197,7 +197,7 @@ struct cone : Entity
 		glm::dvec3 verts[8];
 		glm::dvec3 min(INFINITY, INFINITY, INFINITY), max(-INFINITY, -INFINITY, -INFINITY); //TODO: change this somehow
 
-		
+
 		//vertices of bounding pyramid in object space
 		verts[0] = rad*glm::dvec3(-1, -1, 0);
 		verts[1] = rad*glm::dvec3(-1, 1, 0);
@@ -285,7 +285,7 @@ struct triangle: Entity
 
 		if (t < 0)
 			return false;
-		
+
 		intersect = ray.origin + t*ray.dir;
 
 		if (glm::dot(glm::cross((vertices[1]->pos - vertices[0]->pos), (intersect - vertices[0]->pos)), norm) < 0)
@@ -424,7 +424,7 @@ struct sphereMesh : Entity
 
 	virtual BoundingBox boundingBox() const
 	{
-		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0));
+		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(1, 1, 1));
 	}
 };
 
@@ -520,7 +520,7 @@ struct quadMesh : Entity
 
 	virtual BoundingBox boundingBox() const
 	{
-		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0));
+		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(1, 1, 1));
 	}
 };
 
@@ -567,7 +567,7 @@ struct boxMesh : Entity
 
 	virtual BoundingBox boundingBox() const
 	{
-		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0));
+		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(1, 1, 1));
 	}
 };
 
