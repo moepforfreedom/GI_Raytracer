@@ -331,20 +331,21 @@ struct triangle: Entity
 
 			glm::dvec3 vpos = vertices[i]->pos;
 
-			if (vpos.x < min.x)
-				min.x = vpos.x;
-			if (vpos.x > max.x)
-				max.x = vpos.x;
+			if (vpos.x < min.x)	min.x = vpos.x;
+			if (vpos.x > max.x)	max.x = vpos.x;
+			if (vpos.y < min.y)	min.y = vpos.y;
+			if (vpos.y > max.y)	max.y = vpos.y;
+			if (vpos.z < min.z)	min.z = vpos.z;
+			if (vpos.z > max.z)	max.z = vpos.z;
 
-			if (vpos.y < min.y)
-				min.y = vpos.y;
-			if (vpos.y > max.y)
-				max.y = vpos.y;
+      //special cases for axis aligned triangles
+      if(max.x <= min.x) max.x += 0.0001;
+      if(max.y <= min.y) max.y += 0.0001;
+      if(max.z <= min.z) max.z += 0.0001;
 
-			if (vpos.z < min.z)
-				min.z = vpos.z;
-			if (vpos.z > max.z)
-				max.z = vpos.z;
+      /*std::cout << "bbox min: " << min.x << ", " << min.y << ", " << min.z << "\n";
+      std::cout << "bbox max: " << max.x << ", " << max.y << ", " << max.z << "\n";*/
+
 		}
 
 		return BoundingBox(min, max);

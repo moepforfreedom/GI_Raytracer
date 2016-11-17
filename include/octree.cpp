@@ -24,10 +24,10 @@ void Octree::push_back(Entity* object) {
 
 	_root._entities.push_back(object);
 
-	if (_root._entities.size() > 875)
+	if (_root._entities.size() > 870)
 	{
 		std::cout << "subdividing root...\n";
-		/*_root.partition();
+		_root.partition();
 
 		Node* current = &_root;
 
@@ -43,7 +43,7 @@ void Octree::push_back(Entity* object) {
 			}
 
 			current = current->_children[0].get();
-		}*/
+		}
 	}
 }
 
@@ -61,11 +61,12 @@ void Octree::Node::partition()
 {
 	glm::dvec3 mid = glm::mix(_bbox.min, _bbox.max, .5);
 
+	std::cout << "creating child nodes...\n";
+
 	_children[0] = std::unique_ptr<Node>(new Node(BoundingBox(_bbox.min, mid)));
 	_children[1] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y, _bbox.min.z), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y, mid.z))));
 	_children[2] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x , _bbox.min.y, _bbox.min.z+ .5*_bbox.dz()), glm::dvec3(mid.x, mid.y, mid.z + .5*_bbox.dz()))));
 	_children[3] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y, _bbox.min.z + .5*_bbox.dz()), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y, mid.z + .5*_bbox.dz()))));
-
 	_children[4] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x, _bbox.min.y + .5*_bbox.dy(), _bbox.min.z), glm::dvec3(mid.x, mid.y + .5*_bbox.dy(), mid.z))));
 	_children[5] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y + .5*_bbox.dy(), _bbox.min.z), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y + .5*_bbox.dy(), mid.z))));
 	_children[6] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x, _bbox.min.y + .5*_bbox.dy(), _bbox.min.z + .5*_bbox.dz()), glm::dvec3(mid.x, mid.y + .5*_bbox.dy(), mid.z + .5*_bbox.dz()))));
@@ -73,6 +74,7 @@ void Octree::Node::partition()
 
 	std::vector<Entity*>::iterator it = _entities.begin();
 
+  std::cout << "adding entities...\n";
 	while (it != _entities.end())
 	{
 		Entity* current = *it;
