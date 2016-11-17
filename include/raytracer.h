@@ -101,7 +101,7 @@ class RayTracer {
 
                 #pragma omp critical
                 {
-					_image->setPixel(x, y, color);
+                  _image->setPixel(x, y, color);
                 }
             }
           }

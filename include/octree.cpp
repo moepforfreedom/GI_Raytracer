@@ -27,7 +27,7 @@ void Octree::push_back(Entity* object) {
 	if (_root._entities.size() > 870)
 	{
 		std::cout << "subdividing root...\n";
-		_root.partition();
+		/*_root.partition();
 
 		Node* current = &_root;
 
@@ -43,7 +43,7 @@ void Octree::push_back(Entity* object) {
 			}
 
 			current = current->_children[0].get();
-		}
+		}*/
 	}
 }
 

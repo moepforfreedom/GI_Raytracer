@@ -278,7 +278,7 @@ struct triangle: Entity
 	{
 		double dot = glm::dot(ray.dir, norm);
 
-		if (abs(dot) <= 0.0001)
+		if (dot <= 0.0001 && dot >= -0.0001)
 			return false;
 
 		double t = glm::dot((vertices[0]->pos - ray.origin), norm) / dot;
