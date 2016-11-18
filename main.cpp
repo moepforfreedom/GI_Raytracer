@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
 
 	scene->push_back(new coneMesh(scene, glm::dvec3(3, 0, 0), glm::dvec3(0.5, -.5, 0.0), 1.5, 3.0, 16, Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))));
 
-	scene->push_back(new sphereMesh(scene, glm::dvec3(0, 0, -5), .5, 7, Material(glm::dvec3(1, 0, 1), glm::dvec3(0, 0, 0))));
+	scene->push_back(new sphereMesh(scene, glm::dvec3(0, 0, -5), 1, 4, Material(glm::dvec3(1, 0, 1), glm::dvec3(0, 0, 0))));
 
 	scene->push_back(new quadMesh(scene, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 0), glm::dvec3(0, 0, 1), glm::dvec3(0, 1, .5), Material(glm::dvec3(0, 0, 1), glm::dvec3(0, 0, 0))));
 

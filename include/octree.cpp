@@ -71,14 +71,12 @@ void Octree::Node::debugVis(Node* root, Node* current)
 std::vector<Entity*> Octree::intersect(const Ray& ray) const 
 {
 	std::vector<Entity*> res;
-	std::vector<Entity*> tmp;
 
 	//return _root._entities;
 
 	if (_root._bbox.intersect(ray))
 	{
-		tmp = _root.intersect(ray);
-		res.insert(res.end(), tmp.begin(), tmp.end());
+		_root.intersect(ray, res);
 	}
 	
 	return res;
@@ -88,31 +86,28 @@ std::vector<Entity*> Octree::intersect(const Ray& ray) const
 Octree::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 
 //returns a list of objects within a node that can potentially intersect the given ray
-std::vector<Entity*> Octree::Node::intersect(const Ray& ray) const
+void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res) const
 {
-	std::vector<Entity*> res;
-	std::vector<Entity*> tmp;
-
 	if (_bbox.intersect(ray))
 	{
-		for (int i = 0; i < 8; i++)
+		if (is_leaf())
 		{
-			if (is_leaf())
+			if (_entities.size() > 0)
 			{
-				if (_entities.size() > 0)
-				{
-					res.insert(res.end(), _entities.begin(), _entities.end());
-				}
+				res.insert(res.end(), _entities.begin(), _entities.end());
 			}
-			else
+		}
+		else
+		{
+			for (int i = 0; i < 8; i++)
 			{
-				tmp = _children[i]->intersect(ray);
-				res.insert(res.end(), tmp.begin(), tmp.end());
+				_children[i]->intersect(ray, res);
+				//res.insert(res.end(), tmp.begin(), tmp.end());
+
 			}
 		}
 	}
 
-	return res;
 }
 
 /// Subdivides the current node into 8 children.

@@ -37,7 +37,7 @@ class Octree {
 
 		bool is_leaf() const;
 
-		std::vector<Entity*> intersect(const Ray& ray) const;
+		void intersect(const Ray& ray, std::vector<Entity*>& res) const;
 
         BoundingBox _bbox;
         std::vector<Entity*> _entities;

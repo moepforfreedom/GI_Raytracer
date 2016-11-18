@@ -2,7 +2,7 @@
 #ifndef M_PI
 #define M_PI 3.1415926535897
 #endif
-#define MAX_ENTITIES_PER_LEAF 15
+#define MAX_ENTITIES_PER_LEAF 32
 #define MIN_LEAF_SIZE .03125
 #define EPSILON 0.0001
 
