@@ -35,7 +35,12 @@ if(HAS_O3 AND HAS_GCC_OMP)
   target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} -fopenmp)
 
 elseif(HAS_O3)
-  target_compile_options(global-illu PRIVATE -O3)  
+  target_compile_options(global-illu PRIVATE -O3)
+  target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})
+
+elseif(HAS_MSVC_OMP)  
+  target_compile_options(global-illu PRIVATE /openmp)
+  target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})
 
 else()
   target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})

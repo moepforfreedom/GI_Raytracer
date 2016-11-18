@@ -4,6 +4,7 @@
 #include <cassert>
 
 #include <glm/glm.hpp>
+#include "ray.h"
 
 /// Represents an axis-aligned bounding box.
 struct BoundingBox 
@@ -46,4 +47,48 @@ struct BoundingBox
 		else
 			return false;
     }
+
+	//checks if a Ray intersects the bounding box, implementation based on Peter Shirleys algorithm
+	inline bool intersect(const Ray& ray) const 
+	{
+		double tmin = 0;
+		double tmax = INFINITY;
+		//store vectors in arrays to avoid code duplication
+		double minPos[3], maxPos[3], rayOrigin[3], rayDir[3];
+
+		minPos[0] = min.x;
+		minPos[1] = min.y;
+		minPos[2] = min.z;
+
+		maxPos[0] = max.x;
+		maxPos[1] = max.y;
+		maxPos[2] = max.z;
+
+		rayOrigin[0] = ray.origin.x;
+		rayOrigin[1] = ray.origin.y;
+		rayOrigin[2] = ray.origin.z;
+
+		rayDir[0] = ray.dir.x;
+		rayDir[1] = ray.dir.y;
+		rayDir[2] = ray.dir.z;
+
+		for (int i = 0; i < 3; i++) 
+		{
+			double invD = 1.0f / rayDir[i];
+			double t0 = (minPos[i] - rayOrigin[i]) * invD;
+			double t1 = (maxPos[i] - rayOrigin[i]) * invD;
+
+			if (invD < 0.0f) 
+			{
+				double tmp = t0;
+				t0 = t1;
+				t1 = tmp;
+			}
+			tmin = t0 > tmin ? t0 : tmin;
+			tmax = t1 < tmax ? t1 : tmax;
+			if (tmax <= tmin)
+				return false;
+		}
+		return true;
+	}
 };
