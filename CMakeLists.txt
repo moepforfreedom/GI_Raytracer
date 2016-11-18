@@ -24,6 +24,17 @@ if(CLANG_FORMAT_TARGET)
 endif(CLANG_FORMAT_TARGET)
 
 
-target_compile_options(global-illu PRIVATE -fopenmp)
 target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} -fopenmp)
+
+includeCheckCXXCompilerFlag
+check_cxx_compiler_flag(-O3 HAS_O3)
+check_cxx_compiler_flag(/openmp HAS_OMP)
+
+if(HAS_O3)
+  target_compile_options(global-illu PRIVATE -fopenmp -o3)
+
+else()
+  target_compile_options(global-illu PRIVATE -fopenmp)
+
+endif()
 

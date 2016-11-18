@@ -21,7 +21,7 @@ class Octree {
     /// Store an entity in the correct position of the octree.
 	void push_back(Entity* object);
 
-  void rebuild();
+	void rebuild();	
 
     /// Returns list of entities that have the possibility to be intersected by the ray.
 	std::vector<Entity*> intersect(const Ray& ray) const;
@@ -31,7 +31,9 @@ class Octree {
 
 		explicit Node(const BoundingBox& bbox);
 
-		void partition();
+		void partition();		
+
+		void debugVis(Node* root, Node* current);
 
 		bool is_leaf() const;
 

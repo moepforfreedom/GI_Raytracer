@@ -33,20 +33,32 @@ void Octree::rebuild()
 		std::cout << "subdividing root...\n";
 		_root.partition();
 
-		Node* current = &_root;
+		_root.debugVis(&_root, &_root);
+	}
+				
+}
 
-		while (!current->is_leaf())
+void Octree::Node::debugVis(Node* root, Node* current)
+{
+	std::cout << "inserting debug vis object...\n";
+	if (current->is_leaf())
+	{
+		//root->_entities.push_back(new triangle(new vertex(current->_bbox.min), new vertex(current->_bbox.min + glm::dvec3(current->_bbox.dx(), 0, 0)), new vertex(current->_bbox.max), Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
+
+		root->_entities.push_back(new sphere(current->_bbox.min + .0*current->_bbox.max, .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
+		root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(current->_bbox.dx(), 0, 0), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
+		root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(0, current->_bbox.dy(), 0), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
+		root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(0, 0, current->_bbox.dz()), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
+		root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(current->_bbox.dx(), current->_bbox.dy(), 0), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
+		root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(0, current->_bbox.dy(), current->_bbox.dz()), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
+		root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(current->_bbox.dx(), 0, current->_bbox.dz()), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
+		root->_entities.push_back(new sphere(current->_bbox.max, .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
+	}
+	else
+	{
+		for (int i = 0; i < 8; i++)
 		{
-
-			for (int i = 0; i < 8; i++)
-			{
-				glm::dvec3 minPos = current->_children[i]->_bbox.min;
-				glm::dvec3 maxPos = current->_children[i]->_bbox.max;
-
-				_root._entities.push_back(new sphere(maxPos, .5, Material(glm::dvec3(1*(1.0/i), 0, 0), glm::dvec3(1, 0, 0))));
-			}
-
-			current = current->_children[0].get();
+			debugVis(root, current->_children[i].get());
 		}
 	}
 }
@@ -95,7 +107,7 @@ void Octree::Node::partition()
 
 	for (int i = 0; i < 8; i++)
 	{
-		if (_children[i]->_entities.size() > MAX_ENTITIES_PER_LEAF && _bbox.dx() > .5)
+		if (_children[i]->_entities.size() > MAX_ENTITIES_PER_LEAF && _bbox.dx() > MIN_LEAF_SIZE)
 		{
 			std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
 			_children[i]->partition();
