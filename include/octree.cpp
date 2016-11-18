@@ -28,6 +28,7 @@ void Octree::push_back(Entity* object) {
 
 void Octree::rebuild()
 {
+	std::cout << "rebuilding scene octree...\n";
 	if (_root._entities.size() > MAX_ENTITIES_PER_LEAF)
 	{
 		std::cout << "subdividing root...\n";
@@ -38,6 +39,7 @@ void Octree::rebuild()
 				
 }
 
+//Creates a debug view where the boundong boxes of leaf nodes are visualized using spheres
 void Octree::Node::debugVis(Node* root, Node* current)
 {
 	std::cout << "inserting debug vis object...\n";
@@ -45,8 +47,7 @@ void Octree::Node::debugVis(Node* root, Node* current)
 	{
 		if (current->_entities.size() > 0)
 		{
-			//root->_entities.push_back(new triangle(new vertex(current->_bbox.min), new vertex(current->_bbox.min + glm::dvec3(current->_bbox.dx(), 0, 0)), new vertex(current->_bbox.max), Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
-
+			
 			root->_entities.push_back(new sphere(current->_bbox.min + .0*current->_bbox.max, .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
 			root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(current->_bbox.dx(), 0, 0), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
 			root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(0, current->_bbox.dy(), 0), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
@@ -81,13 +82,12 @@ std::vector<Entity*> Octree::intersect(const Ray& ray) const
 	}
 	
 	return res;
-
-	//return _root._entities;
 }
 
 
 Octree::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 
+//returns a list of objects within a node that can potentially intersect the given ray
 std::vector<Entity*> Octree::Node::intersect(const Ray& ray) const
 {
 	std::vector<Entity*> res;
@@ -120,8 +120,6 @@ void Octree::Node::partition()
 {
 	glm::dvec3 mid = glm::mix(_bbox.min, _bbox.max, .5);
 
-	std::cout << "creating child nodes...\n";
-
 	_children[0] = std::unique_ptr<Node>(new Node(BoundingBox(_bbox.min, mid)));
 	_children[1] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y, _bbox.min.z), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y, mid.z))));
 	_children[2] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x , _bbox.min.y, _bbox.min.z+ .5*_bbox.dz()), glm::dvec3(mid.x, mid.y, mid.z + .5*_bbox.dz()))));
@@ -153,7 +151,7 @@ void Octree::Node::partition()
 	{
 		if (_children[i]->_entities.size() > MAX_ENTITIES_PER_LEAF && _children[i]->_bbox.dx() > MIN_LEAF_SIZE)
 		{
-			std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
+			//std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
 			_children[i]->partition();
 
 		}
