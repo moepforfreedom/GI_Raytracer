@@ -27,7 +27,7 @@ struct Entity
     virtual BoundingBox boundingBox() const = 0;
 
     glm::dvec3 pos = {0, 0, 0};
-    glm::dvec3 rot = {0, 0, 0};
+    glm::dvec3 rot = {0, 0, 0};	
     Material material;
 };
 
@@ -358,6 +358,7 @@ struct sphereMesh : Entity
 {
 	double rad;
 	Octree* scene;
+	int count = 0;
 
 	sphereMesh(Octree* o, glm::dvec3 position, double radius, int subdivs, const Material& material) : Entity(material), rad(radius)
 	{
@@ -383,7 +384,7 @@ struct sphereMesh : Entity
 
 			for (int i = 0; i < tris.size(); i++)
 			{
-
+				
 				//subdivide each triangle into 4 triangles
 				/**
 				*      v2
@@ -404,17 +405,19 @@ struct sphereMesh : Entity
 				tmp.push_back({ v1, a, c });
 				tmp.push_back({ a, v2, b });
 				tmp.push_back({ a, b,  c });
-				tmp.push_back({ c, b, v3 });
-
+				tmp.push_back({ c, b, v3 });				
 			}
 
-			tris = tmp;
+			tris = std::move(tmp);
 		}
 
-		for (int i = 0; i < tmp.size(); i++)
+		for (int i = 0; i < tris.size(); i++)
 		{
-			scene->push_back(new triangle(new vertex(rad*tmp[i][0] + pos, tmp[i][0]), new vertex(rad*tmp[i][1] + pos, tmp[i][1]), new vertex(rad*tmp[i][2] + pos, tmp[i][2]), material));
+			scene->push_back(new triangle(new vertex(rad*tris[i][0] + pos, tris[i][0]), new vertex(rad*tris[i][1] + pos, tris[i][1]), new vertex(rad*tris[i][2] + pos, tris[i][2]), material));
+			count++;
 		}
+
+		std::cout << "sphere tris: " << count << "\n";
 
 	}
 
@@ -434,6 +437,7 @@ struct coneMesh : Entity
 	double rad, height;
 	Octree* scene;
 	glm::dmat3x3 rot;
+	int count = 0;
 
 	coneMesh(Octree* o, glm::dvec3 position, glm::dvec3 rotation, double radius, double height, int tris, const Material& material) : Entity(material), rad(radius), height(height)
 	{
@@ -456,7 +460,9 @@ struct coneMesh : Entity
 			scene->push_back(new triangle(new vertex(rot*last + pos, rot*glm::dvec3(0, 0, -1)), new vertex(rot*next + pos, rot*glm::dvec3(0, 0, -1)), new vertex(glm::dvec3(0, 0, 0) + pos, rot*glm::dvec3(0, 0, -1)), material));
 
 			last = next;
+			count += 2;
 		}
+
 	}
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
