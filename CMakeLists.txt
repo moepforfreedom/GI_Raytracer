@@ -24,17 +24,21 @@ if(CLANG_FORMAT_TARGET)
 endif(CLANG_FORMAT_TARGET)
 
 
-target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} -fopenmp)
 
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag(-O3 HAS_O3)
-check_cxx_compiler_flag(/openmp HAS_OMP)
+check_cxx_compiler_flag(/openmp HAS_MSVC_OMP)
+check_cxx_compiler_flag(-fopenmp HAS_GCC_OMP)
 
-if(HAS_O3)
+if(HAS_O3 AND HAS_GCC_OMP)
   target_compile_options(global-illu PRIVATE -fopenmp -O3)
+  target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} -fopenmp)
+
+elseif(HAS_O3)
+  target_compile_options(global-illu PRIVATE -O3)  
 
 else()
-  target_compile_options(global-illu PRIVATE -fopenmp)
+  target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})
 
 endif()
 
