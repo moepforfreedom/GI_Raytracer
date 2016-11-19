@@ -3,7 +3,8 @@
 #define M_PI 3.1415926535897
 #endif
 #define MAX_ENTITIES_PER_LEAF 32
-#define MIN_LEAF_SIZE .125
+#define MIN_LEAF_SIZE .03125
+#define MAX_SUBDIV_RATIO 0.85
 #define EPSILON 0.0001
 
 //squared vector length

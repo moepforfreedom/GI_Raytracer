@@ -17,6 +17,7 @@ Octree::Octree(glm::dvec3 min, glm::dvec3 max) : _root(Node({ min, max }))
 }
 
 int nodes = 0;
+int skipped_subdiv = 0;
 
 /// Store an entity in the correct position of the octree.
 void Octree::push_back(Entity* object) {
@@ -40,6 +41,7 @@ void Octree::rebuild()
 	}
 
 	std::cout << "done, total nodes: " << nodes << "\n";
+	std::cout << "skipped: " << skipped_subdiv << "\n";
 				
 }
 
@@ -118,6 +120,7 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res) const
 void Octree::Node::partition()
 {
 	glm::dvec3 mid = glm::mix(_bbox.min, _bbox.max, .5);
+	double avg_entities = 0;
 
 	_children[0] = std::unique_ptr<Node>(new Node(BoundingBox(_bbox.min, mid)));
 	_children[1] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y, _bbox.min.z), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y, mid.z))));
@@ -136,19 +139,34 @@ void Octree::Node::partition()
 
 		for (int i = 0; i < 8; i++)
 		{
-			if (_children[i]->_bbox.intersect(current->boundingBox()) && current->boundingBox().dx() > 0.0001)
+			if (_children[i]->_bbox.intersect(current->boundingBox()) && current->boundingBox().dx() > EPSILON)
 			{
 				_children[i]->_entities.push_back(current);
 			}
 		}		
 		it++;
+	}		
+
+	for (int i = 0; i < 8; i++)
+	{
+		avg_entities += (double)_children[i]->_entities.size();
+	}
+
+	avg_entities /= 8;
+
+	//stop subdividing if the last subdivision didn't improve the entity counts
+	if (avg_entities > MAX_SUBDIV_RATIO * _entities.size())
+	{
+		skipped_subdiv++;
+		_entities.clear();
+		return;
 	}
 
 	_entities.clear();
 
 	for (int i = 0; i < 8; i++)
 	{
-		if (_children[i]->_entities.size() > MAX_ENTITIES_PER_LEAF && _children[i]->_bbox.dx() > MIN_LEAF_SIZE)
+		if (_children[i]->_entities.size() > MAX_ENTITIES_PER_LEAF && _children[i]->_bbox.dx() > MIN_LEAF_SIZE)// && avg_entities < MAX_SUBDIV_RATIO * _entities.size())
 		{
 			//std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
 			_children[i]->partition();
