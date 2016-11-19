@@ -474,7 +474,7 @@ struct coneMesh : Entity
 	{
 		glm::dvec3 verts[8];
 		glm::dvec3 min(INFINITY, INFINITY, INFINITY), max(-INFINITY, -INFINITY, -INFINITY); //TODO: change this somehow
-
+		glm::dmat3x3 irot = glm::inverse(rot);
 
 		//vertices of bounding pyramid in object space
 		verts[0] = rad*glm::dvec3(-1, -1, 0);
@@ -489,7 +489,7 @@ struct coneMesh : Entity
 		//transform into world space and compute axis aligned bounding box TODO: find a more space efficient solution
 		for (int i = 0; i < 5; i++)
 		{
-			verts[i] = verts[i] * glm::inverse(rot) + pos;
+			verts[i] = verts[i] * irot  + pos;
 
 			if (verts[i].x < min.x)
 				min.x = verts[i].x;

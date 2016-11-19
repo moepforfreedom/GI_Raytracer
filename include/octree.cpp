@@ -16,6 +16,7 @@ Octree::Octree(glm::dvec3 min, glm::dvec3 max) : _root(Node({ min, max }))
 
 }
 
+int nodes = 0;
 
 /// Store an entity in the correct position of the octree.
 void Octree::push_back(Entity* object) {
@@ -28,6 +29,7 @@ void Octree::push_back(Entity* object) {
 
 void Octree::rebuild()
 {
+	std::cout << "total entities: " << _root._entities.size() << "\n";
 	std::cout << "rebuilding scene octree...\n";
 	if (_root._entities.size() > MAX_ENTITIES_PER_LEAF)
 	{
@@ -36,6 +38,8 @@ void Octree::rebuild()
 
 		//_root.debugVis(&_root, &_root);
 	}
+
+	std::cout << "done, total nodes: " << nodes << "\n";
 				
 }
 
@@ -148,7 +152,7 @@ void Octree::Node::partition()
 		{
 			//std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
 			_children[i]->partition();
-
+			nodes++;
 		}
 	}
 };
