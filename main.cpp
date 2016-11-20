@@ -4,11 +4,12 @@
 
 #include "camera.h"
 #include "gui.h"
+#include "meshLoader.h"
 
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
 
-	Camera camera({ 15, -.05, 0 }, {0, 0, 0});
+	Camera camera({ 20, -.05, 0 }, {0, 0, 0});
     glm::dvec3 light{10, 10, 10};
 
     RayTracer raytracer(camera, light);
@@ -42,6 +43,8 @@ int main(int argc, char** argv) {
 	scene->push_back(new quadMesh(scene, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 0), glm::dvec3(0, 0, 1), glm::dvec3(0, 1, .5), Material(glm::dvec3(0, 0, 1), glm::dvec3(0, 0, 0))));
 
 	scene->push_back(new boxMesh(scene, glm::dvec3(-1, -1, -1), glm::dvec3(2, 2, 2), glm::dvec3(.5, 1, 0), Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))));
+
+	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 0), Material(glm::dvec3(0.25, 1, 1), glm::dvec3(0, 0, 0)));
 
     raytracer.setScene(scene);
 
