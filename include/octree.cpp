@@ -20,12 +20,10 @@ int nodes = 0;
 int skipped_subdiv = 0;
 
 /// Store an entity in the correct position of the octree.
-void Octree::push_back(Entity* object) {
-        // TODO Implement this
-
-
+void Octree::push_back(Entity* object) 
+{
 	_root._entities.push_back(object);
-
+	valid = false;
 }
 
 void Octree::rebuild()
@@ -42,6 +40,8 @@ void Octree::rebuild()
 
 	std::cout << "done, total nodes: " << nodes << "\n";
 	std::cout << "skipped: " << skipped_subdiv << "\n";
+
+	valid = true;
 				
 }
 
@@ -74,15 +74,15 @@ void Octree::Node::debugVis(Node* root, Node* current)
 }
 
 /// Returns list of entities that have the possibility to be intersected by the ray.
-std::vector<Entity*> Octree::intersect(const Ray& ray) const 
+std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax) const 
 {
 	std::vector<Entity*> res;
 
 	//return _root._entities;
 
-	if (_root._bbox.intersect(ray))
+	if (_root._bbox.intersect(ray, tmin, tmax))
 	{
-		_root.intersect(ray, res);
+		_root.intersect(ray, res, tmin, tmax);
 	}
 	
 	return res;
@@ -92,9 +92,9 @@ std::vector<Entity*> Octree::intersect(const Ray& ray) const
 Octree::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 
 //returns a list of objects within a node that can potentially intersect the given ray
-void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res) const
+void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const
 {
-	if (_bbox.intersect(ray))
+	if (_bbox.intersect(ray, tmin, tmax))
 	{
 		if (is_leaf())
 		{
@@ -107,7 +107,7 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res) const
 		{
 			for (int i = 0; i < 8; i++)
 			{
-				_children[i]->intersect(ray, res);
+				_children[i]->intersect(ray, res, tmin, tmax);
 				//res.insert(res.end(), tmp.begin(), tmp.end());
 
 			}

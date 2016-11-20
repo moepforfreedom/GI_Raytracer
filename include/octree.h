@@ -24,7 +24,9 @@ class Octree {
 	void rebuild();	
 
     /// Returns list of entities that have the possibility to be intersected by the ray.
-	std::vector<Entity*> intersect(const Ray& ray) const;
+	std::vector<Entity*> intersect(const Ray& ray, double tmin, double tmax) const;
+
+	bool valid;
 
   private:
     struct Node {
@@ -37,7 +39,7 @@ class Octree {
 
 		bool is_leaf() const;
 
-		void intersect(const Ray& ray, std::vector<Entity*>& res) const;
+		void intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const;
 
         BoundingBox _bbox;
         std::vector<Entity*> _entities;

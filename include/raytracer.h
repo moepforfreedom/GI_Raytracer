@@ -18,12 +18,16 @@ class RayTracer {
     RayTracer(const Camera& camera, glm::dvec3 light)
         : _camera(camera), _light(light), _image(std::make_shared<Image>(0,0)){};
 
-    void setScene(const Octree* scene) { _scene = scene; }
+    void setScene(Octree* scene) { _scene = scene; }
 
-    void run(int w, int h) {
-        // TODO Implement this
+    void run(int w, int h) 
+	{
         _image = std::make_shared<Image>(w, h);
 
+		if (!_scene->valid) 
+		{
+			_scene->rebuild();
+		}
 
 		glm::dmat3x3 crot = glm::eulerAngleXYZ(0.0, 0.02, 0.0);
 		_camera.pos =  _camera.pos*crot;
@@ -66,7 +70,7 @@ class RayTracer {
 					a = a*a;
 				}*/
 
-				std::vector<Entity*> objects = _scene->intersect(ray);
+				std::vector<Entity*> objects = _scene->intersect(ray, 0, INFINITY);
 
 				std::vector<Entity*>::iterator it = objects.begin();
 
@@ -116,7 +120,7 @@ class RayTracer {
 
   private:
     bool _running = false;
-    const Octree* _scene;
+    Octree* _scene;
     Camera _camera;
     glm::dvec3 _light;
     std::shared_ptr<Image> _image;
