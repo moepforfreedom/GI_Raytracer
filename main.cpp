@@ -9,13 +9,13 @@
 int main(int argc, char** argv) {
     QApplication app(argc, argv);
 
-	Camera camera({ 20, -.05, 0 }, {0, 0, 0});
+	Camera camera({ 20, 10, 0 }, {0, 0, 0});
     glm::dvec3 light{10, 10, 10};
 
     RayTracer raytracer(camera, light);
 
     // Set up scene
-    Octree* scene = new Octree({-20, -20, -20}, {20, 20, 20});
+    Octree* scene = new Octree({-30, -30, -30}, {30, 30, 30});
     // TODO Add objects to the scene
     // scene.push_back(...);
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 
 	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 1), Material(glm::dvec3(0.25, 1, 1), glm::dvec3(0, 0, 0)));
 
-	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(glm::dvec3(0.25, 1, 1), glm::dvec3(0, 0, 0)));
+	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(glm::dvec3(1, .65, .25), glm::dvec3(0, 0, 0)));
 
     raytracer.setScene(scene);
 
