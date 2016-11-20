@@ -44,7 +44,9 @@ int main(int argc, char** argv) {
 
 	scene->push_back(new boxMesh(scene, glm::dvec3(-1, -1, -1), glm::dvec3(2, 2, 2), glm::dvec3(.5, 1, 0), Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))));
 
-	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 0), Material(glm::dvec3(0.25, 1, 1), glm::dvec3(0, 0, 0)));
+	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 1), Material(glm::dvec3(0.25, 1, 1), glm::dvec3(0, 0, 0)));
+
+	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(glm::dvec3(0.25, 1, 1), glm::dvec3(0, 0, 0)));
 
     raytracer.setScene(scene);
 

@@ -53,7 +53,7 @@ class RayTracer {
             for (int x = 0; x < w; ++x) {
                 // TODO Implement this
 
-				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*cameraRight + (sensorHalfHeight*((double)y / h - .5))*_camera.up;
+				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*cameraRight - (sensorHalfHeight*((double)y / h - .5))*_camera.up;
 				glm::dvec3 color(0, 0, 0);
 
 				glm::dvec3 hit, minHit, minNorm;
