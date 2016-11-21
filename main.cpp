@@ -6,11 +6,9 @@
 #include "gui.h"
 #include "meshLoader.h"
 
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
-#ifndef _MSC_VER
-	std::locale::global(std::locale("POSIX"));
-#endif
+
 
     QApplication app(argc, argv);
 
