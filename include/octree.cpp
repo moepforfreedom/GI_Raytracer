@@ -20,7 +20,7 @@ int nodes = 0;
 int skipped_subdiv = 0;
 
 /// Store an entity in the correct position of the octree.
-void Octree::push_back(Entity* object) 
+void Octree::push_back(Entity* object)
 {
 	_root._entities.push_back(object);
 	valid = false;
@@ -42,7 +42,7 @@ void Octree::rebuild()
 	std::cout << "skipped: " << skipped_subdiv << "\n";
 
 	valid = true;
-				
+
 }
 
 //Creates a debug view where the boundong boxes of leaf nodes are visualized using spheres
@@ -53,7 +53,7 @@ void Octree::Node::debugVis(Node* root, Node* current)
 	{
 		if (current->_entities.size() > 0)
 		{
-			
+
 			root->_entities.push_back(new sphere(current->_bbox.min + .0*current->_bbox.max, .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
 			root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(current->_bbox.dx(), 0, 0), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
 			root->_entities.push_back(new sphere(current->_bbox.min + glm::dvec3(0, current->_bbox.dy(), 0), .125, Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 1, 0))));
@@ -74,7 +74,7 @@ void Octree::Node::debugVis(Node* root, Node* current)
 }
 
 /// Returns list of entities that have the possibility to be intersected by the ray.
-std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax) const 
+std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax) const
 {
 	std::vector<Entity*> res;
 
@@ -84,7 +84,7 @@ std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax)
 	{
 		_root.intersect(ray, res, tmin, tmax);
 	}
-	
+
 	return res;
 }
 
@@ -143,9 +143,9 @@ void Octree::Node::partition()
 			{
 				_children[i]->_entities.push_back(current);
 			}
-		}		
+		}
 		it++;
-	}		
+	}
 
 	for (int i = 0; i < 8; i++)
 	{

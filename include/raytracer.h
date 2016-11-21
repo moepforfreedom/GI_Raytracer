@@ -12,7 +12,7 @@
 #include "octree.h"
 #include "omp.h"
 
-class RayTracer 
+class RayTracer
 {
   public:
     RayTracer() = delete;
@@ -21,11 +21,11 @@ class RayTracer
 
     void setScene(Octree* scene) { _scene = scene; }
 
-    void run(int w, int h) 
+    void run(int w, int h)
 	{
         _image = std::make_shared<Image>(w, h);
 
-		if (!_scene->valid) 
+		if (!_scene->valid)
 		{
 			_scene->rebuild();
 		}
@@ -51,7 +51,7 @@ class RayTracer
         for (int y = 0; y < h; ++y) {
           if(_running)
           {
-            for (int x = 0; x < w; ++x) 
+            for (int x = 0; x < w; ++x)
 			{
 
 				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*cameraRight - (sensorHalfHeight*((double)y / h - .5))*_camera.up;
@@ -99,7 +99,7 @@ class RayTracer
 					if (l < 0)
 						l = 0;
 
-					color = glm::clamp(current->material.color*l + current->material.emissive, 0.0, 1.0);
+					color = glm::clamp(current->material.color*l+ current->material.emissive, 0.0, 1.0);
 				}
 				else
 					color = glm::dvec3(0, 0, 0);
