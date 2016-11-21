@@ -15,8 +15,6 @@ void loadOBJ(Octree* o, const char* fname, glm::dvec3 pos, glm::dvec3 rotation, 
 
 	glm::dmat3x3 rot = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
 
-	std::locale::global(std::locale("POSIX"));
-
 	FILE* f = fopen(fname, "r");
 
 	if (f == NULL)

@@ -6,9 +6,12 @@
 #include "gui.h"
 #include "meshLoader.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv) 
+{
+#ifndef _MSC_VER
+	std::locale::global(std::locale("POSIX"));
+#endif
 
-std::locale::global(std::locale("en_US.UTF8"));
     QApplication app(argc, argv);
 
 	Camera camera({ 20, 10, 0 }, {0, 0, 0});
@@ -45,8 +48,6 @@ std::locale::global(std::locale("en_US.UTF8"));
 	scene->push_back(new quadMesh(scene, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 0), glm::dvec3(0, 0, 1), glm::dvec3(0, 1, .5), Material(glm::dvec3(0, 0, 1), glm::dvec3(0, 0, 0))));
 
 	scene->push_back(new boxMesh(scene, glm::dvec3(-1, -1, -1), glm::dvec3(2, 2, 2), glm::dvec3(.5, 1, 0), Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))));
-
-  scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(glm::dvec3(0, 1, 0), glm::dvec3(0, 0, 0))));
 
 	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 1), Material(glm::dvec3(0.25, 1, 1), glm::dvec3(0, 0, 0)));
 
