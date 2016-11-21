@@ -68,5 +68,7 @@ void loadOBJ(Octree* scene, const char* fname, glm::dvec3 pos, glm::dvec3 rotati
 										  new vertex(verts[vertIndex[2] - 1], normals[normIndex[2] - 1], uvs[uvIndex[2] - 1]), material));
 		}
 	}
+
+	fclose(f);
 }
 

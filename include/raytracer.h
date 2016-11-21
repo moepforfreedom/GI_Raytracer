@@ -12,7 +12,8 @@
 #include "octree.h"
 #include "omp.h"
 
-class RayTracer {
+class RayTracer 
+{
   public:
     RayTracer() = delete;
     RayTracer(const Camera& camera, glm::dvec3 light)
@@ -50,8 +51,8 @@ class RayTracer {
         for (int y = 0; y < h; ++y) {
           if(_running)
           {
-            for (int x = 0; x < w; ++x) {
-                // TODO Implement this
+            for (int x = 0; x < w; ++x) 
+			{
 
 				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*cameraRight - (sensorHalfHeight*((double)y / h - .5))*_camera.up;
 				glm::dvec3 color(0, 0, 0);
