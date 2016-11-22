@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <set>
 //#include <future>
 
 #include <glm/glm.hpp>
@@ -46,9 +47,13 @@ class RayTracer
 
 		std::cout << cameraRight.x << ", " << cameraRight.y << ", " << cameraRight.z << ", " << "\n";
 
+
+		double avgTests = 0;
+
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10) //OpenMP
-        for (int y = 0; y < h; ++y) {
+        for (int y = 0; y < h; ++y) 
+		{
           if(_running)
           {
             for (int x = 0; x < w; ++x)
@@ -73,6 +78,8 @@ class RayTracer
 
 				std::vector<Entity*> objects = _scene->intersect(ray, 0, INFINITY);
 
+				avgTests += objects.size();
+
 				std::vector<Entity*>::iterator it = objects.begin();
 
 				Entity* current;
@@ -94,12 +101,45 @@ class RayTracer
 				}
 				if (intersected)
 				{
-					double l = glm::dot(minNorm , glm::normalize(_light - minHit));
+					glm::dvec3 i(0, 0, 0);
 
-					if (l < 0)
-						l = 0;
+					for (Light* light : _scene->lights)
+					{
+						bool shadow = false;						
+						glm::dvec3 lightDir = light->getPoint() - minHit;
+						double maxt = glm::length(lightDir);
 
-					color = glm::clamp(current->material.color*l+ current->material.emissive, 0.0, 1.0);
+						Ray shadow_ray(minHit + SHADOW_BIAS*minNorm, lightDir);
+
+
+						std::vector<Entity*> shadow_objects = _scene->intersect(shadow_ray, 0, maxt);
+
+						std::vector<Entity*>::iterator shadow_it = shadow_objects.begin();
+
+						while (!shadow && shadow_it != shadow_objects.end())
+						{
+							Entity* t = *shadow_it;
+							glm::dvec3 shadow_hit, shadow_norm;
+
+							if (t->intersect(shadow_ray, shadow_hit, shadow_norm))
+							{
+								shadow = (vecLengthSquared(shadow_hit - minHit) < maxt*maxt);
+							}
+							shadow_it++;
+						}
+
+						if (!shadow)
+						{
+							double l = glm::dot(minNorm, glm::normalize(lightDir));
+
+							if (l < 0)
+								l = 0;
+
+							i += light->col*l;
+						}
+					}					
+
+					color = glm::clamp(current->material.color*i+ current->material.emissive, 0.0, 1.0);
 				}
 				else
 					color = glm::dvec3(0, 0, 0);
@@ -111,6 +151,10 @@ class RayTracer
             }
           }
         }
+
+		avgTests /= w*h;
+
+		std::cout << "average intersection tests: " << avgTests << "\n";
     }
 
     bool running() const { return _running; }

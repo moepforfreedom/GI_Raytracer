@@ -51,8 +51,8 @@ int main(int argc, char** argv)
 
 	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(glm::dvec3(1, .65, .25), glm::dvec3(0, 0, 0)));
 
-
-
+	scene->push_back(new Light(glm::dvec3(10, 10, 20), glm::dvec3(1, 1, 1), 0));
+	
     raytracer.setScene(scene);
 
     Gui window(500, 500, raytracer);

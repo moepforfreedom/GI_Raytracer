@@ -14,14 +14,20 @@
 
 /// A base class for all entities in the scene.
 struct Entity
-{
-
+{	
     constexpr Entity() : material(Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))) {}
     constexpr Entity(const Material& material) : material(material) {}
 
     /// Check if a ray intersects the object. The arguments intersect and normal will contain the
     /// point of intersection and its normals.
     virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const = 0;
+
+	bool intersect(const Ray& ray)
+	{
+		glm::dvec3 hit, norm;
+
+		return intersect(ray,  hit, norm);
+	}
 
     /// Returns an axis-aligned bounding box of the entity.
     virtual BoundingBox boundingBox() const = 0;

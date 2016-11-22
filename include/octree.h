@@ -3,10 +3,12 @@
 #include <array>
 #include <memory>
 #include <vector>
+#include <set>
 
 #include <glm/glm.hpp>
 
 #include "bbox.h"
+#include "light.h"
 
 
 struct Entity;
@@ -16,10 +18,11 @@ class Octree {
 
 	Octree(glm::dvec3 min, glm::dvec3 max);
 
-	std::vector<Entity*> tmp_entities;
+	std::vector<Light*> lights;
 
     /// Store an entity in the correct position of the octree.
 	void push_back(Entity* object);
+	void Octree::push_back(Light* object);
 
 	void rebuild();	
 
@@ -39,7 +42,7 @@ class Octree {
 
 		bool is_leaf() const;
 
-		void intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const;
+		void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const;
 
         BoundingBox _bbox;
         std::vector<Entity*> _entities;

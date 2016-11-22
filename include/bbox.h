@@ -26,14 +26,6 @@ struct BoundingBox
     /// Check if another bounding box intersects the current bounding box.
     bool intersect(const BoundingBox& other) const 
 	{
-		/*if (max.x < other.min.x) return false; // a is left of b
-		if (min.x > other.max.x) return false; // a is right of b
-		if (max.y < other.min.y) return false; // a is above b
-		if (min.y > other.max.y) return false; // a is below b
-		if (max.z < other.min.z) return false; // a is in front of b
-		if (min.z > other.max.z) return false; // a is behind b
-		return true; // boxes overlap*/
-
 		return (min.x <= other.max.x && max.x >= other.min.x) &&
 			(min.y <= other.max.y && max.y >= other.min.y) &&
 			(min.z <= other.max.z && max.z >= other.min.z);
@@ -49,10 +41,8 @@ struct BoundingBox
     }
 
 	//checks if a Ray intersects the bounding box, implementation based on Peter Shirleys algorithm
-	inline bool intersect(const Ray& ray, double tmin, double tmax) const 
+	inline bool intersect(const Ray& ray, double tmin, double tmax, double& tout) const 
 	{
-		/*double tmin = 0;
-		double tmax = INFINITY;// 40;*/
 		//store vectors in arrays to avoid code duplication
 		double minPos[3], maxPos[3], rayOrigin[3], rayDir[3];
 
@@ -72,11 +62,13 @@ struct BoundingBox
 		rayDir[1] = ray.dir.y;
 		rayDir[2] = ray.dir.z;
 
+		double t0, t1;
+
 		for (int i = 0; i < 3; i++) 
 		{
 			double invD = 1.0f / rayDir[i];
-			double t0 = (minPos[i] - rayOrigin[i]) * invD;
-			double t1 = (maxPos[i] - rayOrigin[i]) * invD;
+			t0 = (minPos[i] - rayOrigin[i]) * invD;
+			t1 = (maxPos[i] - rayOrigin[i]) * invD;
 
 			if (invD < 0.0f) 
 			{
@@ -89,6 +81,7 @@ struct BoundingBox
 			if (tmax <= tmin)
 				return false;
 		}
+		tout = t0;
 		return true;
 	}
 };

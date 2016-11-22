@@ -3,12 +3,14 @@
 #include <array>
 #include <memory>
 #include <vector>
+#include <unordered_set>
 
 #include <glm/glm.hpp>
 
 #include "bbox.h"
 #include "entities.h"
 #include "octree.h"
+#include "light.h"
 
 
 Octree::Octree(glm::dvec3 min, glm::dvec3 max) : _root(Node({ min, max }))
@@ -24,6 +26,12 @@ void Octree::push_back(Entity* object)
 {
 	_root._entities.push_back(object);
 	valid = false;
+}
+
+//Lights are stored in a separate vector
+void Octree::push_back(Light* light)
+{
+	lights.push_back(light);
 }
 
 void Octree::rebuild()
@@ -80,9 +88,19 @@ std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax)
 
 	//return _root._entities;
 
-	if (_root._bbox.intersect(ray, tmin, tmax))
+	double t0;
+
+	if (_root._bbox.intersect(ray, tmin, tmax, t0))
 	{
 		_root.intersect(ray, res, tmin, tmax);
+	}
+
+	//remove duplicates if lots of objects are returned
+	if (res.size() > DUPLICATE_THRESHOLD)
+	{
+		std::sort(res.begin(), res.end());
+
+		res.erase(std::unique(res.begin(), res.end()), res.end());
 	}
 
 	return res;
@@ -94,7 +112,8 @@ Octree::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 //returns a list of objects within a node that can potentially intersect the given ray
 void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const
 {
-	if (_bbox.intersect(ray, tmin, tmax))
+	double t0;
+	if (_bbox.intersect(ray, tmin, tmax, t0))
 	{
 		if (is_leaf())
 		{
