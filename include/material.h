@@ -26,8 +26,8 @@ struct checkerboard: texture
 
     virtual glm::dvec3 get(glm::dvec2 uv)
     {
-        /*if(uv.x < .5 && uv.y < .5)
-            return glm::dvec3(1, 1, 1);*/
+        if(((int)(uv.x * tiles) % 2 == 0) ^ ((int)(uv.y * tiles) % 2 == 0))
+            return glm::dvec3(1, 1, 1);
 
         return glm::dvec3(uv.x, uv.y, 0);
     }

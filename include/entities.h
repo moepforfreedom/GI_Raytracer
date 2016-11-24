@@ -22,12 +22,16 @@ struct Entity
     /// point of intersection and its normals.
     virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const = 0;
 
-	bool intersect(const Ray& ray)
+	virtual bool intersect(const Ray& ray, double& t)
 	{
 		glm::dvec3 hit, norm;
         glm::dvec2 uv;
 
-		return intersect(ray,  hit, norm, uv);
+		bool i = intersect(ray,  hit, norm, uv);
+
+		t = glm::length(hit - ray.origin);
+
+		return i;
 	}
 
     /// Returns an axis-aligned bounding box of the entity.
@@ -72,8 +76,8 @@ struct sphere: Entity
 
 			normal = glm::normalize(intersect - pos);
 
-            double u = (intersect.x - pos.x) / rad;
-            double v = (intersect.z - pos.z) / rad;
+            double u = .5*acos((intersect.y - pos.y) / rad) / (M_PI) + .5;
+            double v = .5*atan((intersect.z - pos.z) / (intersect.x - pos.x)) / (2*M_PI) + .5;
 
             uv = glm::dvec2(u, v);
 			//std::cout << "intersection\n";
@@ -325,12 +329,44 @@ struct triangle: Entity
 
 
 			normal = a1*vertices[0]->norm + a2*vertices[1]->norm + a3*vertices[2]->norm;
+
+			uv = a1*vertices[0]->texCoord + a2*vertices[1]->texCoord + a3*vertices[2]->texCoord;
 		}
 		else
 			normal = norm;
 
 		return true;
 
+	}
+
+	virtual bool intersect(const Ray& ray, double& t)
+	{
+		glm::dvec3 hit;
+
+		double dot = glm::dot(ray.dir, norm);
+
+		if (dot <= EPSILON && dot >= -EPSILON)
+			return false;
+
+		double t0 = glm::dot((vertices[0]->pos - ray.origin), norm) / dot;
+
+		if (t0 < 0)
+			return false;
+
+		hit = ray.origin + t0*ray.dir;
+
+		if (glm::dot(glm::cross((vertices[1]->pos - vertices[0]->pos), (hit - vertices[0]->pos)), norm) < 0)
+			return false;
+
+		if (glm::dot(glm::cross((vertices[2]->pos - vertices[1]->pos), (hit - vertices[1]->pos)), norm) < 0)
+			return false;
+
+		if (glm::dot(glm::cross((vertices[0]->pos - vertices[2]->pos), (hit - vertices[2]->pos)), norm) < 0)
+			return false;
+
+		t = t0;
+
+		return true;
 	}
 
 	virtual BoundingBox boundingBox() const
@@ -424,7 +460,11 @@ struct sphereMesh : Entity
 
 		for (int i = 0; i < tris.size(); i++)
 		{
-			scene->push_back(new triangle(new vertex(rad*tris[i][0] + pos, tris[i][0]), new vertex(rad*tris[i][1] + pos, tris[i][1]), new vertex(rad*tris[i][2] + pos, tris[i][2]), material));
+			/*double u = .5*acos((intersect.y - pos.y) / rad) / (M_PI)+.5;
+			double v = .5*atan((intersect.z - pos.z) / (intersect.x - pos.x)) / (2 * M_PI) + .5;*/
+			scene->push_back(new triangle(new vertex(rad*tris[i][0] + pos, tris[i][0], glm::dvec2(.5*acos((rad*tris[i][0] + pos).y / rad) / (M_PI)+.5, .5*atan((rad*tris[i][0] + pos).z / (rad*tris[i][0] + pos).x) / (2 * M_PI) + .5)),
+										  new vertex(rad*tris[i][1] + pos, tris[i][1], glm::dvec2(.5*acos((rad*tris[i][1] + pos).y / rad) / (M_PI)+.5, .5*atan((rad*tris[i][1] + pos).z / (rad*tris[i][1] + pos).x) / (2 * M_PI) + .5)),
+										  new vertex(rad*tris[i][2] + pos, tris[i][2], glm::dvec2(.5*acos((rad*tris[i][2] + pos).y / rad) / (M_PI)+.5, .5*atan((rad*tris[i][2] + pos).z / (rad*tris[i][2] + pos).x) / (2 * M_PI) + .5)), material));
 			count++;
 		}
 
@@ -585,11 +625,3 @@ struct boxMesh : Entity
 		return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(1, 1, 1));
 	}
 };
-
-// TODO Implement implicit sphere - done
-// TODO Implement implicit cone - done
-
-// TODO Implement triangle - done
-// TODO Implement explicit sphere (triangles) - done
-// TODO Implement explicit quad (triangles) - done
-// TODO Implement explicit cube (triangles) - done

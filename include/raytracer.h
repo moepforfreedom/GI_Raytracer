@@ -122,10 +122,11 @@ class RayTracer
 							Entity* t = *shadow_it;
 							glm::dvec3 shadow_hit, shadow_norm;
                             glm::dvec2 shadow_uv;
+							double t_shadow;
 
-							if (t->intersect(shadow_ray, shadow_hit, shadow_norm, shadow_uv))
+							if (t->intersect(shadow_ray, t_shadow))
 							{
-								shadow = (vecLengthSquared(shadow_hit - minHit) < maxt*maxt);
+								shadow = (t_shadow < maxt);// (vecLengthSquared(shadow_hit - minHit) < maxt*maxt);
 							}
 							shadow_it++;
 						}
