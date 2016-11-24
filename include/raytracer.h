@@ -62,8 +62,8 @@ class RayTracer
 				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*cameraRight - (sensorHalfHeight*((double)y / h - .5))*_camera.up;
 				glm::dvec3 color(0, 0, 0);
 
-				glm::dvec3 hit, minHit, norm, minNorm, minUV;
-                glm::dvec2 uv;
+				glm::dvec3 hit, minHit, norm, minNorm;
+                glm::dvec2 uv, minUV;
 
 				bool intersected = false;
 
@@ -94,6 +94,7 @@ class RayTracer
 							current = tmp;
 							minHit = hit;
 							minNorm = norm;
+                            minUV = uv;
 							intersected = true;
 						}
 					}
@@ -112,7 +113,7 @@ class RayTracer
 						Ray shadow_ray(minHit + SHADOW_BIAS*minNorm, lightDir);
 
 
-						std::vector<Entity*> shadow_objects = _scene->intersect(shadow_ray, 0, maxt);
+						std::vector<Entity*> shadow_objects = _scene->intersect(shadow_ray, SHADOW_BIAS, maxt);
 
 						std::vector<Entity*>::iterator shadow_it = shadow_objects.begin();
 
@@ -140,7 +141,7 @@ class RayTracer
 						}
 					}
 
-					color = glm::clamp(current->material.diffuse->get(glm::dvec2(0, 0))*i+ current->material.emissive->get(glm::dvec2(0, 0)), 0.0, 1.0);
+					color = glm::clamp(current->material.diffuse->get(minUV)*i+ current->material.emissive->get(minUV), 0.0, 1.0);
 				}
 				else
 					color = glm::dvec3(0, 0, 0);

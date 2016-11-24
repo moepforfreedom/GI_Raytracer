@@ -72,8 +72,8 @@ struct sphere: Entity
 
 			normal = glm::normalize(intersect - pos);
 
-            double u = intersect.x / glm::length(intersect - pos);
-            double v = intersect.y / glm::length(intersect - pos);
+            double u = (intersect.x - pos.x) / rad;
+            double v = (intersect.z - pos.z) / rad;
 
             uv = glm::dvec2(u, v);
 			//std::cout << "intersection\n";
@@ -494,10 +494,7 @@ struct coneMesh : Entity
 		verts[3] = rad*glm::dvec3(1, 1, 0);
 		verts[4] = glm::dvec3(0, 0, height);
 
-		/*for (int j = 0; j < 4; j++)
-		verts[4+j] = verts[j] + glm::dvec3(0, 0, height);*/
-
-		//transform into world space and compute axis aligned bounding box TODO: find a more space efficient solution
+		//transform into world space and compute axis aligned bounding box
 		for (int i = 0; i < 5; i++)
 		{
 			verts[i] = verts[i] * irot  + pos;
