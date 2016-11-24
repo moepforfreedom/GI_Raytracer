@@ -7,9 +7,9 @@
 #include "ray.h"
 
 /// Represents an axis-aligned bounding box.
-struct BoundingBox 
+struct BoundingBox
 {
-    BoundingBox(glm::dvec3 min, glm::dvec3 max) : min(min), max(max) 
+    BoundingBox(glm::dvec3 min, glm::dvec3 max) : min(min), max(max)
 	{
         assert(min.x < max.x);
         assert(min.y < max.y);
@@ -24,7 +24,7 @@ struct BoundingBox
     const glm::dvec3 max;
 
     /// Check if another bounding box intersects the current bounding box.
-    bool intersect(const BoundingBox& other) const 
+    bool intersect(const BoundingBox& other) const
 	{
 		return (min.x <= other.max.x && max.x >= other.min.x) &&
 			(min.y <= other.max.y && max.y >= other.min.y) &&
@@ -32,7 +32,7 @@ struct BoundingBox
     }
 
     /// Check if a point lies within the bounding box.
-    bool contains(glm::dvec3 point) const 
+    bool contains(glm::dvec3 point) const
 	{
 		if ((point - min).x > 0 && (point - min).y > 0 && (point - min).z > 0 && (point - max).x > 0 && (point - max).y > 0 && (point - max).z > 0)
 			return true;
@@ -41,7 +41,7 @@ struct BoundingBox
     }
 
 	//checks if a Ray intersects the bounding box, implementation based on Peter Shirleys algorithm
-	inline bool intersect(const Ray& ray, double tmin, double tmax, double& tout) const 
+	inline bool intersect(const Ray& ray, double tmin, double tmax, double& tout) const
 	{
 		//store vectors in arrays to avoid code duplication
 		double minPos[3], maxPos[3], rayOrigin[3], rayDir[3];
@@ -63,14 +63,13 @@ struct BoundingBox
 		rayDir[2] = ray.dir.z;
 
 		double t0, t1;
-
-		for (int i = 0; i < 3; i++) 
+		for (int i = 0; i < 3; i++)
 		{
 			double invD = 1.0f / rayDir[i];
 			t0 = (minPos[i] - rayOrigin[i]) * invD;
 			t1 = (maxPos[i] - rayOrigin[i]) * invD;
 
-			if (invD < 0.0f) 
+			if (invD < 0.0f)
 			{
 				double tmp = t0;
 				t0 = t1;

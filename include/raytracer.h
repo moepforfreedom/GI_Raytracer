@@ -52,7 +52,7 @@ class RayTracer
 
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10) //OpenMP
-        for (int y = 0; y < h; ++y) 
+        for (int y = 0; y < h; ++y)
 		{
           if(_running)
           {
@@ -86,7 +86,7 @@ class RayTracer
 
 				while (it != objects.end())
 				{
-					Entity* tmp = *it;
+                    Entity* tmp = *it;
 					if (tmp->intersect(ray, hit, norm))
 					{
 						if (!intersected ||vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos))
@@ -105,7 +105,7 @@ class RayTracer
 
 					for (Light* light : _scene->lights)
 					{
-						bool shadow = false;						
+						bool shadow = false;
 						glm::dvec3 lightDir = light->getPoint() - minHit;
 						double maxt = glm::length(lightDir);
 
@@ -137,9 +137,9 @@ class RayTracer
 
 							i += light->col*l;
 						}
-					}					
+					}
 
-					color = glm::clamp(current->material.color*i+ current->material.emissive, 0.0, 1.0);
+					color = glm::clamp(current->material.diffuse->get(glm::dvec2(0, 0))*i+ current->material.emissive->get(glm::dvec2(0, 0)), 0.0, 1.0);
 				}
 				else
 					color = glm::dvec3(0, 0, 0);

@@ -2,12 +2,28 @@
 
 #include <glm/glm.hpp>
 
-/// Represents the material properties of an entity. For now it only contains color, but it should
-/// probably be extended to allow more options.
-struct Material 
+struct texture
 {
-    constexpr explicit Material(glm::dvec3 color, glm::dvec3 emissive) : color(std::move(color)), emissive(std::move(emissive)) {}
+
+    texture(glm::dvec3 col) : color(col)
+    {
+
+    }
+
+    virtual glm::dvec3 get(glm::dvec2 uv)
+    {
+        return color;
+    }
 
     glm::dvec3 color;
-	glm::dvec3 emissive;
+};
+
+/// Represents the material properties of an entity. For now it only contains color, but it should
+/// probably be extended to allow more options.
+struct Material
+{
+        Material(texture* dif, texture* em) : diffuse(dif), emissive(em) {}
+
+    texture* diffuse;
+	texture* emissive;
 };

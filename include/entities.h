@@ -14,9 +14,9 @@
 
 /// A base class for all entities in the scene.
 struct Entity
-{	
-    constexpr Entity() : material(Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))) {}
-    constexpr Entity(const Material& material) : material(material) {}
+{
+    Entity() : material(Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)))) {}
+    Entity(const Material& material) : material(material) {}
 
     /// Check if a ray intersects the object. The arguments intersect and normal will contain the
     /// point of intersection and its normals.
@@ -33,7 +33,7 @@ struct Entity
     virtual BoundingBox boundingBox() const = 0;
 
     glm::dvec3 pos = {0, 0, 0};
-    glm::dvec3 rot = {0, 0, 0};	
+    glm::dvec3 rot = {0, 0, 0};
     Material material;
 };
 
@@ -51,7 +51,7 @@ struct sphere: Entity
 
 		double dot = glm::dot(ray.dir, (ray.origin - pos));
 
-		double r = (pow(dot, 2) - pow(glm::length(ray.origin - pos), 2) + pow(rad, 2));
+		double r = (pow(dot, 2) - vecLengthSquared(ray.origin - pos) + pow(rad, 2));
 
 		if (r < 0)
 			return false;
@@ -59,7 +59,6 @@ struct sphere: Entity
 		double t_1 = -1*dot - sqrt(r);
 		double t_2 = -1*dot + sqrt(r);
 
-		//std::cout << t_1 << ", " << t_2 << ": ";
 
 		if (t_1 < 0 && t_2 < 0)
 			return false;
@@ -390,7 +389,7 @@ struct sphereMesh : Entity
 
 			for (int i = 0; i < tris.size(); i++)
 			{
-				
+
 				//subdivide each triangle into 4 triangles
 				/**
 				*      v2
@@ -411,7 +410,7 @@ struct sphereMesh : Entity
 				tmp.push_back({ v1, a, c });
 				tmp.push_back({ a, v2, b });
 				tmp.push_back({ a, b,  c });
-				tmp.push_back({ c, b, v3 });				
+				tmp.push_back({ c, b, v3 });
 			}
 
 			tris = std::move(tmp);
@@ -460,7 +459,7 @@ struct coneMesh : Entity
 
 		for (int i = 0; i < tris; i++)
 		{
-			glm::dvec3 next = baseRot*last;
+            glm::dvec3 next = baseRot*last;
 
 			scene->push_back(new triangle(new vertex(rot*last + pos, rot*last), new vertex(rot*next + pos, rot*next), new vertex(rot*glm::dvec3(0, 0, height) + pos, rot*last), material));
 			scene->push_back(new triangle(new vertex(rot*last + pos, rot*glm::dvec3(0, 0, -1)), new vertex(rot*next + pos, rot*glm::dvec3(0, 0, -1)), new vertex(glm::dvec3(0, 0, 0) + pos, rot*glm::dvec3(0, 0, -1)), material));
