@@ -20,13 +20,14 @@ struct Entity
 
     /// Check if a ray intersects the object. The arguments intersect and normal will contain the
     /// point of intersection and its normals.
-    virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const = 0;
+    virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const = 0;
 
 	bool intersect(const Ray& ray)
 	{
 		glm::dvec3 hit, norm;
+        glm::dvec2 uv;
 
-		return intersect(ray,  hit, norm);
+		return intersect(ray,  hit, norm, uv);
 	}
 
     /// Returns an axis-aligned bounding box of the entity.
@@ -46,7 +47,7 @@ struct sphere: Entity
 		pos = position;
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
 	{
 
 		double dot = glm::dot(ray.dir, (ray.origin - pos));
@@ -70,6 +71,11 @@ struct sphere: Entity
 				intersect = ray.origin + ray.dir*t_2;
 
 			normal = glm::normalize(intersect - pos);
+
+            double u = intersect.x / glm::length(intersect - pos);
+            double v = intersect.y / glm::length(intersect - pos);
+
+            uv = glm::dvec2(u, v);
 			//std::cout << "intersection\n";
 			return true;
 		}
@@ -95,7 +101,7 @@ struct cone : Entity
 		rot = glm::inverse(glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z));
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
 	{
 		//instead of transforming the cylinder, apply the inverse transform to the ray
 		glm::dvec3 tmpOrigin = ray.origin*rot;
@@ -279,7 +285,7 @@ struct triangle: Entity
 		norm = glm::normalize(glm::cross((v2->pos - v1->pos), (v3->pos - v1->pos)));
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
 	{
 		double dot = glm::dot(ray.dir, norm);
 
@@ -426,7 +432,7 @@ struct sphereMesh : Entity
 
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
 	{
 		return false;
 	}
@@ -470,7 +476,7 @@ struct coneMesh : Entity
 
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
 	{
 		return false;
 	}
@@ -525,7 +531,7 @@ struct quadMesh : Entity
 		o->push_back(new triangle(new vertex(v3), new vertex(v2), new vertex(v4), material));
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
 	{
 		return false;
 	}
@@ -572,7 +578,7 @@ struct boxMesh : Entity
 		}
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
 	{
 		return false;
 	}

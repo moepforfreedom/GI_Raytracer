@@ -4,7 +4,6 @@
 
 struct texture
 {
-
     texture(glm::dvec3 col) : color(col)
     {
 
@@ -16,6 +15,21 @@ struct texture
     }
 
     glm::dvec3 color;
+};
+
+struct checkerboard: texture
+{
+    checkerboard(int t): texture(glm::dvec3(0, 0, 0)), tiles(t)
+    {
+
+    }
+
+    virtual glm::dvec3 get(glm::dvec2 uv)
+    {
+
+    }
+
+    int tiles;
 };
 
 /// Represents the material properties of an entity. For now it only contains color, but it should

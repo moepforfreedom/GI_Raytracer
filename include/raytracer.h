@@ -62,8 +62,8 @@ class RayTracer
 				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*cameraRight - (sensorHalfHeight*((double)y / h - .5))*_camera.up;
 				glm::dvec3 color(0, 0, 0);
 
-				glm::dvec3 hit, minHit, minNorm;
-				glm::dvec3 norm;
+				glm::dvec3 hit, minHit, norm, minNorm, minUV;
+                glm::dvec2 uv;
 
 				bool intersected = false;
 
@@ -87,7 +87,7 @@ class RayTracer
 				while (it != objects.end())
 				{
                     Entity* tmp = *it;
-					if (tmp->intersect(ray, hit, norm))
+					if (tmp->intersect(ray, hit, norm, uv))
 					{
 						if (!intersected ||vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos))
 						{
@@ -120,8 +120,9 @@ class RayTracer
 						{
 							Entity* t = *shadow_it;
 							glm::dvec3 shadow_hit, shadow_norm;
+                            glm::dvec2 shadow_uv;
 
-							if (t->intersect(shadow_ray, shadow_hit, shadow_norm))
+							if (t->intersect(shadow_ray, shadow_hit, shadow_norm, shadow_uv))
 							{
 								shadow = (vecLengthSquared(shadow_hit - minHit) < maxt*maxt);
 							}
