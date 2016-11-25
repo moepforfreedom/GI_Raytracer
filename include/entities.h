@@ -15,7 +15,7 @@
 /// A base class for all entities in the scene.
 struct Entity
 {
-    Entity() : material(Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)))) {}
+    Entity() : material(Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)), .75)) {}
     Entity(const Material& material) : material(material) {}
 
     /// Check if a ray intersects the object. The arguments intersect and normal will contain the

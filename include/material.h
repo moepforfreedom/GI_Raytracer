@@ -64,8 +64,9 @@ struct imageTexture : texture
 /// probably be extended to allow more options.
 struct Material
 {
-        Material(texture* dif, texture* em) : diffuse(dif), emissive(em) {}
+        Material(texture* dif, texture* em, double r) : diffuse(dif), emissive(em), roughness(r) {}
 
     texture* diffuse;
 	texture* emissive;
+	double roughness;
 };

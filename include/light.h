@@ -17,7 +17,7 @@ struct Light
 	//returns a point on the surface if the light sourceS
 	glm::dvec3 getPoint() const
 	{
-		return pos + rad*randomUnitVec();
+		return pos + rad*randomVec();
 	}
 
 	glm::dvec3 pos = { 0, 0, 0 };

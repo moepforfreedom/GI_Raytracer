@@ -58,94 +58,21 @@ class RayTracer
           {
             for (int x = 0; x < w; ++x)
 			{
-
-				glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*((double)x/w - .5))*cameraRight - (sensorHalfHeight*((double)y / h - .5))*_camera.up;
 				glm::dvec3 color(0, 0, 0);
 
-				glm::dvec3 hit, minHit, norm, minNorm;
-                glm::dvec2 uv, minUV;
-
-				bool intersected = false;
-
-				Ray ray(_camera.pos, glm::normalize(pixelPos - _camera.pos));
-
-                //simultate an expensive operation for performance testing
-				/*for (int j = 0; j < 10000; j++)
+				for (int s = 0; s < SAMPLES; s++)
 				{
-					int a = j;
-					a = a*a;
-				}*/
+					double dx = (double)x + AA_JITTER*(2*drand() - .5);
+					double dy = (double)y + AA_JITTER*(2*drand() - .5);
 
-				std::vector<Entity*> objects = _scene->intersect(ray, 0, INFINITY);
+					glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*(dx / w - .5))*cameraRight - (sensorHalfHeight*(dy / h - .5))*_camera.up;
+					
 
-				avgTests += objects.size();
+					Ray ray(_camera.pos, glm::normalize(pixelPos - _camera.pos));
 
-				std::vector<Entity*>::iterator it = objects.begin();
+					color += (1.0/ SAMPLES)*radiance(ray, 0);
 
-				Entity* current;
-
-				while (it != objects.end())
-				{
-                    Entity* tmp = *it;
-					if (tmp->intersect(ray, hit, norm, uv))
-					{
-						if (!intersected ||vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos))
-						{
-							current = tmp;
-							minHit = hit;
-							minNorm = norm;
-                            minUV = uv;
-							intersected = true;
-						}
-					}
-					++it;
 				}
-				if (intersected)
-				{
-					glm::dvec3 i(0, 0, 0);
-
-					for (Light* light : _scene->lights)
-					{
-						bool shadow = false;
-						glm::dvec3 lightDir = light->getPoint() - minHit;
-						double maxt = glm::length(lightDir);
-
-						Ray shadow_ray(minHit + SHADOW_BIAS*minNorm, lightDir);
-
-
-						std::vector<Entity*> shadow_objects = _scene->intersect(shadow_ray, SHADOW_BIAS, maxt);
-
-						std::vector<Entity*>::iterator shadow_it = shadow_objects.begin();
-
-						while (!shadow && shadow_it != shadow_objects.end())
-						{
-							Entity* t = *shadow_it;
-							glm::dvec3 shadow_hit, shadow_norm;
-                            glm::dvec2 shadow_uv;
-							double t_shadow;
-
-							if (t->intersect(shadow_ray, t_shadow))
-							{
-								shadow = (t_shadow < maxt);// (vecLengthSquared(shadow_hit - minHit) < maxt*maxt);
-							}
-							shadow_it++;
-						}
-
-						if (!shadow)
-						{
-							double l = glm::dot(minNorm, glm::normalize(lightDir));
-
-							if (l < 0)
-								l = 0;
-
-							i += light->col*l;
-						}
-					}
-
-					color = glm::clamp(current->material.diffuse->get(minUV)*i+ current->material.emissive->get(minUV), 0.0, 1.0);
-				}
-				else
-					color = glm::dvec3(0, 0, 0);
 
                 #pragma omp critical
                 {
@@ -160,6 +87,89 @@ class RayTracer
 		std::cout << "average intersection tests: " << avgTests << "\n";
     }
 
+	glm::dvec3 radiance(Ray& ray, int depth)
+	{
+		if (depth > MAX_DEPTH)
+			return glm::dvec3(0, 0, 0);
+
+
+		glm::dvec3 hit, minHit, norm, minNorm;
+		glm::dvec2 uv, minUV;
+
+		bool intersected = false;
+
+		std::vector<Entity*> objects = _scene->intersect(ray, 0, INFINITY);
+
+		//avgTests += objects.size();
+
+		std::vector<Entity*>::iterator it = objects.begin();
+
+		Entity* current;
+
+		while (it != objects.end())
+		{
+			Entity* tmp = *it;
+			if (tmp->intersect(ray, hit, norm, uv))
+			{
+				if (!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos))
+				{
+					current = tmp;
+					minHit = hit;
+					minNorm = norm;
+					minUV = uv;
+					intersected = true;
+				}
+			}
+			++it;
+		}
+		if (intersected)
+		{
+			glm::dvec3 i(0, 0, 0);
+
+			for (Light* light : _scene->lights)
+			{
+				bool shadow = false;
+				glm::dvec3 lightDir = light->getPoint() - minHit;
+				double maxt = glm::length(lightDir);
+
+				Ray shadow_ray(minHit + SHADOW_BIAS*minNorm, lightDir);
+
+
+				std::vector<Entity*> shadow_objects = _scene->intersect(shadow_ray, SHADOW_BIAS, maxt);
+
+				std::vector<Entity*>::iterator shadow_it = shadow_objects.begin();
+
+				while (!shadow && shadow_it != shadow_objects.end())
+				{
+					Entity* t = *shadow_it;
+					glm::dvec3 shadow_hit, shadow_norm;
+					glm::dvec2 shadow_uv;
+					double t_shadow;
+
+					if (t->intersect(shadow_ray, t_shadow))
+					{
+						shadow = (t_shadow < maxt);// (vecLengthSquared(shadow_hit - minHit) < maxt*maxt);
+					}
+					shadow_it++;
+				}
+
+				if (!shadow)
+				{
+					double l = glm::dot(minNorm, glm::normalize(lightDir));
+
+					if (l < 0)
+						l = 0;
+
+					i += light->col*l;
+				}
+			}
+
+			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);// +radiance(Ray(minHit + SHADOW_BIAS*minNorm, glm::mix(glm::reflect(ray.dir, minNorm), randomUnitVec(), current->material.roughness)), ++depth), 0.0, 1.0);
+		}
+		else
+			return glm::dvec3(0, 0, 0);
+	}
+
     bool running() const { return _running; }
     void stop() { _running = false; }
     void start() { _running = true; }
@@ -171,5 +181,6 @@ class RayTracer
     Octree* _scene;
     Camera _camera;
     glm::dvec3 _light;
-    std::shared_ptr<Image> _image;
-};
+    std::shared_ptr<Image> _image;};
+
+

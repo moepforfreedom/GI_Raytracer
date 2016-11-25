@@ -10,6 +10,9 @@
 #define EPSILON 0.0001
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.001
+#define AA_JITTER 0.4
+#define MAX_DEPTH 1
+#define SAMPLES 8
 
 //squared vector length
 inline double vecLengthSquared(glm::dvec3 vec)
@@ -17,7 +20,12 @@ inline double vecLengthSquared(glm::dvec3 vec)
 	return vec.x*vec.x + vec.y*vec.y + vec.z*vec.z;
 }
 
-inline glm::dvec3 randomUnitVec()
+inline glm::dvec3 randomVec()
 {
 	return glm::dvec3((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
+}
+
+inline double drand()
+{
+	return (double)rand() / RAND_MAX;
 }
