@@ -23,7 +23,7 @@ void loadOBJ(Octree* o, const char* fname, glm::dvec3 pos, glm::dvec3 rotation, 
 
 	if (f == NULL)
 	{
-		//std::cout << "error while opening file: " << fname << "\n";
+		std::cout << "error while opening file: " << fname << "\n";
 		return;
 	}
 	int faces = 0;
@@ -78,9 +78,6 @@ void loadOBJ(Octree* o, const char* fname, glm::dvec3 pos, glm::dvec3 rotation, 
 										  new vertex(verts[vertIndex[2] - 1], normals[normIndex[2] - 1], uvs[uvIndex[2] - 1]), material));
 
 			faces++;
-			//std::cout << "bla\n";
-			//std::cout << verts[vertIndex[0] - 1].x << ", " << verts[vertIndex[0] - 1].y << ", " << verts[vertIndex[0] - 1].z << "\n";
-			//o->push_back(new triangle(new vertex(verts[vertIndex[0] - 1]), new vertex(verts[vertIndex[1] - 1]), new vertex(verts[vertIndex[2] - 1]), Material(glm::dvec3(1, 0, 0), glm::dvec3(0, 0, 0))));
 		}
 	}
 

@@ -462,9 +462,9 @@ struct sphereMesh : Entity
 		{
 			/*double u = .5*acos((intersect.y - pos.y) / rad) / (M_PI)+.5;
 			double v = .5*atan((intersect.z - pos.z) / (intersect.x - pos.x)) / (2 * M_PI) + .5;*/
-			scene->push_back(new triangle(new vertex(rad*tris[i][0] + pos, tris[i][0], glm::dvec2(.5*acos((rad*tris[i][0] + pos).y / rad) / (M_PI)+.5, .5*atan((rad*tris[i][0] + pos).z / (rad*tris[i][0] + pos).x) / (2 * M_PI) + .5)),
-										  new vertex(rad*tris[i][1] + pos, tris[i][1], glm::dvec2(.5*acos((rad*tris[i][1] + pos).y / rad) / (M_PI)+.5, .5*atan((rad*tris[i][1] + pos).z / (rad*tris[i][1] + pos).x) / (2 * M_PI) + .5)),
-										  new vertex(rad*tris[i][2] + pos, tris[i][2], glm::dvec2(.5*acos((rad*tris[i][2] + pos).y / rad) / (M_PI)+.5, .5*atan((rad*tris[i][2] + pos).z / (rad*tris[i][2] + pos).x) / (2 * M_PI) + .5)), material));
+			scene->push_back(new triangle(new vertex(rad*tris[i][0] + pos, tris[i][0], glm::dvec2(.5*acos((tris[i][0]).y) / (M_PI)+.5, .5*atan((tris[i][0]).z / (tris[i][0]).x) / (2 * M_PI) + .5)),
+										  new vertex(rad*tris[i][1] + pos, tris[i][1], glm::dvec2(.5*acos((tris[i][1]).y) / (M_PI)+.5, .5*atan((tris[i][1]).z / (tris[i][1]).x) / (2 * M_PI) + .5)),
+										  new vertex(rad*tris[i][2] + pos, tris[i][2], glm::dvec2(.5*acos((tris[i][2]).y) / (M_PI)+.5, .5*atan((tris[i][2] ).z / (tris[i][2]).x) / (2 * M_PI) + .5)), material));
 			count++;
 		}
 

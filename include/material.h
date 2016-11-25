@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <QImage>
 
 struct texture
 {
@@ -17,9 +18,11 @@ struct texture
     glm::dvec3 color;
 };
 
+//Procedural checkerboard texture
 struct checkerboard: texture
 {
-    checkerboard(int t): texture(glm::dvec3(0, 0, 0)), tiles(t)
+	glm::dvec3 a, b;
+    checkerboard(int t, glm::dvec3 col0, glm::dvec3 col1): texture(glm::dvec3(0, 0, 0)), tiles(t), a(col0), b(col1)
     {
 
     }
@@ -27,12 +30,34 @@ struct checkerboard: texture
     virtual glm::dvec3 get(glm::dvec2 uv)
     {
         if(((int)(uv.x * tiles) % 2 == 0) ^ ((int)(uv.y * tiles) % 2 == 0))
-            return glm::dvec3(1, 1, 1);
+            return a;
 
-        return glm::dvec3(uv.x, uv.y, 0);
+        return b;
     }
 
     int tiles;
+};
+
+//Texture from image file
+struct imageTexture : texture
+{
+	const char* fname;
+	QImage image;
+	glm::dvec2 tile;
+
+	imageTexture(const char* name, glm::dvec2 t) : texture(glm::dvec3(0, 0, 0)), fname(name), image(name), tile(t)
+	{
+
+	}
+
+	virtual glm::dvec3 get(glm::dvec2 uv)
+	{
+		auto p = image.pixel((int)(uv.x * image.width() * tile.x) % image.width(), (int)(uv.y * image.height() * tile.y) % image.height());
+
+		return { qRed(p) / 255., qGreen(p) / 255., qBlue(p) / 255. };
+	}
+
+	int tiles;
 };
 
 /// Represents the material properties of an entity. For now it only contains color, but it should
