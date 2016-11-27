@@ -41,7 +41,7 @@ struct BoundingBox
     }
 
 	//checks if a Ray intersects the bounding box, implementation based on Peter Shirleys algorithm
-	inline bool intersect(const Ray& ray, double tmin, double tmax, double& tout) const
+	inline bool intersect(const Ray& ray, double tmin, double tmax, double& toutmin, double& toutmax) const
 	{
 		//store vectors in arrays to avoid code duplication
 		double minPos[3], maxPos[3], rayOrigin[3], rayDir[3];
@@ -78,9 +78,14 @@ struct BoundingBox
 			tmin = t0 > tmin ? t0 : tmin;
 			tmax = t1 < tmax ? t1 : tmax;
 			if (tmax <= tmin)
+			{
+				toutmin = INFINITY;
+				toutmax = -INFINITY;
 				return false;
+			}
 		}
-		tout = t0;
+		toutmin = tmin;
+		toutmax = tmax;
 		return true;
 	}
 };

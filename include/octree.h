@@ -30,7 +30,8 @@ class Octree {
 		void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax) const;
 
         BoundingBox _bbox;
-		double* t = new double(0);
+		double* mint = new double(0);
+		double* maxt = new double(0);
         std::vector<Entity*> _entities;
         std::array<std::unique_ptr<Node>, 8> _children;
     };

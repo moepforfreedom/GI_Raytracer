@@ -104,31 +104,41 @@ class RayTracer
 
 		bool intersected = false;
 
-		std::vector<Entity*> objects = _scene->intersect(ray, 0, INFINITY);
-
 		std::vector<const Octree::Node*> nodes = _scene->intersectSorted(ray, 0, INFINITY);
+
+		std::vector<const Octree::Node*>::iterator nd = nodes.begin();
 
 		//avgTests += objects.size();
 
-		std::vector<Entity*>::iterator it = objects.begin();
-
 		Entity* current;
 
-		while (it != objects.end())
+		bool lastIntersect = false;
+
+		while (nd != nodes.end() && !intersected)
 		{
-			Entity* tmp = *it;
-			if (tmp->intersect(ray, hit, norm, uv))
+			lastIntersect = intersected;
+
+			const Octree::Node* curNode = *nd;
+
+			std::vector<Entity*>::const_iterator it = curNode->_entities.begin();			
+
+			while (it != curNode->_entities.end())
 			{
-				if (!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos))
+				Entity* tmp = *it;
+				if (tmp->intersect(ray, hit, norm, uv))
 				{
-					current = tmp;
-					minHit = hit;
-					minNorm = norm;
-					minUV = uv;
-					intersected = true;
+					if (!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos) && (vecLengthSquared(hit - _camera.pos) < pow(*curNode->maxt, 2)*sqrt(2)))
+					{
+						current = tmp;
+						minHit = hit;
+						minNorm = norm;
+						minUV = uv;
+						intersected = true;
+					}
 				}
+				++it;
 			}
-			++it;
+			nd++;
 		}
 		if (intersected)
 		{

@@ -89,9 +89,9 @@ std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax)
 
 	//return _root._entities;
 
-	double t0;
+	double t0, t1;
 
-	if (_root._bbox.intersect(ray, tmin, tmax, t0))
+	if (_root._bbox.intersect(ray, tmin, tmax, t0, t1))
 	{
 		_root.intersect(ray, res, tmin, tmax);
 	}
@@ -112,9 +112,9 @@ std::vector<const Octree::Node*> Octree::intersectSorted(const Ray& ray, double 
 {
 	std::vector<const Octree::Node*> res;
 
-	double t0;
+	double t0, t1;
 
-	if (_root._bbox.intersect(ray, tmin, tmax, t0))
+	if (_root._bbox.intersect(ray, tmin, tmax, t0, t1))
 	{
 		_root.intersectSorted(ray, res, tmin, tmax);
 	}
@@ -128,8 +128,8 @@ Octree::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 //returns a list of objects within a node that can potentially intersect the given ray
 void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const
 {
-	double t0;
-	if (_bbox.intersect(ray, tmin, tmax, t0))
+	double t0, t1;
+	if (_bbox.intersect(ray, tmin, tmax, t0, t1))
 	{
 		if (is_leaf())
 		{
@@ -153,16 +153,19 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 //inserts the node into a sorted list if it intersects the given ray
 void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax) const
 {
-	double t0;
+	double t0, t1;
 	int i = 0;
-	if (_bbox.intersect(ray, tmin, tmax, t0))
+	if (_bbox.intersect(ray, tmin, tmax, t0, t1))
 	{
 		if (is_leaf())
 		{
-			*t = t0;
+			*mint = t0;
+			*maxt = t1;
+
+			//std::cout << t0 << "\n";
 			if (_entities.size() > 0)
 			{
-				while (i < res.size() && t0 < *res[i]->t)
+				while (i < res.size() && t0 >= *res[i]->mint)
 					i++;
 
 				res.insert(res.begin() + i, this);
