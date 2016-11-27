@@ -17,6 +17,7 @@ int main(int argc, char** argv)
 
     RayTracer raytracer(camera, light);
 
+
     // Set up scene
     Octree* scene = new Octree({-30, -30, -30}, {30, 30, 30});
 
@@ -47,7 +48,7 @@ int main(int argc, char** argv)
 
 	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 1), Material(new texture(glm::dvec3(0.25, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .25));
 
-	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(new imageTexture("Stone_01_Diffuse", glm::dvec2(16, 16))/*checkerboard(32, glm::dvec3(1, .65, .25), glm::dvec3(1, 1, 1))*/, new texture(glm::dvec3(0, 0, 0)), .5));
+	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(new imageTexture("Stone_01_Diffuse", glm::dvec2(16, 16)), new texture(glm::dvec3(0, 0, 0)), .5));
 
 	scene->push_back(new Light(glm::dvec3(10, 10, 20), glm::dvec3(1, 1, 1), 0));
 	

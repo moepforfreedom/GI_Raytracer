@@ -1,5 +1,6 @@
 #include <glm/glm.hpp>
 #include <random>
+#include <iostream>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897
@@ -10,9 +11,11 @@
 #define EPSILON 0.0001
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.001
-#define AA_JITTER 0.4
+#define AA_JITTER 1
 #define MAX_DEPTH 1
-#define SAMPLES 8
+#define SAMPLES 1
+#define FOCAL_BLUR 0
+
 
 //squared vector length
 inline double vecLengthSquared(glm::dvec3 vec)
@@ -28,4 +31,23 @@ inline glm::dvec3 randomVec()
 inline double drand()
 {
 	return (double)rand() / RAND_MAX;
+}
+
+
+//generates a sequence of subrandom numbers
+inline std::vector<double> subrand(int n)
+{
+	double lastRand = drand();
+	double a = drand();
+
+	std::vector<double> res;
+	
+	for (int i = 0; i < n; i++)
+	{
+		lastRand = fmod(lastRand + a, 1.0);
+
+		res.push_back(lastRand);		
+	}
+
+	return res;
 }

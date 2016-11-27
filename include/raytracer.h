@@ -46,9 +46,11 @@ class RayTracer
 		glm::dvec3 cameraRight =  glm::normalize(glm::cross(_camera.forward, _camera.up));
 
 		std::cout << cameraRight.x << ", " << cameraRight.y << ", " << cameraRight.z << ", " << "\n";
-
-
+		
 		double avgTests = 0;
+
+		std::vector<double> xrand = subrand(2048);
+		std::vector<double> yrand = subrand(2048);
 
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10) //OpenMP
@@ -62,13 +64,17 @@ class RayTracer
 
 				for (int s = 0; s < SAMPLES; s++)
 				{
-					double dx = (double)x + AA_JITTER*(2*drand() - .5);
-					double dy = (double)y + AA_JITTER*(2*drand() - .5);
+					double xr = xrand[((x + w*y)*SAMPLES + s) % xrand.size()];
+					double yr = yrand[((x + w*y)*SAMPLES + s) % yrand.size()];
+
+					double dx = (double)x + AA_JITTER*xr;
+					double dy = (double)y + AA_JITTER*yr;
 
 					glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*(dx / w - .5))*cameraRight - (sensorHalfHeight*(dy / h - .5))*_camera.up;
-					
 
-					Ray ray(_camera.pos, glm::normalize(pixelPos - _camera.pos));
+					glm::dvec3 eyePos = _camera.pos + FOCAL_BLUR*xr*cameraRight + FOCAL_BLUR*yr *_camera.up;
+
+					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));
 
 					color += (1.0/ SAMPLES)*radiance(ray, 0);
 
@@ -99,6 +105,8 @@ class RayTracer
 		bool intersected = false;
 
 		std::vector<Entity*> objects = _scene->intersect(ray, 0, INFINITY);
+
+		std::vector<const Octree::Node*> nodes = _scene->intersectSorted(ray, 0, INFINITY);
 
 		//avgTests += objects.size();
 
