@@ -111,10 +111,9 @@ class RayTracer
 		//avgTests += objects.size();
 
 		Entity* current;
-
 		bool lastIntersect = false;
 
-		while (nd != nodes.end() && !intersected)
+		while (nd != nodes.end() && !lastIntersect)
 		{
 			lastIntersect = intersected;
 
@@ -127,7 +126,7 @@ class RayTracer
 				Entity* tmp = *it;
 				if (tmp->intersect(ray, hit, norm, uv))
 				{
-					if (!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos) && (vecLengthSquared(hit - _camera.pos) < pow(*curNode->maxt, 2)*sqrt(2)))
+					if ((!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos)) && (vecLengthSquared(hit - _camera.pos) < pow(*curNode->maxt + .5, 2))	)
 					{
 						current = tmp;
 						minHit = hit;
@@ -185,7 +184,7 @@ class RayTracer
 			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);// +radiance(Ray(minHit + SHADOW_BIAS*minNorm, glm::mix(glm::reflect(ray.dir, minNorm), randomUnitVec(), current->material.roughness)), ++depth), 0.0, 1.0);
 		}
 		else
-			return glm::dvec3(0, 0, 0);
+			return glm::dvec3(1, 1, 0);
 	}
 
     bool running() const { return _running; }
