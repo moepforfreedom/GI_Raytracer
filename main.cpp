@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 	}
 	scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75)));
 	scene->push_back(new cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(.125, 0, 0)), .75)));
-	//scene->push_back(new sphere(glm::dvec3(0, 0, 0), 128, Material(new texture(glm::dvec3(0.25, 0.25, .25)), new texture(glm::dvec3(.125, 0.125, .125)), .75)));
+	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 128, Material(new texture(glm::dvec3(0.25, 0.25, .25)), new texture(glm::dvec3(.125, 0.125, .125)), .75)));
 
 	scene->push_back(new coneMesh(scene, glm::dvec3(3, 0, 0), glm::dvec3(0.5, -.5, 0.0), 1.5, 3.0, 32, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)), .75)));
 

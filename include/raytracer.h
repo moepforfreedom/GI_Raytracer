@@ -111,11 +111,11 @@ class RayTracer
 		//avgTests += objects.size();
 
 		Entity* current;
-		bool lastIntersect = false;
+		bool term = false;
 
-		while (nd != nodes.end() && !lastIntersect)
+		while (nd != nodes.end() && !term)
 		{
-			lastIntersect = intersected;
+			//lastIntersect = intersected;
 
 			const Octree::Node* curNode = *nd;
 
@@ -126,13 +126,16 @@ class RayTracer
 				Entity* tmp = *it;
 				if (tmp->intersect(ray, hit, norm, uv))
 				{
-					if ((!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos)) && (vecLengthSquared(hit - _camera.pos) < pow(*curNode->maxt + .5, 2))	)
+					if ((!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos)))
 					{
 						current = tmp;
 						minHit = hit;
 						minNorm = norm;
 						minUV = uv;
 						intersected = true;
+
+						if((vecLengthSquared(hit - _camera.pos) < pow(*curNode->maxt, 2)))
+							term = true;
 					}
 				}
 				++it;
