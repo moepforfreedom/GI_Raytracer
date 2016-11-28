@@ -12,6 +12,7 @@
 #include "image.h"
 #include "octree.h"
 #include "omp.h"
+#include <ctime>
 
 class RayTracer
 {
@@ -31,6 +32,8 @@ class RayTracer
 			_scene->rebuild();
 		}
 
+		std::srand(std::time(0));
+
 		glm::dmat3x3 crot = glm::eulerAngleXYZ(0.0, 0.02, 0.0);
 		_camera.pos =  _camera.pos*crot;
 		_camera.forward = glm::normalize(glm::dvec3(0, 0, 0) - _camera.pos);
@@ -49,8 +52,10 @@ class RayTracer
 		
 		double avgTests = 0;
 
-		std::vector<double> xrand = subrand(2048);
-		std::vector<double> yrand = subrand(2048);
+		std::vector<double> xrand;
+		subrand(xrand, 25000);
+		std::vector<double> yrand;
+		subrand(yrand, 25000);
 
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10) //OpenMP
@@ -64,15 +69,17 @@ class RayTracer
 
 				for (int s = 0; s < SAMPLES; s++)
 				{
-					double xr = xrand[((x + w*y)*SAMPLES + s) % xrand.size()];
-					double yr = yrand[((x + w*y)*SAMPLES + s) % yrand.size()];
+					double xr =  xrand[((x + w*y)*SAMPLES + s) % xrand.size()];
+					double yr =  yrand[((x + w*y)*SAMPLES + s) % yrand.size()];
+
+					//std::cout << (xr - yr) << "\n";
 
 					double dx = (double)x + AA_JITTER*xr;
 					double dy = (double)y + AA_JITTER*yr;
 
 					glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*(dx / w - .5))*cameraRight - (sensorHalfHeight*(dy / h - .5))*_camera.up;
 
-					glm::dvec3 eyePos = _camera.pos + FOCAL_BLUR*xr*cameraRight + FOCAL_BLUR*yr *_camera.up;
+					glm::dvec3 eyePos = _camera.pos + FOCAL_BLUR*(xr-.5)*cameraRight + FOCAL_BLUR*(yr-.5) *_camera.up;
 
 					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));
 

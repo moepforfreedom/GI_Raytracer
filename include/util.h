@@ -1,6 +1,7 @@
 #include <glm/glm.hpp>
 #include <random>
 #include <iostream>
+#include <ctime>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897
@@ -11,10 +12,10 @@
 #define EPSILON 0.0001
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.001
-#define AA_JITTER 1
+#define AA_JITTER 0
 #define MAX_DEPTH 1
-#define SAMPLES 1
-#define FOCAL_BLUR 0
+#define SAMPLES 64
+#define FOCAL_BLUR 1.25
 
 
 //squared vector length
@@ -35,19 +36,21 @@ inline double drand()
 
 
 //generates a sequence of subrandom numbers
-inline std::vector<double> subrand(int n)
+inline void subrand(std::vector<double>&out, int n)
 {
 	double lastRand = drand();
 	double a = drand();
 
-	std::vector<double> res;
+	//std::vector<double> res;
+
+	out.clear();
 	
 	for (int i = 0; i < n; i++)
 	{
 		lastRand = fmod(lastRand + a, 1.0);
 
-		res.push_back(lastRand);		
+		out.push_back(lastRand);
 	}
 
-	return res;
+	//return res;
 }
