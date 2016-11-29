@@ -55,7 +55,7 @@ int main(int argc, char** argv)
 
     raytracer.setScene(scene);
 
-    Gui window(500, 500, raytracer);
+    Gui window(1000, 1000, raytracer);
     window.show();
     return app.exec();
 }

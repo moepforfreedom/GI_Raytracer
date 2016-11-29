@@ -52,6 +52,9 @@ class RayTracer
 		
 		double avgTests = 0;
 
+		std::vector<double> vars;
+		vars.reserve(w*h);
+
 		std::vector<double> xrand;
 		subrand(xrand, 25000);
 		std::vector<double> yrand;
@@ -65,12 +68,18 @@ class RayTracer
           {
             for (int x = 0; x < w; ++x)
 			{
-				glm::dvec3 color(0, 0, 0);
+				glm::dvec3 color(0.5, 0.5, 0.5);
+				glm::dvec3 lastCol(0, 0, 0);
+				double var = 0;
+				int samps = 0;
+				int s = 0;
 
-				for (int s = 0; s < SAMPLES; s++)
+				while (s < SAMPLES)
 				{
-					double xr =  xrand[((x + w*y)*SAMPLES + s) % xrand.size()];
-					double yr =  yrand[((x + w*y)*SAMPLES + s) % yrand.size()];
+					lastCol = color;
+
+					double xr = 1*xrand[((x + w*y)*SAMPLES + s) % xrand.size()] + 0*drand();
+					double yr = 1*yrand[((x + w*y)*SAMPLES + s) % yrand.size()] + 0*drand();
 
 					//std::cout << (xr - yr) << "\n";
 
@@ -81,15 +90,32 @@ class RayTracer
 
 					glm::dvec3 eyePos = _camera.pos + FOCAL_BLUR*(xr-.5)*cameraRight + FOCAL_BLUR*(yr-.5) *_camera.up;
 
-					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));
+					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));	
 
-					color += (1.0/ SAMPLES)*radiance(ray, 0);
+					if (s == 0)
+						color = radiance(ray, 0);
+					else
+					color = (1.0*s*color + radiance(ray, 0))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
 
+					if (s > 0)
+					{
+						var = ((SAMPLES - 1.0)*var + glm::length(color - lastCol))*(1.0 / SAMPLES);
+
+						//var = .5*var + .5*vars[clamp(0, w, x - 1) + w*clamp(0, h, y)];
+					}
+
+					/*if (s > MIN_SAMPLES && var < NOISE_THRESH)
+						s++;*/
+
+					s++;
+					samps++;
 				}
+
+				vars[x + w*y] = var;
 
                 #pragma omp critical
                 {
-                  _image->setPixel(x, y, color);
+                  _image->setPixel(x, y, glm::clamp(/*1.0*(double)samps / SAMPLES*/SAMPLES*4*var*glm::dvec3(1, 1, 1), 0.0, 1.0));
                 }
             }
           }
