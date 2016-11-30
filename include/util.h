@@ -14,10 +14,10 @@
 #define SHADOW_BIAS 0.001
 #define AA_JITTER 1
 #define MAX_DEPTH 1
-#define NOISE_THRESH 0.001
-#define MIN_SAMPLES 32
-#define SAMPLES 32
-#define FOCAL_BLUR 1
+#define NOISE_THRESH 0.003
+#define MIN_SAMPLES 128
+#define SAMPLES 128
+#define FOCAL_BLUR 0
 
 
 //squared vector length

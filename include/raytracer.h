@@ -74,7 +74,7 @@ class RayTracer
 				int samps = 0;
 				int s = 0;
 
-				while (s < SAMPLES)
+				while (s < SAMPLES && samps < MIN_SAMPLES)
 				{
 					lastCol = color;
 
@@ -99,13 +99,16 @@ class RayTracer
 
 					if (s > 0)
 					{
-						var = ((SAMPLES - 1.0)*var + glm::length(color - lastCol))*(1.0 / SAMPLES);
+						var = (1.0*5*var + glm::length(color - lastCol))*(1.0 / (5 + 1));
 
 						//var = .5*var + .5*vars[clamp(0, w, x - 1) + w*clamp(0, h, y)];
 					}
 
 					/*if (s > MIN_SAMPLES && var < NOISE_THRESH)
-						s++;*/
+						s+=4;*/
+
+					if (s > 0 && var > NOISE_THRESH)
+						samps--;
 
 					s++;
 					samps++;
@@ -115,7 +118,7 @@ class RayTracer
 
                 #pragma omp critical
                 {
-                  _image->setPixel(x, y, glm::clamp(/*1.0*(double)samps / SAMPLES*/SAMPLES*4*var*glm::dvec3(1, 1, 1), 0.0, 1.0));
+                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var**//**glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
                 }
             }
           }
