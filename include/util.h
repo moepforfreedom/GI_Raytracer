@@ -15,8 +15,8 @@
 #define AA_JITTER 1
 #define MAX_DEPTH 1
 #define NOISE_THRESH 0.003
-#define MIN_SAMPLES 128
-#define SAMPLES 128
+#define MIN_SAMPLES 4
+#define SAMPLES 512
 #define FOCAL_BLUR 0
 
 
@@ -58,11 +58,36 @@ inline void subrand(std::vector<double>&out, int n)
 	double a = fmod(sqrt(primes[rand() % 11]), 1.0);
 
 	out.clear();
-	
+
 	for (int i = 0; i < n; i++)
 	{
 		lastRand = fmod(lastRand + a, 1.0);
 
 		out.push_back(lastRand);
+	}
+}
+
+//generates a sequence of subrandom numbers
+inline void subrandUnitVec(std::vector<glm::dvec3>&out, int n)
+{
+	double primes[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31 };
+
+	glm::dvec3 lastRand = randomVec();
+
+	glm::dvec3 tmp;
+
+	glm::dvec3 a = glm::dvec3(fmod(sqrt(primes[rand() % 11]), 1.0), fmod(sqrt(primes[rand() % 11]), 1.0), fmod(sqrt(primes[rand() % 11]), 1.0));
+
+	out.clear();
+
+	for (int i = 0; i < n; i++)
+	{
+		lastRand.x = fmod(lastRand.x + a.x, 1.0);
+
+		lastRand.y = fmod(lastRand.y + a.y, 1.0);
+
+		//std::cout << glm::normalize(tmp).x << ", " << glm::normalize(tmp).y << ", " << glm::normalize(tmp).z << "\n";
+
+		out.push_back(glm::dvec3(sin(lastRand.x) + cos(lastRand.y), sin(lastRand.x) + sin(lastRand.y), cos(lastRand.x)));
 	}
 }

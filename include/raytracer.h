@@ -49,7 +49,7 @@ class RayTracer
 		glm::dvec3 cameraRight =  glm::normalize(glm::cross(_camera.forward, _camera.up));
 
 		std::cout << cameraRight.x << ", " << cameraRight.y << ", " << cameraRight.z << ", " << "\n";
-		
+
 		double avgTests = 0;
 
 		std::vector<double> vars;
@@ -83,14 +83,14 @@ class RayTracer
 
 					//std::cout << (xr - yr) << "\n";
 
-					double dx = (double)x + AA_JITTER*xr;
-					double dy = (double)y + AA_JITTER*yr;
+					double dx = (double)x + AA_JITTER*xrand[((x + w*y)*SAMPLES + s) % xrand.size() + 1];
+					double dy = (double)y + AA_JITTER*yrand[((x + w*y)*SAMPLES + s) % yrand.size() + 1];
 
 					glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*(dx / w - .5))*cameraRight - (sensorHalfHeight*(dy / h - .5))*_camera.up;
 
 					glm::dvec3 eyePos = _camera.pos + FOCAL_BLUR*(xr-.5)*cameraRight + FOCAL_BLUR*(yr-.5) *_camera.up;
 
-					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));	
+					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));
 
 					if (s == 0)
 						color = radiance(ray, 0);
@@ -108,7 +108,7 @@ class RayTracer
 						s+=4;*/
 
 					if (s > 0 && var > NOISE_THRESH)
-						samps--;
+						samps-=2;
 
 					s++;
 					samps++;
@@ -155,7 +155,7 @@ class RayTracer
 
 			const Octree::Node* curNode = *nd;
 
-			std::vector<Entity*>::const_iterator it = curNode->_entities.begin();			
+			std::vector<Entity*>::const_iterator it = curNode->_entities.begin();
 
 			while (it != curNode->_entities.end())
 			{
@@ -238,5 +238,3 @@ class RayTracer
     Camera _camera;
     glm::dvec3 _light;
     std::shared_ptr<Image> _image;};
-
-

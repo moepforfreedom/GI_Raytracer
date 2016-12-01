@@ -27,7 +27,7 @@ class Octree {
 
 		void intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const;
 
-		void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax) const;
+		void intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax) const;
 
         BoundingBox _bbox;
 		double* mint = new double(0);
@@ -51,7 +51,7 @@ public:
 	/// Returns list of entities that have the possibility to be intersected by the ray.
 	std::vector<Entity*> intersect(const Ray& ray, double tmin, double tmax) const;
 
-	std::vector<const Octree::Node*> Octree::intersectSorted(const Ray& ray, double tmin, double tmax) const;
+	std::vector<const Octree::Node*> intersectSorted(const Ray& ray, double tmin, double tmax) const;
 
 	bool valid;
     Node _root;
