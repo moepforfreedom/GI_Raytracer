@@ -32,7 +32,7 @@ class RayTracer
 			_scene->rebuild();
 		}
 
-		std::srand(std::time(0));
+		srand(std::time(0));
 
 		glm::dmat3x3 crot = glm::eulerAngleXYZ(0.0, 0.02, 0.0);
 		_camera.pos =  _camera.pos*crot;
@@ -64,6 +64,7 @@ class RayTracer
         #pragma omp parallel for schedule(dynamic, 10) //OpenMP
         for (int y = 0; y < h; ++y)
 		{
+		  srand(std::time(0) + rand());
           if(_running)
           {
             for (int x = 0; x < w; ++x)
@@ -220,10 +221,32 @@ class RayTracer
 				}
 			}
 
-			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);// +radiance(Ray(minHit + SHADOW_BIAS*minNorm, glm::mix(glm::reflect(ray.dir, minNorm), randomUnitVec(), current->material.roughness)), ++depth), 0.0, 1.0);
+			glm::dvec2 p = hammersley2d(rand() % 250, 250);		
+
+			double z = abs(minNorm.z);
+
+			glm::dmat3x3 rot(z + (1.0 / (1 + z))*-minNorm.y*-minNorm.y, (1.0 / (1 + z))*(minNorm.x*-minNorm.y), -minNorm.x,
+				(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
+				minNorm.x, minNorm.y, z);
+
+			glm::dvec3 refDir = rot*hemisphereSample_uniform(p.x, p.y);			
+
+			if (minNorm.z < 0)
+				refDir.z = -1.0*refDir.z;
+
+			/*if (glm::dot(minNorm, refDir) < 0)
+				minNorm = -1.0*minNorm;*/
+
+			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);
+
+			refDir = glm::mix(glm::reflect(hit - _camera.pos, minNorm), refDir, 1.0);
+
+			i += 2*glm::dot(minNorm, refDir)*radiance(Ray(minHit + SHADOW_BIAS*minNorm, refDir), ++depth);
+
+			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);
 		}
 		else
-			return glm::dvec3(1, 1, 0);
+			return glm::dvec3(1, 1, 1);
 	}
 
     bool running() const { return _running; }

@@ -2,13 +2,19 @@
 
 #include <iostream>
 
+#include <glm/glm.hpp>
+#include <glm/gtx/vector_angle.hpp>
+
 #include "camera.h"
 #include "gui.h"
 #include "meshLoader.h"
+#include <ctime>
 
 int main(int argc, char** argv)
 {
+	//std::srand(std::time(0));
 
+	srand(std::time(0));
 
     QApplication app(argc, argv);
 
@@ -26,14 +32,30 @@ int main(int argc, char** argv)
 	scene->push_back(new sphere(glm::dvec3(5, .5, 0), .5, Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75)));
 	scene->push_back(new sphere(glm::dvec3(6, .5, .75), .25, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75)));
 	glm::dvec3 pos = glm::dvec3(4.5, .5, .75);
-	for (int i = 0; i < 16; i++)
-	{
-		pos.x -= 4;
-		pos.y -= 1;
-		//cone* a = new cone(pos, glm::dvec3(0.0 - .2*i, -0.0, 0), .25, 2, Material(glm::dvec3(0, 0, 1), glm::dvec3(.125, 0, 0)));
 
-		//scene->push_back(a);
-	}
+	std::vector<glm::dvec3> points;
+	points.reserve(25000);
+	subrandUnitVec(points, 25000);
+
+	/*for (int i = 0; i < 5500; i++)
+	{
+		glm::dvec2 p = hammersley2d(rand() % 5500, 5500);		
+
+		glm::dvec3 norm = glm::normalize(glm::dvec3(0, 1, -1));
+
+		double z = abs(norm.z);		
+
+		glm::dmat3x3 rot(z + (1.0 / (1 + z))*-norm.y*-norm.y, (1.0 / (1 + z))*(norm.x*-norm.y), -norm.x,
+						 (1.0 / (1 + z))*(norm.x*-norm.y), z + (1.0 / (1 + z))*-norm.x*-norm.x, -norm.y,
+						 norm.x, norm.y, z);
+
+		glm::dvec3 dir = rot*hemisphereSample_cos(p.x, p.y);
+
+		if (norm.z < 0)
+			dir.z = -1.0*dir.z;
+
+		scene->push_back(new sphere(2.0*dir,  .01, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75)));
+	}*/
 	scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75)));
 	scene->push_back(new cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(.125, 0, 0)), .75)));
 	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 128, Material(new texture(glm::dvec3(0.25, 0.25, .25)), new texture(glm::dvec3(.125, 0.125, .125)), .75)));
@@ -48,9 +70,9 @@ int main(int argc, char** argv)
 
 	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 1), Material(new texture(glm::dvec3(0.25, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .25));
 
-	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(new imageTexture("Stone_01_Diffuse", glm::dvec2(16, 16)), new texture(glm::dvec3(0, 0, 0)), .5));
+	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(new imageTexture("Stone_01_Diffuse", glm::dvec2(16, 16)), new texture(glm::dvec3(0, 0, 0)), 1));
 
-	scene->push_back(new Light(glm::dvec3(10, 10, 20), glm::dvec3(1, 1, 1), 0));
+	scene->push_back(new Light(glm::dvec3(10, 10, 20), glm::dvec3(1, 1, 1), 1));
 
 
     raytracer.setScene(scene);

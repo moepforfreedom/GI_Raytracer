@@ -15,16 +15,14 @@ struct Light
 
 	Light(glm::dvec3 position, glm::dvec3 color, double radius) : pos(position), col(color), rad(radius)
 	{
-		points.reserve(2500);
-		subrandUnitVec(points, 2500);
+		points.reserve(250);
+		subrandUnitVec(points, 250);
 	}
 
-	//returns a point on the surface if the light sourceS
+	//returns a point on the surface of the light source
 	glm::dvec3 getPoint()
 	{
-		//std::cout << count << ": " << points[count % points.size()].x << ", " << points[count % points.size()].y << ", " << points[count % points.size()].z << "\n";
-		count = (count+1) % points.size();
-		return pos + rad*randomVec();//points[count];
+		return pos + rad*points[rand() % points.size()];
 	}
 
 	glm::dvec3 pos = { 0, 0, 0 };

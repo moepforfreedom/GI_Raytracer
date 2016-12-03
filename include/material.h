@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 #include <QImage>
-#include <vector>
 
 struct texture
 {
@@ -23,11 +22,8 @@ struct texture
 struct checkerboard: texture
 {
 	glm::dvec3 a, b;
-    std::vector<glm::dvec3> points;
     checkerboard(int t, glm::dvec3 col0, glm::dvec3 col1): texture(glm::dvec3(0, 0, 0)), tiles(t), a(col0), b(col1)
     {
-        points.reserve(2500);
-		//subrandUnitVec(points, 2500);
     }
 
     virtual glm::dvec3 get(glm::dvec2 uv)
@@ -36,8 +32,6 @@ struct checkerboard: texture
             return a;
 
         return b;
-
-
     }
 
     int tiles;
