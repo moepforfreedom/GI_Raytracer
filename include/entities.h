@@ -20,7 +20,7 @@ struct Entity
 
     /// Check if a ray intersects the object. The arguments intersect and normal will contain the
     /// point of intersection and its normals.
-    virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const = 0;
+    virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) = 0;
 
 	virtual bool intersect(const Ray& ray, double& t)
 	{
@@ -51,7 +51,7 @@ struct sphere: Entity
 		pos = position;
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{
 
 		double dot = glm::dot(ray.dir, (ray.origin - pos));
@@ -107,7 +107,7 @@ struct cone : Entity
 		rot = glm::inverse(glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z));
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{
 		//instead of transforming the cylinder, apply the inverse transform to the ray
 		glm::dvec3 tmpOrigin = ray.origin*rot;
@@ -281,6 +281,8 @@ struct triangle: Entity
 	glm::dmat3x3 rot;
 	vertex* vertices[3];
 	glm::dvec3 norm;
+	glm::dvec3 hitNorm;
+	glm::dvec3 tmpNorm;
 
 	triangle(vertex* v1, vertex* v2, vertex* v3, const Material& material) : Entity(material)
 	{
@@ -291,7 +293,7 @@ struct triangle: Entity
 		norm = glm::normalize(glm::cross((v2->pos - v1->pos), (v3->pos - v1->pos)));
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{
 		double dot = glm::dot(ray.dir, norm);
 
@@ -314,6 +316,11 @@ struct triangle: Entity
 		if (glm::dot(glm::cross((vertices[0]->pos - vertices[2]->pos), (intersect - vertices[2]->pos)), norm) < 0)
 			return false;
 
+		if (dot > 0)
+			hitNorm = -1.0*norm;
+		else
+			hitNorm = norm;
+
 		//Interpolate normal if vertex normals are set
 		if (vecLengthSquared(vertices[0]->norm) > 0 && vecLengthSquared(vertices[1]->norm) > 0 && vecLengthSquared(vertices[2]->norm) > 0)
 		{
@@ -331,6 +338,11 @@ struct triangle: Entity
 
 
 			normal = a1*vertices[0]->norm + a2*vertices[1]->norm + a3*vertices[2]->norm;
+
+			if (glm::dot(hitNorm, normal) < 0)
+				normal = -1.0*normal;
+
+			//normal = tmpNorm;
 
 			uv = a1*vertices[0]->texCoord + a2*vertices[1]->texCoord + a3*vertices[2]->texCoord;
 		}
@@ -474,7 +486,7 @@ struct sphereMesh : Entity
 
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{
 		return false;
 	}
@@ -518,7 +530,7 @@ struct coneMesh : Entity
 
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{
 		return false;
 	}
@@ -570,7 +582,7 @@ struct quadMesh : Entity
 		o->push_back(new triangle(new vertex(v3), new vertex(v2), new vertex(v4), material));
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{
 		return false;
 	}
@@ -617,7 +629,7 @@ struct boxMesh : Entity
 		}
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv) const
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{
 		return false;
 	}

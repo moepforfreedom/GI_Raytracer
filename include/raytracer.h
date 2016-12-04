@@ -183,8 +183,8 @@ class RayTracer
 		{
 			glm::dvec3 i(0, 0, 0);
 
-			if (glm::dot(ray.dir, minNorm) > 0)
-				minNorm = -1.0*minNorm;
+			/*if (glm::dot(ray.dir, minNorm) > 0)
+				minNorm = -1.0*minNorm;*/
 
 			for (Light* light : _scene->lights)
 			{

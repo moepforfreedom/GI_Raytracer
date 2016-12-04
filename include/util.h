@@ -13,10 +13,10 @@
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.001
 #define AA_JITTER 1
-#define MAX_DEPTH 3
+#define MAX_DEPTH 1
 #define NOISE_THRESH 0.003
-#define MIN_SAMPLES 8
-#define SAMPLES 128
+#define MIN_SAMPLES 4
+#define SAMPLES 16
 #define FOCAL_BLUR 0
 
 
