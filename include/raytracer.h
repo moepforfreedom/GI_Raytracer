@@ -183,6 +183,9 @@ class RayTracer
 		{
 			glm::dvec3 i(0, 0, 0);
 
+			if (glm::dot(ray.dir, minNorm) > 0)
+				minNorm = -1.0*minNorm;
+
 			for (Light* light : _scene->lights)
 			{
 				bool shadow = false;
@@ -221,7 +224,7 @@ class RayTracer
 				}
 			}
 
-			glm::dvec2 p = hammersley2d(rand() % 250, 250);		
+			glm::dvec2 p = hammersley2d(rand() % 250, 250);				
 
 			double z = abs(minNorm.z);
 
@@ -229,24 +232,21 @@ class RayTracer
 				(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
 				minNorm.x, minNorm.y, z);
 
-			glm::dvec3 refDir = rot*hemisphereSample_uniform(p.x, p.y);			
+			glm::dvec3 refDir = rot*hemisphereSample_uniform(p.x, p.y);	
 
 			if (minNorm.z < 0)
-				refDir.z = -1.0*refDir.z;
-
-			/*if (glm::dot(minNorm, refDir) < 0)
-				minNorm = -1.0*minNorm;*/
+				refDir.z = -1.0*refDir.z;			
 
 			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);
 
 			refDir = glm::mix(glm::reflect(hit - _camera.pos, minNorm), refDir, 1.0);
 
-			i += 2*glm::dot(minNorm, refDir)*radiance(Ray(minHit + SHADOW_BIAS*minNorm, refDir), ++depth);
+			i += 2*glm::dot(minNorm, refDir)*radiance(Ray(minHit + SHADOW_BIAS*minNorm, glm::normalize(refDir)), ++depth);
 
 			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);
 		}
 		else
-			return glm::dvec3(1, 1, 1);
+			return glm::dvec3(0, 0, 0);
 	}
 
     bool running() const { return _running; }

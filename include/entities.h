@@ -76,8 +76,10 @@ struct sphere: Entity
 
 			normal = glm::normalize(intersect - pos);
 
-            double u = .5*acos((intersect.y - pos.y) / rad) / (M_PI) + .5;
-            double v = .5*atan((intersect.z - pos.z) / (intersect.x - pos.x)) / (2*M_PI) + .5;
+			glm::dvec3 d = (pos - intersect)/rad;
+
+			double v = .5 + asin(d.y) / M_PI;//.5*acos((intersect.y - pos.y) / rad) / (M_PI) + .5; 
+            double u = .5 + atan2(d.z, d.x) / (2 * M_PI);//.5*atan((intersect.z - pos.z) / (intersect.x - pos.x)) / (2*M_PI) + .5;
 
             uv = glm::dvec2(u, v);
 			//std::cout << "intersection\n";

@@ -18,6 +18,6 @@ struct Camera {
     glm::dvec3 up;
     glm::dvec3 forward;              // normalized vector of the view direction
 	glm::dvec3 right;
-    const double sensorDiag = 0.035*FOCAL_DIST; // diagonal of the sensor
+    const double sensorDiag = 0.035*FOCAL_DIST*2; // diagonal of the sensor
     const double focalDist = 0.04*FOCAL_DIST;   // focal distance
 };

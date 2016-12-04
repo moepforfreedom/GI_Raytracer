@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <QImage>
+#include <iostream>
 
 struct texture
 {
@@ -46,14 +47,14 @@ struct imageTexture : texture
 
 	imageTexture(const char* name, glm::dvec2 t) : texture(glm::dvec3(0, 0, 0)), fname(name), image(name), tile(t)
 	{
-
+		std::cout << "bits per pixel: " << image.pixelFormat().redSize() << "\n";
 	}
 
 	virtual glm::dvec3 get(glm::dvec2 uv)
 	{
-		auto p = image.pixel((int)(uv.x * image.width() * tile.x) % image.width(), (int)(uv.y * image.height() * tile.y) % image.height());
+		auto p = image.pixelColor((int)(uv.x * image.width() * tile.x) % image.width(), (int)(uv.y * image.height() * tile.y) % image.height());
 
-		return { qRed(p) / 255., qGreen(p) / 255., qBlue(p) / 255. };
+		return{ p.red() / 255.0, p.green() / 255.0, p.blue() / 255.0 };//*qRed(p) / 255., qGreen(p) / 255., qBlue(p) / 255. };
 	}
 
 	int tiles;
