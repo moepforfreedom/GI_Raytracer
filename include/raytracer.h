@@ -119,7 +119,7 @@ class RayTracer
 
                 #pragma omp critical
                 {
-                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var**//**glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
+                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var*glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
                 }
             }
           }
@@ -232,21 +232,23 @@ class RayTracer
 				(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
 				minNorm.x, minNorm.y, z);
 
-			glm::dvec3 refDir = rot*hemisphereSample_uniform(p.x, p.y);	
+			glm::dvec3 refDir = rot*hemisphereSample_cos(p.x, p.y, 2);
+			//refDir = glm::reflect(ray.dir, tmpNorm);
+			//refDir = glm::refract(ray.dir, minNorm, .75);
 
 			if (minNorm.z < 0)
-				refDir.z = -1.0*refDir.z;			
+				refDir.z = -1.0*refDir.z;
 
-			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);
+			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);// / current->material.roughness);
 
-			refDir = glm::mix(glm::reflect(hit - _camera.pos, minNorm), refDir, 1.0);
+			//refDir = glm::mix(glm::reflect(hit - _camera.pos, minNorm), refDir, 1.0);
 
-			i += 2*glm::dot(minNorm, refDir)*radiance(Ray(minHit + SHADOW_BIAS*minNorm, glm::normalize(refDir)), ++depth);
+			i += 1.0*/*glm::dot(minNorm, refDir)*/radiance(Ray(minHit + SHADOW_BIAS*minNorm, glm::normalize(refDir)), ++depth);
 
 			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);
 		}
 		else
-			return glm::dvec3(0, 0, 0);
+			return glm::dvec3(1, 1, 1);
 	}
 
     bool running() const { return _running; }

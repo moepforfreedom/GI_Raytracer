@@ -28,9 +28,9 @@ int main(int argc, char** argv)
     Octree* scene = new Octree({-70, -70, -70}, {70, 70, 70});
 
 
-	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 1, Material(new /*imageTexture("nightsky", glm::dvec2(1, 1))*/checkerboard(8, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .1)));
-	scene->push_back(new sphere(glm::dvec3(5, .5, 0), .5, Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75)));
-	scene->push_back(new sphere(glm::dvec3(6, .5, .75), .25, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75)));
+	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 1, Material(new checkerboard(8, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .1, 1)));
+	scene->push_back(new sphere(glm::dvec3(5, .5, 0), .5, Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
+	scene->push_back(new sphere(glm::dvec3(6, .5, .75), .25, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
 	glm::dvec3 pos = glm::dvec3(4.5, .5, .75);
 
 	std::vector<glm::dvec3> points;
@@ -49,30 +49,30 @@ int main(int argc, char** argv)
 						 (1.0 / (1 + z))*(norm.x*-norm.y), z + (1.0 / (1 + z))*-norm.x*-norm.x, -norm.y,
 						 norm.x, norm.y, z);
 
-		glm::dvec3 dir = rot*hemisphereSample_cos(p.x, p.y);
+		glm::dvec3 dir = rot*hemisphereSample_cos(p.x, p.y, 32);
 
 		if (norm.z < 0)
 			dir.z = -1.0*dir.z;
 
 		scene->push_back(new sphere(2.0*dir,  .01, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75)));
 	}*/
-	scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75)));
-	scene->push_back(new cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(.125, 0, 0)), .75)));
-	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 75, Material(new texture(glm::dvec3(0, 0, 0)), new imageTexture("HDR_029_Sky_Cloudy_Bg", glm::dvec2(1, 1))/*texture(glm::dvec3(.125, 0.125, .125))*/, .75)));
+	scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
+	scene->push_back(new cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
+	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 75, Material(new texture(glm::dvec3(0, 0, 0)), new imageTexture("HDR_029_Sky_Cloudy_Bg", glm::dvec2(1, 1)), .75, 1)));
 
-	scene->push_back(new coneMesh(scene, glm::dvec3(3, 0, 0), glm::dvec3(0.5, -.5, 0.0), 1.5, 3.0, 32, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)), .75)));
+	scene->push_back(new coneMesh(scene, glm::dvec3(3, 0, 0), glm::dvec3(0.5, -.5, 0.0), 1.5, 3.0, 32, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
 
-	sphereMesh(scene, glm::dvec3(0, 0, -5), 3, 3, Material(new texture(glm::dvec3(1, 0, 1)), new texture(glm::dvec3(0, 0, 0)), .75));
+	sphereMesh(scene, glm::dvec3(0, 0, -5), 3, 3, Material(new texture(glm::dvec3(1, 0, 1)), new texture(glm::dvec3(0, 0, 0)), .75, 1));
 
 	//scene->push_back(new quadMesh(scene, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 0), glm::dvec3(0, 0, 1), glm::dvec3(0, 1, .5), Material(glm::dvec3(0, 0, 1), glm::dvec3(0, 0, 0))));
 
-	scene->push_back(new boxMesh(scene, glm::dvec3(-1, -1, -1), glm::dvec3(2, 2, 2), glm::dvec3(.5, 1, 0), Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)), .75)));
+	scene->push_back(new boxMesh(scene, glm::dvec3(-1, -1, -1), glm::dvec3(2, 2, 2), glm::dvec3(.5, 1, 0), Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
 
-	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 1), Material(new texture(glm::dvec3(0.25, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .25));
+	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 1), Material(new texture(glm::dvec3(0.25, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .0015, 1));
 
-	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(new imageTexture("Stone_01_Diffuse", glm::dvec2(16, 16)), new texture(glm::dvec3(0, 0, 0)), 1));
+	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -6, -10), glm::dvec3(0, 0, 0), Material(new imageTexture("Stone_01_Diffuse", glm::dvec2(16, 16)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
 
-	//scene->push_back(new Light(glm::dvec3(10, 10, 20), glm::dvec3(1, 1, 1), 0));
+	scene->push_back(new Light(glm::dvec3(10, 10, 20), glm::dvec3(1, 1, 1), 0));
 
 
     raytracer.setScene(scene);

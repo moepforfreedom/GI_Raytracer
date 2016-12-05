@@ -13,10 +13,10 @@
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.001
 #define AA_JITTER 1
-#define MAX_DEPTH 1
+#define MAX_DEPTH 3
 #define NOISE_THRESH 0.003
-#define MIN_SAMPLES 4
-#define SAMPLES 16
+#define MIN_SAMPLES 8
+#define SAMPLES 128
 #define FOCAL_BLUR 0
 
 
@@ -77,10 +77,10 @@ inline glm::dvec3 hemisphereSample_uniform(float u, float v)
 	return glm::dvec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 }
 
-inline glm::dvec3 hemisphereSample_cos(float u, float v) 
+inline glm::dvec3 hemisphereSample_cos(float u, float v, double power) 
 {
 	float phi = v * 2.0 * M_PI;
-	float cosTheta = sqrt(1.0 - u);
+	float cosTheta = pow(1.0 - u, (1.0/power));
 	float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 	return glm::dvec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 }
