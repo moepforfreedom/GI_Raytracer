@@ -3,7 +3,7 @@
 #include <array>
 #include <memory>
 #include <vector>
-
+#include "util.h"
 #include <glm/glm.hpp>
 
 //Struct for all scene lights

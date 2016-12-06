@@ -1,7 +1,11 @@
+#ifndef _UTILS
+#define _UTILS
+
 #include <glm/glm.hpp>
 #include <random>
 #include <iostream>
 #include <ctime>
+#include <algorithm>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897
@@ -13,10 +17,10 @@
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.001
 #define AA_JITTER 1
-#define MAX_DEPTH 3
+#define MAX_DEPTH 1
 #define NOISE_THRESH 0.003
 #define MIN_SAMPLES 8
-#define SAMPLES 128
+#define SAMPLES 16
 #define FOCAL_BLUR 0
 
 
@@ -31,16 +35,6 @@ inline double drand()
 	return (double)rand() / RAND_MAX;
 }
 
-inline glm::dvec3 randomVec()
-{
-	return glm::dvec3((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
-}
-
-inline glm::dvec3 randomUnitVec()
-{
-	return glm::normalize(glm::dvec3(2*drand()-1, 2*drand()-1, 2*drand()-1));
-}
-
 inline int clamp(int min, int max, int val)
 {
 	if (val < min)
@@ -52,8 +46,7 @@ inline int clamp(int min, int max, int val)
 	return val;
 }
 
-
-inline float radicalInverse_VdC(uint bits) 
+inline float radicalInverse_VdC(unsigned int bits)
 {
 	bits = (bits << 16u) | (bits >> 16u);
 	bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
@@ -63,84 +56,25 @@ inline float radicalInverse_VdC(uint bits)
 	return float(bits) * 2.3283064365386963e-10; // / 0x100000000
 }
 
+glm::dvec3 randomVec();
+
+glm::dvec3 randomUnitVec();
+
 // generates a point of the hammersley point set, based on http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
-inline glm::dvec2 hammersley2d(uint i, uint N) 
-{
-	return glm::dvec2(float(i) / float(N), radicalInverse_VdC(i));
-}
+glm::dvec2 hammersley2d(unsigned int i, unsigned int N);
 
-inline glm::dvec3 hemisphereSample_uniform(float u, float v) 
-{
-	float phi = v * 2.0 * M_PI;
-	float cosTheta = 1.0 - u;
-	float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
-	return glm::dvec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
-}
+glm::dvec3 hemisphereSample_uniform(float u, float v);
 
-inline glm::dvec3 hemisphereSample_cos(float u, float v, double power) 
-{
-	float phi = v * 2.0 * M_PI;
-	float cosTheta = pow(1.0 - u, (1.0/power));
-	float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
-	return glm::dvec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
-}
+glm::dvec3 hemisphereSample_cos(float u, float v, double power);
 
-inline double PowerCosHemispherePdfW(const glm::dvec3  aNormal, glm::dvec3  aDirection, double  aPower)
-{
-	float cosTheta = std::max(0.0, glm::dot(aNormal, aDirection));
-	return (aPower + 1.0) * std::pow(cosTheta, aPower) * ((1.0/M_PI) * 0.5);
-}
+double PowerCosHemispherePdfW(const glm::dvec3  aNormal, glm::dvec3  aDirection, double  aPower);
+
+glm::dvec2 importance_sample_ggx(double x, double y, double a);
 
 //generates a sequence of subrandom numbers
-inline void subrand(std::vector<double>&out, int n)
-{
-	double primes[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31 };
-
-	double lastRand = drand();
-
-	double a = fmod(sqrt(primes[rand() % 11]), 1.0);
-
-	out.clear();
-
-	for (int i = 0; i < n; i++)
-	{
-		lastRand = fmod(lastRand + a, 1.0);
-
-		out.push_back(lastRand);
-	}
-}
+void subrand(std::vector<double>&out, int n);
 
 //generates a sequence of subrandom unit vectors
-inline void subrandUnitVec(std::vector<glm::dvec3>&out, int n)
-{
-	double primes[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31 };
+void subrandUnitVec(std::vector<glm::dvec3>&out, int n);
 
-	glm::dvec3 lastRand = randomVec();
-
-	glm::dvec3 tmp;
-
-	glm::dvec3 a = glm::dvec3(fmod(sqrt(primes[rand() % 11]), 1.0), fmod(sqrt(primes[rand() % 11]), 1.0), fmod(sqrt(primes[rand() % 11]), 1.0));
-
-	out.clear();
-
-	for (int i = 0; i < n; i++)
-	{
-		//lastRand.x = fmod(lastRand.x + a.x, 1.0);
-
-		//lastRand.y = fmod(lastRand.y + a.y, 1.0);
-
-		//lastRand.z = fmod(lastRand.z + a.z, 1.0);
-
-		lastRand.x = hammersley2d(i, n).x;
-		
-		lastRand.y = hammersley2d(i, n).y;
-
-		tmp = glm::dvec3(2.0*lastRand.x - 1, 2.0*lastRand.y - 1, 2.0*lastRand.z - 1);
-
-		//std::cout << glm::normalize(tmp).x << ", " << glm::normalize(tmp).y << ", " << glm::normalize(tmp).z << "\n";
-
-		double theta = acos(2 * lastRand.y - 1);
-
-		out.push_back(glm::dvec3(sin(theta) * cos(2 * lastRand.x*M_PI), sin(theta) * sin(2 * lastRand.x*M_PI), cos(theta)));
-	}
-}
+#endif

@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "gui.h"
 #include "meshLoader.h"
+#include "util.h"
 #include <ctime>
 
 int main(int argc, char** argv)

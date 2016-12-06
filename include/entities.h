@@ -8,9 +8,9 @@
 #include "bbox.h"
 #include "material.h"
 #include "ray.h"
-#include "util.h"
 #include <iostream>
 #include "octree.h"
+//#include "util.h"
 
 /// A base class for all entities in the scene.
 struct Entity

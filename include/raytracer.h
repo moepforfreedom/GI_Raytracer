@@ -13,6 +13,7 @@
 #include "octree.h"
 #include "omp.h"
 #include <ctime>
+#include "util.h"
 
 class RayTracer
 {
@@ -232,8 +233,12 @@ class RayTracer
 				(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
 				minNorm.x, minNorm.y, z);
 
-			glm::dvec3 refDir = rot*hemisphereSample_cos(p.x, p.y, 2);
-			//refDir = glm::reflect(ray.dir, tmpNorm);
+
+			glm::dvec2 g = importance_sample_ggx(p.x, p.y, .5);
+			glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 2);
+
+			glm::dvec3 refDir;// = rot*hemisphereSample_cos(p.x, p.y, 2);
+			refDir = glm::reflect(ray.dir, tmpNorm);
 			//refDir = glm::refract(ray.dir, minNorm, .75);
 
 			if (minNorm.z < 0)

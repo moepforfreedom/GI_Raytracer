@@ -11,7 +11,7 @@ set(CMAKE_PREFIX_PATH /media/philip/Data2/qt_linux/5.7/gcc_64)
 find_package(Qt5Widgets)
 find_package(Threads)
 
-set(SOURCES main.cpp include/octree.cpp include/meshLoader.cpp)
+set(SOURCES main.cpp include/octree.cpp include/meshLoader.cpp include/util.cpp)
 set(HEADERS include/gui.h include/image.h include/ray.h include/entities.h include/camera.h include/raytracer.h include/viewer.h include/octree.h include/bbox.h include/material.h include/util.h include/meshLoader.h include/light.h)
 
 add_executable(global-illu ${SOURCES} ${HEADERS})
