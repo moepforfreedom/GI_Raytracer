@@ -209,17 +209,19 @@ class RayTracer
 
 					if (t->intersect(shadow_ray, t_shadow))
 					{
-						shadow = (t_shadow < maxt);// (vecLengthSquared(shadow_hit - minHit) < maxt*maxt);
+						shadow = (t_shadow < maxt);
 					}
 					shadow_it++;
 				}
 
 				if (!shadow)
 				{
-					double l = pow(glm::dot(minNorm, glm::normalize(lightDir)), 1);// / current->material.roughness);
+					double d = glm::dot(minNorm, glm::normalize(lightDir));
 
-					if (l < 0)
-						l = 0;
+					if (d < 0)
+						d = 0;
+
+					double l = pow(d, 1 / current->material.roughness);					
 
 					i += light->col*l;
 				}
