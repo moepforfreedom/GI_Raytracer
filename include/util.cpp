@@ -92,7 +92,7 @@ void subrandUnitVec(std::vector<glm::dvec3>&out, int n)
 
 glm::dvec2 importance_sample_ggx(double x, double y, double a)
 {
-	float phi = 2.0f * M_PI * x;
+	float phi = 2.0 * M_PI * x;
 	float theta = acos(sqrt((1.0 - y)/((a*a - 1.0) * y + 1.0)));
 	return glm::dvec2(phi, theta);
 }

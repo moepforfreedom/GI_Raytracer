@@ -120,7 +120,7 @@ class RayTracer
 
                 #pragma omp critical
                 {
-                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var*glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
+                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var*//**glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
                 }
             }
           }
@@ -216,7 +216,7 @@ class RayTracer
 
 				if (!shadow)
 				{
-					double l = glm::dot(minNorm, glm::normalize(lightDir));
+					double l = pow(glm::dot(minNorm, glm::normalize(lightDir)), 1);// / current->material.roughness);
 
 					if (l < 0)
 						l = 0;
@@ -235,14 +235,19 @@ class RayTracer
 
 
 			glm::dvec2 g = importance_sample_ggx(p.x, p.y, .5);
-			glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 2);
+			glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 2 / current->material.roughness);
 
-			glm::dvec3 refDir;// = rot*hemisphereSample_cos(p.x, p.y, 2);
-			refDir = glm::reflect(ray.dir, tmpNorm);
+			glm::dvec3 refDir;// = rot*hemisphereSample_cos(p.x, p.y, 2);			
 			//refDir = glm::refract(ray.dir, minNorm, .75);
 
 			if (minNorm.z < 0)
+			{
 				refDir.z = -1.0*refDir.z;
+				tmpNorm.z = -1.0*tmpNorm.z;
+			}
+
+			refDir = glm::reflect(ray.dir, tmpNorm);
+				
 
 			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);// / current->material.roughness);
 
