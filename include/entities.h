@@ -283,6 +283,7 @@ struct triangle: Entity
 	glm::dvec3 norm;
 	glm::dvec3 hitNorm;
 	glm::dvec3 tmpNorm;
+	double inv_area;
 
 	triangle(vertex* v1, vertex* v2, vertex* v3, const Material& material) : Entity(material)
 	{
@@ -291,6 +292,8 @@ struct triangle: Entity
 		vertices[2] = v3;
 
 		norm = glm::normalize(glm::cross((v2->pos - v1->pos), (v3->pos - v1->pos)));
+
+		inv_area = 1.0 / glm::length(glm::cross(vertices[0]->pos - vertices[1]->pos, vertices[0]->pos - vertices[2]->pos));
 	}
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
@@ -328,13 +331,11 @@ struct triangle: Entity
 			glm::dvec3 d1 = intersect - vertices[0]->pos;
 			glm::dvec3 d2 = intersect - vertices[1]->pos;
 			glm::dvec3 d3 = intersect - vertices[2]->pos;
+			
 
-
-			double area = glm::length(glm::cross(vertices[0]->pos - vertices[1]->pos, vertices[0]->pos - vertices[2]->pos));
-
-			double a1 = glm::length(glm::cross(d2, d3)) / area;
-			double a2 = glm::length(glm::cross(d3, d1)) / area;
-			double a3 = glm::length(glm::cross(d1, d2)) / area;
+			double a1 = glm::length(glm::cross(d2, d3)) * inv_area;
+			double a2 = glm::length(glm::cross(d3, d1)) * inv_area;
+			double a3 = glm::length(glm::cross(d1, d2)) * inv_area;
 
 
 			normal = a1*vertices[0]->norm + a2*vertices[1]->norm + a3*vertices[2]->norm;

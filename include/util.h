@@ -25,7 +25,7 @@
 
 
 //squared vector length
-inline double vecLengthSquared(glm::dvec3 vec)
+inline double vecLengthSquared(glm::dvec3& vec)
 {
 	return vec.x*vec.x + vec.y*vec.y + vec.z*vec.z;
 }

@@ -32,7 +32,7 @@ struct BoundingBox
     }
 
     /// Check if a point lies within the bounding box.
-    bool contains(glm::dvec3 point) const
+    bool contains(glm::dvec3& point) const
 	{
 		if ((point - min).x > 0 && (point - min).y > 0 && (point - min).z > 0 && (point - max).x > 0 && (point - max).y > 0 && (point - max).z > 0)
 			return true;
@@ -43,33 +43,13 @@ struct BoundingBox
 	//checks if a Ray intersects the bounding box, implementation based on Peter Shirleys algorithm
 	inline bool intersect(const Ray& ray, double tmin, double tmax, double& toutmin, double& toutmax) const
 	{
-		//store vectors in arrays to avoid code duplication
-		double minPos[3], maxPos[3], rayOrigin[3], rayDir[3];
-
-		minPos[0] = min.x;
-		minPos[1] = min.y;
-		minPos[2] = min.z;
-
-		maxPos[0] = max.x;
-		maxPos[1] = max.y;
-		maxPos[2] = max.z;
-
-		rayOrigin[0] = ray.origin.x;
-		rayOrigin[1] = ray.origin.y;
-		rayOrigin[2] = ray.origin.z;
-
-		rayDir[0] = ray.dir.x;
-		rayDir[1] = ray.dir.y;
-		rayDir[2] = ray.dir.z;
-
-		double t0, t1;
 		for (int i = 0; i < 3; i++)
 		{
-			double invD = 1.0f / rayDir[i];
-			t0 = (minPos[i] - rayOrigin[i]) * invD;
-			t1 = (maxPos[i] - rayOrigin[i]) * invD;
+			double invD = 1.0 / ray.dir[i];
+			double t0 = (min[i] - ray.origin[i]) * invD;
+			double t1 = (max[i] - ray.origin[i]) * invD;
 
-			if (invD < 0.0f)
+			if (invD < 0.0)
 			{
 				double tmp = t0;
 				t0 = t1;
@@ -86,6 +66,31 @@ struct BoundingBox
 		}
 		toutmin = tmin;
 		toutmax = tmax;
+		return true;
+	}
+
+	//checks if a Ray intersects the bounding box, implementation based on Peter Shirleys algorithm
+	inline bool intersectSimple(const Ray& ray, double tmin, double tmax) const
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			double invD = 1.0 / ray.dir[i];
+			double t0 = (min[i] - ray.origin[i]) * invD;
+			double t1 = (max[i] - ray.origin[i]) * invD;
+
+			if (invD < 0.0)
+			{
+				double tmp = t0;
+				t0 = t1;
+				t1 = tmp;
+			}
+			tmin = t0 > tmin ? t0 : tmin;
+			tmax = t1 < tmax ? t1 : tmax;
+			if (tmax <= tmin)
+			{
+				return false;
+			}
+		}
 		return true;
 	}
 };

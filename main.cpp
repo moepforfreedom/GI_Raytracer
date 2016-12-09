@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 
 
 	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 1, Material(new checkerboard(8, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .1, 1)));
-	scene->push_back(new sphere(glm::dvec3(5, .5, 0), .5, Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .0002, 1)));
+	scene->push_back(new sphere(glm::dvec3(5, .5, 0), .5, Material(new texture(glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .0001, 1)));
 	scene->push_back(new sphere(glm::dvec3(6, .5, .75), .25, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
 	glm::dvec3 pos = glm::dvec3(4.5, .5, .75);
 

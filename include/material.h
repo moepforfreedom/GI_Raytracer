@@ -11,7 +11,7 @@ struct texture
 
     }
 
-    virtual glm::dvec3 get(glm::dvec2 uv)
+    virtual glm::dvec3 get(glm::dvec2& uv)
     {
         return color;
     }
@@ -27,7 +27,7 @@ struct checkerboard: texture
     {
     }
 
-    virtual glm::dvec3 get(glm::dvec2 uv)
+    virtual glm::dvec3 get(glm::dvec2& uv)
     {
         if(((int)(uv.x * tiles) % 2 == 0) ^ ((int)(uv.y * tiles) % 2 == 0))
             return a;
@@ -50,7 +50,7 @@ struct imageTexture : texture
 		std::cout << "bits per pixel: " << image.pixelFormat().redSize() << "\n";
 	}
 
-	virtual glm::dvec3 get(glm::dvec2 uv)
+	virtual glm::dvec3 get(glm::dvec2& uv)
 	{
 		auto p = image.pixelColor((int)(uv.x * image.width() * tile.x) % image.width(), (int)(uv.y * image.height() * tile.y) % image.height());
 

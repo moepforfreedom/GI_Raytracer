@@ -178,14 +178,11 @@ class RayTracer
 				}
 				++it;
 			}
-			nd++;
+			++nd;
 		}
 		if (intersected)
 		{
 			glm::dvec3 i(0, 0, 0);
-
-			/*if (glm::dot(ray.dir, minNorm) > 0)
-				minNorm = -1.0*minNorm;*/
 
 			for (Light* light : _scene->lights)
 			{
@@ -195,24 +192,7 @@ class RayTracer
 
 				Ray shadow_ray(minHit + SHADOW_BIAS*minNorm, lightDir);
 
-
-				std::vector<Entity*> shadow_objects = _scene->intersect(shadow_ray, SHADOW_BIAS, maxt);
-
-				std::vector<Entity*>::iterator shadow_it = shadow_objects.begin();
-
-				while (!shadow && shadow_it != shadow_objects.end())
-				{
-					Entity* t = *shadow_it;
-					glm::dvec3 shadow_hit, shadow_norm;
-					glm::dvec2 shadow_uv;
-					double t_shadow;
-
-					if (t->intersect(shadow_ray, t_shadow))
-					{
-						shadow = (t_shadow < maxt);
-					}
-					shadow_it++;
-				}
+				shadow = !visible(shadow_ray, maxt);
 
 				if (!shadow)
 				{
@@ -253,14 +233,36 @@ class RayTracer
 
 			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);// / current->material.roughness);
 
-			//refDir = glm::mix(glm::reflect(hit - _camera.pos, minNorm), refDir, 1.0);
-
-			i += 1.0*/*glm::dot(minNorm, refDir)*/radiance(Ray(minHit + SHADOW_BIAS*minNorm, glm::normalize(refDir)), ++depth);
+			i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + SHADOW_BIAS*minNorm, glm::normalize(refDir)), ++depth);
 
 			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);
 		}
 		else
 			return glm::dvec3(1, 1, 1);
+	}
+
+
+	//checks if the given ray is visible, meaning that nothing overlaps it
+	bool visible(Ray& ray, double mt)
+	{
+		bool hit = false;
+		std::vector<Entity*> shadow_objects = _scene->intersect(ray, SHADOW_BIAS, mt);
+
+		std::vector<Entity*>::iterator shadow_it = shadow_objects.begin();
+
+		while (!hit && shadow_it != shadow_objects.end())
+		{
+			Entity* t = *shadow_it;
+			double t_shadow;
+
+			if (t->intersect(ray, t_shadow))
+			{
+				hit = (t_shadow < mt);
+			}
+			++shadow_it;
+		}
+
+		return !hit;
 	}
 
     bool running() const { return _running; }

@@ -86,15 +86,12 @@ void Octree::Node::debugVis(Node* root, Node* current)
 std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax) const
 {
 	std::vector<Entity*> res;
+	res.reserve(256);
 
 	//return _root._entities;
 
-	double t0, t1;
+	_root.intersect(ray, res, tmin, tmax);
 
-	if (_root._bbox.intersect(ray, tmin, tmax, t0, t1))
-	{
-		_root.intersect(ray, res, tmin, tmax);
-	}
 
 	//remove duplicates if lots of objects are returned
 	if (res.size() > DUPLICATE_THRESHOLD)
@@ -112,12 +109,7 @@ std::vector<const Octree::Node*> Octree::intersectSorted(const Ray& ray, double 
 {
 	std::vector<const Octree::Node*> res;
 
-	double t0, t1;
-
-	if (_root._bbox.intersect(ray, tmin, tmax, t0, t1))
-	{
-		_root.intersectSorted(ray, res, tmin, tmax);
-	}
+	_root.intersectSorted(ray, res, tmin, tmax);
 
 	return res;
 }
@@ -129,7 +121,7 @@ Octree::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const
 {
 	double t0, t1;
-	if (_bbox.intersect(ray, tmin, tmax, t0, t1))
+	if (_bbox.intersectSimple(ray, tmin, tmax))
 	{
 		if (is_leaf())
 		{
