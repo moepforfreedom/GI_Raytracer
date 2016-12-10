@@ -131,7 +131,7 @@ class RayTracer
 		std::cout << "average intersection tests: " << avgTests << "\n";
     }
 
-	glm::dvec3 radiance(Ray& ray, int depth)
+	glm::dvec3 radiance(Ray ray, int depth)
 	{
 		if (depth > MAX_DEPTH)
 			return glm::dvec3(0, 0, 0);
@@ -201,13 +201,13 @@ class RayTracer
 					if (d < 0)
 						d = 0;
 
-					double l = pow(d, 1 / current->material.roughness);					
+					double l = pow(d, 1);// / current->material.roughness);
 
 					i += light->col*l;
 				}
 			}
 
-			glm::dvec2 p = hammersley2d(rand() % 250, 250);				
+			glm::dvec2 p = hammersley2d(rand() % 250, 250);
 
 			double z = abs(minNorm.z);
 
@@ -217,23 +217,23 @@ class RayTracer
 
 
 			glm::dvec2 g = importance_sample_ggx(p.x, p.y, .5);
-			glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 2 / current->material.roughness);
+			//glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 2 / current->material.roughness);
 
-			glm::dvec3 refDir;// = rot*hemisphereSample_cos(p.x, p.y, 2);			
+			glm::dvec3 refDir = rot*hemisphereSample_cos(p.x, p.y, 2);
 			//refDir = glm::refract(ray.dir, minNorm, .75);
 
 			if (minNorm.z < 0)
 			{
 				refDir.z = -1.0*refDir.z;
-				tmpNorm.z = -1.0*tmpNorm.z;
+				//tmpNorm.z = -1.0*tmpNorm.z;
 			}
 
-			refDir = glm::reflect(ray.dir, tmpNorm);
-				
+			//refDir = glm::reflect(ray.dir, minNorm);
+
 
 			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);// / current->material.roughness);
 
-			i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + SHADOW_BIAS*minNorm, glm::normalize(refDir)), ++depth);
+			i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + SHADOW_BIAS*minNorm, refDir), ++depth);
 
 			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);
 		}

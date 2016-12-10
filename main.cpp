@@ -40,11 +40,11 @@ int main(int argc, char** argv)
 
 	/*for (int i = 0; i < 5500; i++)
 	{
-		glm::dvec2 p = hammersley2d(rand() % 5500, 5500);		
+		glm::dvec2 p = hammersley2d(rand() % 5500, 5500);
 
 		glm::dvec3 norm = glm::normalize(glm::dvec3(0, 1, -1));
 
-		double z = abs(norm.z);		
+		double z = abs(norm.z);
 
 		glm::dmat3x3 rot(z + (1.0 / (1 + z))*-norm.y*-norm.y, (1.0 / (1 + z))*(norm.x*-norm.y), -norm.x,
 						 (1.0 / (1 + z))*(norm.x*-norm.y), z + (1.0 / (1 + z))*-norm.x*-norm.x, -norm.y,
@@ -57,8 +57,8 @@ int main(int argc, char** argv)
 
 		scene->push_back(new sphere(2.0*dir,  .01, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75)));
 	}*/
-	scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
-	scene->push_back(new cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
+	//scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
+	//scene->push_back(new cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
 	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 75, Material(new texture(glm::dvec3(0, 0, 0)), new imageTexture("HDR_029_Sky_Cloudy_Bg", glm::dvec2(1, 1)), .75, 1)));
 
 	scene->push_back(new coneMesh(scene, glm::dvec3(3, 0, 0), glm::dvec3(0.5, -.5, 0.0), 1.5, 3.0, 32, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));

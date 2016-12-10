@@ -45,10 +45,10 @@ struct BoundingBox
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			double t0 = (min[i] - ray.origin[i]) * ray.invDir[i];
-			double t1 = (max[i] - ray.origin[i]) * ray.invDir[i];
+            double t0 = ((&min.x)[i] - (&ray.origin.x)[i]) * (&ray.invDir.x)[i];
+			double t1 = ((&max.x)[i] - (&ray.origin.x)[i]) * (&ray.invDir.x)[i];
 
-			if (ray.invDir[i] < 0.0)
+			if ((&ray.invDir.x)[i] < 0.0)
 			{
 				double tmp = t0;
 				t0 = t1;
@@ -73,10 +73,10 @@ struct BoundingBox
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			double t0 = (min[i] - ray.origin[i]) * ray.invDir[i];
-			double t1 = (max[i] - ray.origin[i]) * ray.invDir[i];
+			double t0 = ((&min.x)[i] - (&ray.origin.x)[i]) * (&ray.invDir.x)[i];
+			double t1 = ((&max.x)[i] - (&ray.origin.x)[i]) * (&ray.invDir.x)[i];
 
-			if (ray.invDir[i] < 0.0)
+			if ((&ray.invDir.x)[i] < 0.0)
 			{
 				double tmp = t0;
 				t0 = t1;

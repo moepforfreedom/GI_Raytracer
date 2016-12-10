@@ -19,13 +19,13 @@
 #define AA_JITTER 1
 #define MAX_DEPTH 4
 #define NOISE_THRESH 0.004
-#define MIN_SAMPLES 8
-#define SAMPLES 64
+#define MIN_SAMPLES 4
+#define SAMPLES 16
 #define FOCAL_BLUR 0
 
 
 //squared vector length
-inline double vecLengthSquared(glm::dvec3& vec)
+inline double vecLengthSquared(glm::dvec3 vec)
 {
 	return vec.x*vec.x + vec.y*vec.y + vec.z*vec.z;
 }
