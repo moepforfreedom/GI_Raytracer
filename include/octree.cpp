@@ -93,13 +93,13 @@ std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax)
 	_root.intersect(ray, res, tmin, tmax);
 
 
-	//remove duplicates if lots of objects are returned
+	/*//remove duplicates if lots of objects are returned
 	if (res.size() > DUPLICATE_THRESHOLD)
 	{
 		std::sort(res.begin(), res.end());
 
 		res.erase(std::unique(res.begin(), res.end()), res.end());
-	}
+	}*/
 
 	return res;
 }
@@ -120,7 +120,6 @@ Octree::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 //returns a list of objects within a node that can potentially intersect the given ray
 void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const
 {
-	double t0, t1;
 	if (_bbox.intersectSimple(ray, tmin, tmax))
 	{
 		if (is_leaf())

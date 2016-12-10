@@ -37,7 +37,7 @@ glm::dvec3 hemisphereSample_cos(float u, float v, double power)
 	return glm::dvec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 }
 
-double PowerCosHemispherePdfW(const glm::dvec3  aNormal, glm::dvec3  aDirection, double  aPower)
+double PowerCosHemispherePdfW(glm::dvec3  aNormal, glm::dvec3  aDirection, double  aPower)
 {
 	float cosTheta = std::max(0.0, glm::dot(aNormal, aDirection));
 	return (aPower + 1.0) * std::pow(cosTheta, aPower) * ((1.0 / M_PI) * 0.5);
