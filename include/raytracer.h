@@ -14,6 +14,8 @@
 #include "omp.h"
 #include <ctime>
 #include "util.h"
+#include "halton_enum.h"
+#include "halton_sampler.h"
 
 class RayTracer
 {
@@ -137,49 +139,13 @@ class RayTracer
 			return glm::dvec3(0, 0, 0);
 
 
-		glm::dvec3 hit, minHit, norm, minNorm;
-		glm::dvec2 uv, minUV;
-
-		bool intersected = false;
-
-		std::vector<const Octree::Node*> nodes = _scene->intersectSorted(ray, 0, INFINITY);
-
-		std::vector<const Octree::Node*>::iterator nd = nodes.begin();
-
-		//avgTests += objects.size();
+		glm::dvec3 minHit, minNorm;
+		glm::dvec2 minUV;
 
 		Entity* current;
-		bool term = false;
 
-		while (nd != nodes.end() && !term)
-		{
-			//lastIntersect = intersected;
+		bool intersected = trace(ray, minHit, minNorm, minUV, current);
 
-			const Octree::Node* curNode = *nd;
-
-			std::vector<Entity*>::const_iterator it = curNode->_entities.begin();
-
-			while (it != curNode->_entities.end())
-			{
-				Entity* tmp = *it;
-				if (tmp->intersect(ray, hit, norm, uv))
-				{
-					if ((!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos)))
-					{
-						current = tmp;
-						minHit = hit;
-						minNorm = norm;
-						minUV = uv;
-						intersected = true;
-
-						if((vecLengthSquared(hit - _camera.pos) < pow(*curNode->maxt, 2)))
-							term = true;
-					}
-				}
-				++it;
-			}
-			++nd;
-		}
 		if (intersected)
 		{
 			glm::dvec3 i(0, 0, 0);
@@ -263,6 +229,54 @@ class RayTracer
 		}
 
 		return !hit;
+	}
+
+	bool trace(Ray& ray, glm::dvec3& minHit, glm::dvec3&minNorm, glm::dvec2& minUV, Entity*& obj)
+	{
+		glm::dvec3 hit, norm;
+		glm::dvec2 uv;
+
+		bool intersected = false;
+
+		std::vector<const Octree::Node*> nodes = _scene->intersectSorted(ray, 0, INFINITY);
+
+		std::vector<const Octree::Node*>::iterator nd = nodes.begin();
+
+		//avgTests += objects.size();
+
+		Entity* current;
+		bool term = false;
+
+		while (nd != nodes.end() && !term)
+		{
+			const Octree::Node* curNode = *nd;
+
+			std::vector<Entity*>::const_iterator it = curNode->_entities.begin();
+
+			while (it != curNode->_entities.end())
+			{
+				Entity* tmp = *it;
+				if (tmp->intersect(ray, hit, norm, uv))
+				{
+					if ((!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos)))
+					{
+						current = tmp;
+						minHit = hit;
+						minNorm = norm;
+						minUV = uv;
+						intersected = true;
+
+						if ((vecLengthSquared(hit - _camera.pos) < pow(*curNode->maxt, 2)))
+							term = true;
+					}
+				}
+				++it;
+			}
+			++nd;
+		}
+
+		obj = current;
+		return intersected;
 	}
 
     bool running() const { return _running; }
