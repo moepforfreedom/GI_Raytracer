@@ -17,6 +17,8 @@
 #include "halton_enum.h"
 #include "halton_sampler.h"
 
+int p = 0;
+
 class RayTracer
 {
   public:
@@ -63,11 +65,15 @@ class RayTracer
 		std::vector<double> yrand;
 		subrand(yrand, 25000);
 
+        Halton_sampler sampler;
+        sampler.init_faure();
+
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10) //OpenMP
         for (int y = 0; y < h; ++y)
 		{
 		  srand(std::time(0) + rand());
+
           if(_running)
           {
             for (int x = 0; x < w; ++x)
@@ -97,9 +103,9 @@ class RayTracer
 					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));
 
 					if (s == 0)
-						color = radiance(ray, 0);
+						color = radiance(ray, 0, sampler, s);
 					else
-					color = (1.0*s*color + radiance(ray, 0))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
+					color = (1.0*s*color + radiance(ray, 0, sampler, s))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
 
 					if (s > 0)
 					{
@@ -116,6 +122,7 @@ class RayTracer
 
 					s++;
 					samps++;
+                    p++;
 				}
 
 				vars[x + w*y] = var;
@@ -133,11 +140,16 @@ class RayTracer
 		std::cout << "average intersection tests: " << avgTests << "\n";
     }
 
-	glm::dvec3 radiance(Ray ray, int depth)
+	glm::dvec3 radiance(Ray ray, int depth, Halton_sampler& halton_sampler, int sample)
 	{
 		if (depth > MAX_DEPTH)
 			return glm::dvec3(0, 0, 0);
 
+
+        float sx = halton_sampler.sample(0 + 2*depth, sample);
+        float sy = halton_sampler.sample(1 + 2*depth, sample);
+
+        //std::cout << sample << "\n";
 
 		glm::dvec3 minHit, minNorm;
 		glm::dvec2 minUV;
@@ -173,7 +185,7 @@ class RayTracer
 				}
 			}
 
-			glm::dvec2 p = hammersley2d(rand() % 250, 250);
+			glm::dvec2 p = hammersley2d(sample % 150, 150);
 
 			double z = abs(minNorm.z);
 
@@ -185,7 +197,7 @@ class RayTracer
 			glm::dvec2 g = importance_sample_ggx(p.x, p.y, .5);
 			//glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 2 / current->material.roughness);
 
-			glm::dvec3 refDir = rot*hemisphereSample_cos(p.x, p.y, 2);
+			glm::dvec3 refDir = rot*hemisphereSample_cos(sx, sy, 2);
 			//refDir = glm::refract(ray.dir, minNorm, .75);
 
 			if (minNorm.z < 0)
@@ -199,7 +211,7 @@ class RayTracer
 
 			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);// / current->material.roughness);
 
-			i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + SHADOW_BIAS*minNorm, refDir), ++depth);
+			i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + SHADOW_BIAS*minNorm, refDir), ++depth, halton_sampler, sample);
 
 			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);
 		}

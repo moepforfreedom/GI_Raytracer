@@ -10,6 +10,8 @@
 #include "meshLoader.h"
 #include "util.h"
 #include <ctime>
+#include <iomanip>
+#include <limits>
 
 int main(int argc, char** argv)
 {
@@ -38,11 +40,21 @@ int main(int argc, char** argv)
 	points.reserve(25000);
 	subrandUnitVec(points, 25000);
 
+	Halton_sampler halton_sampler;
+
+    halton_sampler.init_faure();
+	//const Halton_enum halton_enum(width, height);
+
 	/*for (int i = 0; i < 5500; i++)
 	{
 		glm::dvec2 p = hammersley2d(rand() % 5500, 5500);
 
 		glm::dvec3 norm = glm::normalize(glm::dvec3(0, 1, -1));
+
+		//const unsigned index = halton_enum.get_index(i, x, y);
+
+		const float sx = halton_sampler.sample(0, i);
+        const float sy = halton_sampler.sample(1, i);
 
 		double z = abs(norm.z);
 
@@ -50,12 +62,12 @@ int main(int argc, char** argv)
 						 (1.0 / (1 + z))*(norm.x*-norm.y), z + (1.0 / (1 + z))*-norm.x*-norm.x, -norm.y,
 						 norm.x, norm.y, z);
 
-		glm::dvec3 dir = rot*hemisphereSample_cos(p.x, p.y, 32);
+		glm::dvec3 dir = rot*hemisphereSample_cos(sx, sy, 1);
 
 		if (norm.z < 0)
 			dir.z = -1.0*dir.z;
 
-		scene->push_back(new sphere(2.0*dir,  .01, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75)));
+		scene->push_back(new sphere(2.0*dir,  .01, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
 	}*/
 	//scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
 	//scene->push_back(new cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));

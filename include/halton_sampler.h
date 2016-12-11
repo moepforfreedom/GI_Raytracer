@@ -1435,7 +1435,7 @@ inline float Halton_sampler::halton3(const unsigned index) const
     return (m_perm3[index % 243u] * 14348907u +
             m_perm3[(index / 243u) % 243u] * 59049u +
             m_perm3[(index / 59049u) % 243u] * 243u +
-            m_perm3[(index / 14348907u) % 243u]) * float(0x1.fffffcp-1 / 3486784401u); // Results in [0,1).
+            m_perm3[(index / 14348907u) % 243u]) * float(0.9999998807907104 / 3486784401u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton5(const unsigned index) const
@@ -1443,14 +1443,14 @@ inline float Halton_sampler::halton5(const unsigned index) const
     return (m_perm5[index % 125u] * 1953125u +
             m_perm5[(index / 125u) % 125u] * 15625u +
             m_perm5[(index / 15625u) % 125u] * 125u +
-            m_perm5[(index / 1953125u) % 125u]) * float(0x1.fffffcp-1 / 244140625u); // Results in [0,1).
+            m_perm5[(index / 1953125u) % 125u]) * float(0.9999998807907104 / 244140625u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton7(const unsigned index) const
 {
     return (m_perm7[index % 343u] * 117649u +
             m_perm7[(index / 343u) % 343u] * 343u +
-            m_perm7[(index / 117649u) % 343u]) * float(0x1.fffffcp-1 / 40353607u); // Results in [0,1).
+            m_perm7[(index / 117649u) % 343u]) * float(0.9999998807907104 / 40353607u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton11(const unsigned index) const
@@ -1458,7 +1458,7 @@ inline float Halton_sampler::halton11(const unsigned index) const
     return (m_perm11[index % 121u] * 1771561u +
             m_perm11[(index / 121u) % 121u] * 14641u +
             m_perm11[(index / 14641u) % 121u] * 121u +
-            m_perm11[(index / 1771561u) % 121u]) * float(0x1.fffffcp-1 / 214358881u); // Results in [0,1).
+            m_perm11[(index / 1771561u) % 121u]) * float(0.9999998807907104 / 214358881u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton13(const unsigned index) const
@@ -1466,21 +1466,21 @@ inline float Halton_sampler::halton13(const unsigned index) const
     return (m_perm13[index % 169u] * 4826809u +
             m_perm13[(index / 169u) % 169u] * 28561u +
             m_perm13[(index / 28561u) % 169u] * 169u +
-            m_perm13[(index / 4826809u) % 169u]) * float(0x1.fffffcp-1 / 815730721u); // Results in [0,1).
+            m_perm13[(index / 4826809u) % 169u]) * float(0.9999998807907104 / 815730721u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton17(const unsigned index) const
 {
     return (m_perm17[index % 289u] * 83521u +
             m_perm17[(index / 289u) % 289u] * 289u +
-            m_perm17[(index / 83521u) % 289u]) * float(0x1.fffffcp-1 / 24137569u); // Results in [0,1).
+            m_perm17[(index / 83521u) % 289u]) * float(0.9999998807907104 / 24137569u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton19(const unsigned index) const
 {
     return (m_perm19[index % 361u] * 130321u +
             m_perm19[(index / 361u) % 361u] * 361u +
-            m_perm19[(index / 130321u) % 361u]) * float(0x1.fffffcp-1 / 47045881u); // Results in [0,1).
+            m_perm19[(index / 130321u) % 361u]) * float(0.9999998807907104 / 47045881u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton23(const unsigned index) const
@@ -1491,7 +1491,7 @@ inline float Halton_sampler::halton23(const unsigned index) const
             m_perm23[(index / 12167u) % 23u] * 12167u +
             m_perm23[(index / 279841u) % 23u] * 529u +
             m_perm23[(index / 6436343u) % 23u] * 23u +
-            m_perm23[(index / 148035889u) % 23u]) * float(0x1.fffffcp-1 / 3404825447u); // Results in [0,1).
+            m_perm23[(index / 148035889u) % 23u]) * float(0.9999998807907104 / 3404825447u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton29(const unsigned index) const
@@ -1501,7 +1501,7 @@ inline float Halton_sampler::halton29(const unsigned index) const
             m_perm29[(index / 841u) % 29u] * 24389u +
             m_perm29[(index / 24389u) % 29u] * 841u +
             m_perm29[(index / 707281u) % 29u] * 29u +
-            m_perm29[(index / 20511149u) % 29u]) * float(0x1.fffffcp-1 / 594823321u); // Results in [0,1).
+            m_perm29[(index / 20511149u) % 29u]) * float(0.9999998807907104 / 594823321u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton31(const unsigned index) const
@@ -1511,7 +1511,7 @@ inline float Halton_sampler::halton31(const unsigned index) const
             m_perm31[(index / 961u) % 31u] * 29791u +
             m_perm31[(index / 29791u) % 31u] * 961u +
             m_perm31[(index / 923521u) % 31u] * 31u +
-            m_perm31[(index / 28629151u) % 31u]) * float(0x1.fffffcp-1 / 887503681u); // Results in [0,1).
+            m_perm31[(index / 28629151u) % 31u]) * float(0.9999998807907104 / 887503681u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton37(const unsigned index) const
@@ -1521,7 +1521,7 @@ inline float Halton_sampler::halton37(const unsigned index) const
             m_perm37[(index / 1369u) % 37u] * 50653u +
             m_perm37[(index / 50653u) % 37u] * 1369u +
             m_perm37[(index / 1874161u) % 37u] * 37u +
-            m_perm37[(index / 69343957u) % 37u]) * float(0x1.fffffcp-1 / 2565726409u); // Results in [0,1).
+            m_perm37[(index / 69343957u) % 37u]) * float(0.9999998807907104 / 2565726409u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton41(const unsigned index) const
@@ -1530,7 +1530,7 @@ inline float Halton_sampler::halton41(const unsigned index) const
             m_perm41[(index / 41u) % 41u] * 68921u +
             m_perm41[(index / 1681u) % 41u] * 1681u +
             m_perm41[(index / 68921u) % 41u] * 41u +
-            m_perm41[(index / 2825761u) % 41u]) * float(0x1.fffffcp-1 / 115856201u); // Results in [0,1).
+            m_perm41[(index / 2825761u) % 41u]) * float(0.9999998807907104 / 115856201u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton43(const unsigned index) const
@@ -1539,7 +1539,7 @@ inline float Halton_sampler::halton43(const unsigned index) const
             m_perm43[(index / 43u) % 43u] * 79507u +
             m_perm43[(index / 1849u) % 43u] * 1849u +
             m_perm43[(index / 79507u) % 43u] * 43u +
-            m_perm43[(index / 3418801u) % 43u]) * float(0x1.fffffcp-1 / 147008443u); // Results in [0,1).
+            m_perm43[(index / 3418801u) % 43u]) * float(0.9999998807907104 / 147008443u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton47(const unsigned index) const
@@ -1548,7 +1548,7 @@ inline float Halton_sampler::halton47(const unsigned index) const
             m_perm47[(index / 47u) % 47u] * 103823u +
             m_perm47[(index / 2209u) % 47u] * 2209u +
             m_perm47[(index / 103823u) % 47u] * 47u +
-            m_perm47[(index / 4879681u) % 47u]) * float(0x1.fffffcp-1 / 229345007u); // Results in [0,1).
+            m_perm47[(index / 4879681u) % 47u]) * float(0.9999998807907104 / 229345007u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton53(const unsigned index) const
@@ -1557,7 +1557,7 @@ inline float Halton_sampler::halton53(const unsigned index) const
             m_perm53[(index / 53u) % 53u] * 148877u +
             m_perm53[(index / 2809u) % 53u] * 2809u +
             m_perm53[(index / 148877u) % 53u] * 53u +
-            m_perm53[(index / 7890481u) % 53u]) * float(0x1.fffffcp-1 / 418195493u); // Results in [0,1).
+            m_perm53[(index / 7890481u) % 53u]) * float(0.9999998807907104 / 418195493u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton59(const unsigned index) const
@@ -1566,7 +1566,7 @@ inline float Halton_sampler::halton59(const unsigned index) const
             m_perm59[(index / 59u) % 59u] * 205379u +
             m_perm59[(index / 3481u) % 59u] * 3481u +
             m_perm59[(index / 205379u) % 59u] * 59u +
-            m_perm59[(index / 12117361u) % 59u]) * float(0x1.fffffcp-1 / 714924299u); // Results in [0,1).
+            m_perm59[(index / 12117361u) % 59u]) * float(0.9999998807907104 / 714924299u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton61(const unsigned index) const
@@ -1575,7 +1575,7 @@ inline float Halton_sampler::halton61(const unsigned index) const
             m_perm61[(index / 61u) % 61u] * 226981u +
             m_perm61[(index / 3721u) % 61u] * 3721u +
             m_perm61[(index / 226981u) % 61u] * 61u +
-            m_perm61[(index / 13845841u) % 61u]) * float(0x1.fffffcp-1 / 844596301u); // Results in [0,1).
+            m_perm61[(index / 13845841u) % 61u]) * float(0.9999998807907104 / 844596301u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton67(const unsigned index) const
@@ -1584,7 +1584,7 @@ inline float Halton_sampler::halton67(const unsigned index) const
             m_perm67[(index / 67u) % 67u] * 300763u +
             m_perm67[(index / 4489u) % 67u] * 4489u +
             m_perm67[(index / 300763u) % 67u] * 67u +
-            m_perm67[(index / 20151121u) % 67u]) * float(0x1.fffffcp-1 / 1350125107u); // Results in [0,1).
+            m_perm67[(index / 20151121u) % 67u]) * float(0.9999998807907104 / 1350125107u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton71(const unsigned index) const
@@ -1593,7 +1593,7 @@ inline float Halton_sampler::halton71(const unsigned index) const
             m_perm71[(index / 71u) % 71u] * 357911u +
             m_perm71[(index / 5041u) % 71u] * 5041u +
             m_perm71[(index / 357911u) % 71u] * 71u +
-            m_perm71[(index / 25411681u) % 71u]) * float(0x1.fffffcp-1 / 1804229351u); // Results in [0,1).
+            m_perm71[(index / 25411681u) % 71u]) * float(0.9999998807907104 / 1804229351u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton73(const unsigned index) const
@@ -1602,7 +1602,7 @@ inline float Halton_sampler::halton73(const unsigned index) const
             m_perm73[(index / 73u) % 73u] * 389017u +
             m_perm73[(index / 5329u) % 73u] * 5329u +
             m_perm73[(index / 389017u) % 73u] * 73u +
-            m_perm73[(index / 28398241u) % 73u]) * float(0x1.fffffcp-1 / 2073071593u); // Results in [0,1).
+            m_perm73[(index / 28398241u) % 73u]) * float(0.9999998807907104 / 2073071593u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton79(const unsigned index) const
@@ -1611,7 +1611,7 @@ inline float Halton_sampler::halton79(const unsigned index) const
             m_perm79[(index / 79u) % 79u] * 493039u +
             m_perm79[(index / 6241u) % 79u] * 6241u +
             m_perm79[(index / 493039u) % 79u] * 79u +
-            m_perm79[(index / 38950081u) % 79u]) * float(0x1.fffffcp-1 / 3077056399u); // Results in [0,1).
+            m_perm79[(index / 38950081u) % 79u]) * float(0.9999998807907104 / 3077056399u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton83(const unsigned index) const
@@ -1620,7 +1620,7 @@ inline float Halton_sampler::halton83(const unsigned index) const
             m_perm83[(index / 83u) % 83u] * 571787u +
             m_perm83[(index / 6889u) % 83u] * 6889u +
             m_perm83[(index / 571787u) % 83u] * 83u +
-            m_perm83[(index / 47458321u) % 83u]) * float(0x1.fffffcp-1 / 3939040643u); // Results in [0,1).
+            m_perm83[(index / 47458321u) % 83u]) * float(0.9999998807907104 / 3939040643u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton89(const unsigned index) const
@@ -1628,7 +1628,7 @@ inline float Halton_sampler::halton89(const unsigned index) const
     return (m_perm89[index % 89u] * 704969u +
             m_perm89[(index / 89u) % 89u] * 7921u +
             m_perm89[(index / 7921u) % 89u] * 89u +
-            m_perm89[(index / 704969u) % 89u]) * float(0x1.fffffcp-1 / 62742241u); // Results in [0,1).
+            m_perm89[(index / 704969u) % 89u]) * float(0.9999998807907104 / 62742241u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton97(const unsigned index) const
@@ -1636,7 +1636,7 @@ inline float Halton_sampler::halton97(const unsigned index) const
     return (m_perm97[index % 97u] * 912673u +
             m_perm97[(index / 97u) % 97u] * 9409u +
             m_perm97[(index / 9409u) % 97u] * 97u +
-            m_perm97[(index / 912673u) % 97u]) * float(0x1.fffffcp-1 / 88529281u); // Results in [0,1).
+            m_perm97[(index / 912673u) % 97u]) * float(0.9999998807907104 / 88529281u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton101(const unsigned index) const
@@ -1644,7 +1644,7 @@ inline float Halton_sampler::halton101(const unsigned index) const
     return (m_perm101[index % 101u] * 1030301u +
             m_perm101[(index / 101u) % 101u] * 10201u +
             m_perm101[(index / 10201u) % 101u] * 101u +
-            m_perm101[(index / 1030301u) % 101u]) * float(0x1.fffffcp-1 / 104060401u); // Results in [0,1).
+            m_perm101[(index / 1030301u) % 101u]) * float(0.9999998807907104 / 104060401u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton103(const unsigned index) const
@@ -1652,7 +1652,7 @@ inline float Halton_sampler::halton103(const unsigned index) const
     return (m_perm103[index % 103u] * 1092727u +
             m_perm103[(index / 103u) % 103u] * 10609u +
             m_perm103[(index / 10609u) % 103u] * 103u +
-            m_perm103[(index / 1092727u) % 103u]) * float(0x1.fffffcp-1 / 112550881u); // Results in [0,1).
+            m_perm103[(index / 1092727u) % 103u]) * float(0.9999998807907104 / 112550881u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton107(const unsigned index) const
@@ -1660,7 +1660,7 @@ inline float Halton_sampler::halton107(const unsigned index) const
     return (m_perm107[index % 107u] * 1225043u +
             m_perm107[(index / 107u) % 107u] * 11449u +
             m_perm107[(index / 11449u) % 107u] * 107u +
-            m_perm107[(index / 1225043u) % 107u]) * float(0x1.fffffcp-1 / 131079601u); // Results in [0,1).
+            m_perm107[(index / 1225043u) % 107u]) * float(0.9999998807907104 / 131079601u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton109(const unsigned index) const
@@ -1668,7 +1668,7 @@ inline float Halton_sampler::halton109(const unsigned index) const
     return (m_perm109[index % 109u] * 1295029u +
             m_perm109[(index / 109u) % 109u] * 11881u +
             m_perm109[(index / 11881u) % 109u] * 109u +
-            m_perm109[(index / 1295029u) % 109u]) * float(0x1.fffffcp-1 / 141158161u); // Results in [0,1).
+            m_perm109[(index / 1295029u) % 109u]) * float(0.9999998807907104 / 141158161u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton113(const unsigned index) const
@@ -1676,7 +1676,7 @@ inline float Halton_sampler::halton113(const unsigned index) const
     return (m_perm113[index % 113u] * 1442897u +
             m_perm113[(index / 113u) % 113u] * 12769u +
             m_perm113[(index / 12769u) % 113u] * 113u +
-            m_perm113[(index / 1442897u) % 113u]) * float(0x1.fffffcp-1 / 163047361u); // Results in [0,1).
+            m_perm113[(index / 1442897u) % 113u]) * float(0.9999998807907104 / 163047361u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton127(const unsigned index) const
@@ -1684,7 +1684,7 @@ inline float Halton_sampler::halton127(const unsigned index) const
     return (m_perm127[index % 127u] * 2048383u +
             m_perm127[(index / 127u) % 127u] * 16129u +
             m_perm127[(index / 16129u) % 127u] * 127u +
-            m_perm127[(index / 2048383u) % 127u]) * float(0x1.fffffcp-1 / 260144641u); // Results in [0,1).
+            m_perm127[(index / 2048383u) % 127u]) * float(0.9999998807907104 / 260144641u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton131(const unsigned index) const
@@ -1692,7 +1692,7 @@ inline float Halton_sampler::halton131(const unsigned index) const
     return (m_perm131[index % 131u] * 2248091u +
             m_perm131[(index / 131u) % 131u] * 17161u +
             m_perm131[(index / 17161u) % 131u] * 131u +
-            m_perm131[(index / 2248091u) % 131u]) * float(0x1.fffffcp-1 / 294499921u); // Results in [0,1).
+            m_perm131[(index / 2248091u) % 131u]) * float(0.9999998807907104 / 294499921u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton137(const unsigned index) const
@@ -1700,7 +1700,7 @@ inline float Halton_sampler::halton137(const unsigned index) const
     return (m_perm137[index % 137u] * 2571353u +
             m_perm137[(index / 137u) % 137u] * 18769u +
             m_perm137[(index / 18769u) % 137u] * 137u +
-            m_perm137[(index / 2571353u) % 137u]) * float(0x1.fffffcp-1 / 352275361u); // Results in [0,1).
+            m_perm137[(index / 2571353u) % 137u]) * float(0.9999998807907104 / 352275361u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton139(const unsigned index) const
@@ -1708,7 +1708,7 @@ inline float Halton_sampler::halton139(const unsigned index) const
     return (m_perm139[index % 139u] * 2685619u +
             m_perm139[(index / 139u) % 139u] * 19321u +
             m_perm139[(index / 19321u) % 139u] * 139u +
-            m_perm139[(index / 2685619u) % 139u]) * float(0x1.fffffcp-1 / 373301041u); // Results in [0,1).
+            m_perm139[(index / 2685619u) % 139u]) * float(0.9999998807907104 / 373301041u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton149(const unsigned index) const
@@ -1716,7 +1716,7 @@ inline float Halton_sampler::halton149(const unsigned index) const
     return (m_perm149[index % 149u] * 3307949u +
             m_perm149[(index / 149u) % 149u] * 22201u +
             m_perm149[(index / 22201u) % 149u] * 149u +
-            m_perm149[(index / 3307949u) % 149u]) * float(0x1.fffffcp-1 / 492884401u); // Results in [0,1).
+            m_perm149[(index / 3307949u) % 149u]) * float(0.9999998807907104 / 492884401u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton151(const unsigned index) const
@@ -1724,7 +1724,7 @@ inline float Halton_sampler::halton151(const unsigned index) const
     return (m_perm151[index % 151u] * 3442951u +
             m_perm151[(index / 151u) % 151u] * 22801u +
             m_perm151[(index / 22801u) % 151u] * 151u +
-            m_perm151[(index / 3442951u) % 151u]) * float(0x1.fffffcp-1 / 519885601u); // Results in [0,1).
+            m_perm151[(index / 3442951u) % 151u]) * float(0.9999998807907104 / 519885601u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton157(const unsigned index) const
@@ -1732,7 +1732,7 @@ inline float Halton_sampler::halton157(const unsigned index) const
     return (m_perm157[index % 157u] * 3869893u +
             m_perm157[(index / 157u) % 157u] * 24649u +
             m_perm157[(index / 24649u) % 157u] * 157u +
-            m_perm157[(index / 3869893u) % 157u]) * float(0x1.fffffcp-1 / 607573201u); // Results in [0,1).
+            m_perm157[(index / 3869893u) % 157u]) * float(0.9999998807907104 / 607573201u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton163(const unsigned index) const
@@ -1740,7 +1740,7 @@ inline float Halton_sampler::halton163(const unsigned index) const
     return (m_perm163[index % 163u] * 4330747u +
             m_perm163[(index / 163u) % 163u] * 26569u +
             m_perm163[(index / 26569u) % 163u] * 163u +
-            m_perm163[(index / 4330747u) % 163u]) * float(0x1.fffffcp-1 / 705911761u); // Results in [0,1).
+            m_perm163[(index / 4330747u) % 163u]) * float(0.9999998807907104 / 705911761u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton167(const unsigned index) const
@@ -1748,7 +1748,7 @@ inline float Halton_sampler::halton167(const unsigned index) const
     return (m_perm167[index % 167u] * 4657463u +
             m_perm167[(index / 167u) % 167u] * 27889u +
             m_perm167[(index / 27889u) % 167u] * 167u +
-            m_perm167[(index / 4657463u) % 167u]) * float(0x1.fffffcp-1 / 777796321u); // Results in [0,1).
+            m_perm167[(index / 4657463u) % 167u]) * float(0.9999998807907104 / 777796321u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton173(const unsigned index) const
@@ -1756,7 +1756,7 @@ inline float Halton_sampler::halton173(const unsigned index) const
     return (m_perm173[index % 173u] * 5177717u +
             m_perm173[(index / 173u) % 173u] * 29929u +
             m_perm173[(index / 29929u) % 173u] * 173u +
-            m_perm173[(index / 5177717u) % 173u]) * float(0x1.fffffcp-1 / 895745041u); // Results in [0,1).
+            m_perm173[(index / 5177717u) % 173u]) * float(0.9999998807907104 / 895745041u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton179(const unsigned index) const
@@ -1764,7 +1764,7 @@ inline float Halton_sampler::halton179(const unsigned index) const
     return (m_perm179[index % 179u] * 5735339u +
             m_perm179[(index / 179u) % 179u] * 32041u +
             m_perm179[(index / 32041u) % 179u] * 179u +
-            m_perm179[(index / 5735339u) % 179u]) * float(0x1.fffffcp-1 / 1026625681u); // Results in [0,1).
+            m_perm179[(index / 5735339u) % 179u]) * float(0.9999998807907104 / 1026625681u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton181(const unsigned index) const
@@ -1772,7 +1772,7 @@ inline float Halton_sampler::halton181(const unsigned index) const
     return (m_perm181[index % 181u] * 5929741u +
             m_perm181[(index / 181u) % 181u] * 32761u +
             m_perm181[(index / 32761u) % 181u] * 181u +
-            m_perm181[(index / 5929741u) % 181u]) * float(0x1.fffffcp-1 / 1073283121u); // Results in [0,1).
+            m_perm181[(index / 5929741u) % 181u]) * float(0.9999998807907104 / 1073283121u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton191(const unsigned index) const
@@ -1780,7 +1780,7 @@ inline float Halton_sampler::halton191(const unsigned index) const
     return (m_perm191[index % 191u] * 6967871u +
             m_perm191[(index / 191u) % 191u] * 36481u +
             m_perm191[(index / 36481u) % 191u] * 191u +
-            m_perm191[(index / 6967871u) % 191u]) * float(0x1.fffffcp-1 / 1330863361u); // Results in [0,1).
+            m_perm191[(index / 6967871u) % 191u]) * float(0.9999998807907104 / 1330863361u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton193(const unsigned index) const
@@ -1788,7 +1788,7 @@ inline float Halton_sampler::halton193(const unsigned index) const
     return (m_perm193[index % 193u] * 7189057u +
             m_perm193[(index / 193u) % 193u] * 37249u +
             m_perm193[(index / 37249u) % 193u] * 193u +
-            m_perm193[(index / 7189057u) % 193u]) * float(0x1.fffffcp-1 / 1387488001u); // Results in [0,1).
+            m_perm193[(index / 7189057u) % 193u]) * float(0.9999998807907104 / 1387488001u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton197(const unsigned index) const
@@ -1796,7 +1796,7 @@ inline float Halton_sampler::halton197(const unsigned index) const
     return (m_perm197[index % 197u] * 7645373u +
             m_perm197[(index / 197u) % 197u] * 38809u +
             m_perm197[(index / 38809u) % 197u] * 197u +
-            m_perm197[(index / 7645373u) % 197u]) * float(0x1.fffffcp-1 / 1506138481u); // Results in [0,1).
+            m_perm197[(index / 7645373u) % 197u]) * float(0.9999998807907104 / 1506138481u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton199(const unsigned index) const
@@ -1804,7 +1804,7 @@ inline float Halton_sampler::halton199(const unsigned index) const
     return (m_perm199[index % 199u] * 7880599u +
             m_perm199[(index / 199u) % 199u] * 39601u +
             m_perm199[(index / 39601u) % 199u] * 199u +
-            m_perm199[(index / 7880599u) % 199u]) * float(0x1.fffffcp-1 / 1568239201u); // Results in [0,1).
+            m_perm199[(index / 7880599u) % 199u]) * float(0.9999998807907104 / 1568239201u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton211(const unsigned index) const
@@ -1812,7 +1812,7 @@ inline float Halton_sampler::halton211(const unsigned index) const
     return (m_perm211[index % 211u] * 9393931u +
             m_perm211[(index / 211u) % 211u] * 44521u +
             m_perm211[(index / 44521u) % 211u] * 211u +
-            m_perm211[(index / 9393931u) % 211u]) * float(0x1.fffffcp-1 / 1982119441u); // Results in [0,1).
+            m_perm211[(index / 9393931u) % 211u]) * float(0.9999998807907104 / 1982119441u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton223(const unsigned index) const
@@ -1820,7 +1820,7 @@ inline float Halton_sampler::halton223(const unsigned index) const
     return (m_perm223[index % 223u] * 11089567u +
             m_perm223[(index / 223u) % 223u] * 49729u +
             m_perm223[(index / 49729u) % 223u] * 223u +
-            m_perm223[(index / 11089567u) % 223u]) * float(0x1.fffffcp-1 / 2472973441u); // Results in [0,1).
+            m_perm223[(index / 11089567u) % 223u]) * float(0.9999998807907104 / 2472973441u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton227(const unsigned index) const
@@ -1828,7 +1828,7 @@ inline float Halton_sampler::halton227(const unsigned index) const
     return (m_perm227[index % 227u] * 11697083u +
             m_perm227[(index / 227u) % 227u] * 51529u +
             m_perm227[(index / 51529u) % 227u] * 227u +
-            m_perm227[(index / 11697083u) % 227u]) * float(0x1.fffffcp-1 / 2655237841u); // Results in [0,1).
+            m_perm227[(index / 11697083u) % 227u]) * float(0.9999998807907104 / 2655237841u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton229(const unsigned index) const
@@ -1836,7 +1836,7 @@ inline float Halton_sampler::halton229(const unsigned index) const
     return (m_perm229[index % 229u] * 12008989u +
             m_perm229[(index / 229u) % 229u] * 52441u +
             m_perm229[(index / 52441u) % 229u] * 229u +
-            m_perm229[(index / 12008989u) % 229u]) * float(0x1.fffffcp-1 / 2750058481u); // Results in [0,1).
+            m_perm229[(index / 12008989u) % 229u]) * float(0.9999998807907104 / 2750058481u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton233(const unsigned index) const
@@ -1844,7 +1844,7 @@ inline float Halton_sampler::halton233(const unsigned index) const
     return (m_perm233[index % 233u] * 12649337u +
             m_perm233[(index / 233u) % 233u] * 54289u +
             m_perm233[(index / 54289u) % 233u] * 233u +
-            m_perm233[(index / 12649337u) % 233u]) * float(0x1.fffffcp-1 / 2947295521u); // Results in [0,1).
+            m_perm233[(index / 12649337u) % 233u]) * float(0.9999998807907104 / 2947295521u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton239(const unsigned index) const
@@ -1852,7 +1852,7 @@ inline float Halton_sampler::halton239(const unsigned index) const
     return (m_perm239[index % 239u] * 13651919u +
             m_perm239[(index / 239u) % 239u] * 57121u +
             m_perm239[(index / 57121u) % 239u] * 239u +
-            m_perm239[(index / 13651919u) % 239u]) * float(0x1.fffffcp-1 / 3262808641u); // Results in [0,1).
+            m_perm239[(index / 13651919u) % 239u]) * float(0.9999998807907104 / 3262808641u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton241(const unsigned index) const
@@ -1860,7 +1860,7 @@ inline float Halton_sampler::halton241(const unsigned index) const
     return (m_perm241[index % 241u] * 13997521u +
             m_perm241[(index / 241u) % 241u] * 58081u +
             m_perm241[(index / 58081u) % 241u] * 241u +
-            m_perm241[(index / 13997521u) % 241u]) * float(0x1.fffffcp-1 / 3373402561u); // Results in [0,1).
+            m_perm241[(index / 13997521u) % 241u]) * float(0.9999998807907104 / 3373402561u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton251(const unsigned index) const
@@ -1868,1422 +1868,1421 @@ inline float Halton_sampler::halton251(const unsigned index) const
     return (m_perm251[index % 251u] * 15813251u +
             m_perm251[(index / 251u) % 251u] * 63001u +
             m_perm251[(index / 63001u) % 251u] * 251u +
-            m_perm251[(index / 15813251u) % 251u]) * float(0x1.fffffcp-1 / 3969126001u); // Results in [0,1).
+            m_perm251[(index / 15813251u) % 251u]) * float(0.9999998807907104 / 3969126001u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton257(const unsigned index) const
 {
     return (m_perm257[index % 257u] * 66049u +
             m_perm257[(index / 257u) % 257u] * 257u +
-            m_perm257[(index / 66049u) % 257u]) * float(0x1.fffffcp-1 / 16974593u); // Results in [0,1).
+            m_perm257[(index / 66049u) % 257u]) * float(0.9999998807907104 / 16974593u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton263(const unsigned index) const
 {
     return (m_perm263[index % 263u] * 69169u +
             m_perm263[(index / 263u) % 263u] * 263u +
-            m_perm263[(index / 69169u) % 263u]) * float(0x1.fffffcp-1 / 18191447u); // Results in [0,1).
+            m_perm263[(index / 69169u) % 263u]) * float(0.9999998807907104 / 18191447u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton269(const unsigned index) const
 {
     return (m_perm269[index % 269u] * 72361u +
             m_perm269[(index / 269u) % 269u] * 269u +
-            m_perm269[(index / 72361u) % 269u]) * float(0x1.fffffcp-1 / 19465109u); // Results in [0,1).
+            m_perm269[(index / 72361u) % 269u]) * float(0.9999998807907104 / 19465109u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton271(const unsigned index) const
 {
     return (m_perm271[index % 271u] * 73441u +
             m_perm271[(index / 271u) % 271u] * 271u +
-            m_perm271[(index / 73441u) % 271u]) * float(0x1.fffffcp-1 / 19902511u); // Results in [0,1).
+            m_perm271[(index / 73441u) % 271u]) * float(0.9999998807907104 / 19902511u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton277(const unsigned index) const
 {
     return (m_perm277[index % 277u] * 76729u +
             m_perm277[(index / 277u) % 277u] * 277u +
-            m_perm277[(index / 76729u) % 277u]) * float(0x1.fffffcp-1 / 21253933u); // Results in [0,1).
+            m_perm277[(index / 76729u) % 277u]) * float(0.9999998807907104 / 21253933u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton281(const unsigned index) const
 {
     return (m_perm281[index % 281u] * 78961u +
             m_perm281[(index / 281u) % 281u] * 281u +
-            m_perm281[(index / 78961u) % 281u]) * float(0x1.fffffcp-1 / 22188041u); // Results in [0,1).
+            m_perm281[(index / 78961u) % 281u]) * float(0.9999998807907104 / 22188041u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton283(const unsigned index) const
 {
     return (m_perm283[index % 283u] * 80089u +
             m_perm283[(index / 283u) % 283u] * 283u +
-            m_perm283[(index / 80089u) % 283u]) * float(0x1.fffffcp-1 / 22665187u); // Results in [0,1).
+            m_perm283[(index / 80089u) % 283u]) * float(0.9999998807907104 / 22665187u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton293(const unsigned index) const
 {
     return (m_perm293[index % 293u] * 85849u +
             m_perm293[(index / 293u) % 293u] * 293u +
-            m_perm293[(index / 85849u) % 293u]) * float(0x1.fffffcp-1 / 25153757u); // Results in [0,1).
+            m_perm293[(index / 85849u) % 293u]) * float(0.9999998807907104 / 25153757u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton307(const unsigned index) const
 {
     return (m_perm307[index % 307u] * 94249u +
             m_perm307[(index / 307u) % 307u] * 307u +
-            m_perm307[(index / 94249u) % 307u]) * float(0x1.fffffcp-1 / 28934443u); // Results in [0,1).
+            m_perm307[(index / 94249u) % 307u]) * float(0.9999998807907104 / 28934443u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton311(const unsigned index) const
 {
     return (m_perm311[index % 311u] * 96721u +
             m_perm311[(index / 311u) % 311u] * 311u +
-            m_perm311[(index / 96721u) % 311u]) * float(0x1.fffffcp-1 / 30080231u); // Results in [0,1).
+            m_perm311[(index / 96721u) % 311u]) * float(0.9999998807907104 / 30080231u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton313(const unsigned index) const
 {
     return (m_perm313[index % 313u] * 97969u +
             m_perm313[(index / 313u) % 313u] * 313u +
-            m_perm313[(index / 97969u) % 313u]) * float(0x1.fffffcp-1 / 30664297u); // Results in [0,1).
+            m_perm313[(index / 97969u) % 313u]) * float(0.9999998807907104 / 30664297u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton317(const unsigned index) const
 {
     return (m_perm317[index % 317u] * 100489u +
             m_perm317[(index / 317u) % 317u] * 317u +
-            m_perm317[(index / 100489u) % 317u]) * float(0x1.fffffcp-1 / 31855013u); // Results in [0,1).
+            m_perm317[(index / 100489u) % 317u]) * float(0.9999998807907104 / 31855013u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton331(const unsigned index) const
 {
     return (m_perm331[index % 331u] * 109561u +
             m_perm331[(index / 331u) % 331u] * 331u +
-            m_perm331[(index / 109561u) % 331u]) * float(0x1.fffffcp-1 / 36264691u); // Results in [0,1).
+            m_perm331[(index / 109561u) % 331u]) * float(0.9999998807907104 / 36264691u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton337(const unsigned index) const
 {
     return (m_perm337[index % 337u] * 113569u +
             m_perm337[(index / 337u) % 337u] * 337u +
-            m_perm337[(index / 113569u) % 337u]) * float(0x1.fffffcp-1 / 38272753u); // Results in [0,1).
+            m_perm337[(index / 113569u) % 337u]) * float(0.9999998807907104 / 38272753u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton347(const unsigned index) const
 {
     return (m_perm347[index % 347u] * 120409u +
             m_perm347[(index / 347u) % 347u] * 347u +
-            m_perm347[(index / 120409u) % 347u]) * float(0x1.fffffcp-1 / 41781923u); // Results in [0,1).
+            m_perm347[(index / 120409u) % 347u]) * float(0.9999998807907104 / 41781923u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton349(const unsigned index) const
 {
     return (m_perm349[index % 349u] * 121801u +
             m_perm349[(index / 349u) % 349u] * 349u +
-            m_perm349[(index / 121801u) % 349u]) * float(0x1.fffffcp-1 / 42508549u); // Results in [0,1).
+            m_perm349[(index / 121801u) % 349u]) * float(0.9999998807907104 / 42508549u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton353(const unsigned index) const
 {
     return (m_perm353[index % 353u] * 124609u +
             m_perm353[(index / 353u) % 353u] * 353u +
-            m_perm353[(index / 124609u) % 353u]) * float(0x1.fffffcp-1 / 43986977u); // Results in [0,1).
+            m_perm353[(index / 124609u) % 353u]) * float(0.9999998807907104 / 43986977u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton359(const unsigned index) const
 {
     return (m_perm359[index % 359u] * 128881u +
             m_perm359[(index / 359u) % 359u] * 359u +
-            m_perm359[(index / 128881u) % 359u]) * float(0x1.fffffcp-1 / 46268279u); // Results in [0,1).
+            m_perm359[(index / 128881u) % 359u]) * float(0.9999998807907104 / 46268279u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton367(const unsigned index) const
 {
     return (m_perm367[index % 367u] * 134689u +
             m_perm367[(index / 367u) % 367u] * 367u +
-            m_perm367[(index / 134689u) % 367u]) * float(0x1.fffffcp-1 / 49430863u); // Results in [0,1).
+            m_perm367[(index / 134689u) % 367u]) * float(0.9999998807907104 / 49430863u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton373(const unsigned index) const
 {
     return (m_perm373[index % 373u] * 139129u +
             m_perm373[(index / 373u) % 373u] * 373u +
-            m_perm373[(index / 139129u) % 373u]) * float(0x1.fffffcp-1 / 51895117u); // Results in [0,1).
+            m_perm373[(index / 139129u) % 373u]) * float(0.9999998807907104 / 51895117u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton379(const unsigned index) const
 {
     return (m_perm379[index % 379u] * 143641u +
             m_perm379[(index / 379u) % 379u] * 379u +
-            m_perm379[(index / 143641u) % 379u]) * float(0x1.fffffcp-1 / 54439939u); // Results in [0,1).
+            m_perm379[(index / 143641u) % 379u]) * float(0.9999998807907104 / 54439939u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton383(const unsigned index) const
 {
     return (m_perm383[index % 383u] * 146689u +
             m_perm383[(index / 383u) % 383u] * 383u +
-            m_perm383[(index / 146689u) % 383u]) * float(0x1.fffffcp-1 / 56181887u); // Results in [0,1).
+            m_perm383[(index / 146689u) % 383u]) * float(0.9999998807907104 / 56181887u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton389(const unsigned index) const
 {
     return (m_perm389[index % 389u] * 151321u +
             m_perm389[(index / 389u) % 389u] * 389u +
-            m_perm389[(index / 151321u) % 389u]) * float(0x1.fffffcp-1 / 58863869u); // Results in [0,1).
+            m_perm389[(index / 151321u) % 389u]) * float(0.9999998807907104 / 58863869u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton397(const unsigned index) const
 {
     return (m_perm397[index % 397u] * 157609u +
             m_perm397[(index / 397u) % 397u] * 397u +
-            m_perm397[(index / 157609u) % 397u]) * float(0x1.fffffcp-1 / 62570773u); // Results in [0,1).
+            m_perm397[(index / 157609u) % 397u]) * float(0.9999998807907104 / 62570773u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton401(const unsigned index) const
 {
     return (m_perm401[index % 401u] * 160801u +
             m_perm401[(index / 401u) % 401u] * 401u +
-            m_perm401[(index / 160801u) % 401u]) * float(0x1.fffffcp-1 / 64481201u); // Results in [0,1).
+            m_perm401[(index / 160801u) % 401u]) * float(0.9999998807907104 / 64481201u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton409(const unsigned index) const
 {
     return (m_perm409[index % 409u] * 167281u +
             m_perm409[(index / 409u) % 409u] * 409u +
-            m_perm409[(index / 167281u) % 409u]) * float(0x1.fffffcp-1 / 68417929u); // Results in [0,1).
+            m_perm409[(index / 167281u) % 409u]) * float(0.9999998807907104 / 68417929u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton419(const unsigned index) const
 {
     return (m_perm419[index % 419u] * 175561u +
             m_perm419[(index / 419u) % 419u] * 419u +
-            m_perm419[(index / 175561u) % 419u]) * float(0x1.fffffcp-1 / 73560059u); // Results in [0,1).
+            m_perm419[(index / 175561u) % 419u]) * float(0.9999998807907104 / 73560059u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton421(const unsigned index) const
 {
     return (m_perm421[index % 421u] * 177241u +
             m_perm421[(index / 421u) % 421u] * 421u +
-            m_perm421[(index / 177241u) % 421u]) * float(0x1.fffffcp-1 / 74618461u); // Results in [0,1).
+            m_perm421[(index / 177241u) % 421u]) * float(0.9999998807907104 / 74618461u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton431(const unsigned index) const
 {
     return (m_perm431[index % 431u] * 185761u +
             m_perm431[(index / 431u) % 431u] * 431u +
-            m_perm431[(index / 185761u) % 431u]) * float(0x1.fffffcp-1 / 80062991u); // Results in [0,1).
+            m_perm431[(index / 185761u) % 431u]) * float(0.9999998807907104 / 80062991u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton433(const unsigned index) const
 {
     return (m_perm433[index % 433u] * 187489u +
             m_perm433[(index / 433u) % 433u] * 433u +
-            m_perm433[(index / 187489u) % 433u]) * float(0x1.fffffcp-1 / 81182737u); // Results in [0,1).
+            m_perm433[(index / 187489u) % 433u]) * float(0.9999998807907104 / 81182737u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton439(const unsigned index) const
 {
     return (m_perm439[index % 439u] * 192721u +
             m_perm439[(index / 439u) % 439u] * 439u +
-            m_perm439[(index / 192721u) % 439u]) * float(0x1.fffffcp-1 / 84604519u); // Results in [0,1).
+            m_perm439[(index / 192721u) % 439u]) * float(0.9999998807907104 / 84604519u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton443(const unsigned index) const
 {
     return (m_perm443[index % 443u] * 196249u +
             m_perm443[(index / 443u) % 443u] * 443u +
-            m_perm443[(index / 196249u) % 443u]) * float(0x1.fffffcp-1 / 86938307u); // Results in [0,1).
+            m_perm443[(index / 196249u) % 443u]) * float(0.9999998807907104 / 86938307u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton449(const unsigned index) const
 {
     return (m_perm449[index % 449u] * 201601u +
             m_perm449[(index / 449u) % 449u] * 449u +
-            m_perm449[(index / 201601u) % 449u]) * float(0x1.fffffcp-1 / 90518849u); // Results in [0,1).
+            m_perm449[(index / 201601u) % 449u]) * float(0.9999998807907104 / 90518849u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton457(const unsigned index) const
 {
     return (m_perm457[index % 457u] * 208849u +
             m_perm457[(index / 457u) % 457u] * 457u +
-            m_perm457[(index / 208849u) % 457u]) * float(0x1.fffffcp-1 / 95443993u); // Results in [0,1).
+            m_perm457[(index / 208849u) % 457u]) * float(0.9999998807907104 / 95443993u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton461(const unsigned index) const
 {
     return (m_perm461[index % 461u] * 212521u +
             m_perm461[(index / 461u) % 461u] * 461u +
-            m_perm461[(index / 212521u) % 461u]) * float(0x1.fffffcp-1 / 97972181u); // Results in [0,1).
+            m_perm461[(index / 212521u) % 461u]) * float(0.9999998807907104 / 97972181u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton463(const unsigned index) const
 {
     return (m_perm463[index % 463u] * 214369u +
             m_perm463[(index / 463u) % 463u] * 463u +
-            m_perm463[(index / 214369u) % 463u]) * float(0x1.fffffcp-1 / 99252847u); // Results in [0,1).
+            m_perm463[(index / 214369u) % 463u]) * float(0.9999998807907104 / 99252847u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton467(const unsigned index) const
 {
     return (m_perm467[index % 467u] * 218089u +
             m_perm467[(index / 467u) % 467u] * 467u +
-            m_perm467[(index / 218089u) % 467u]) * float(0x1.fffffcp-1 / 101847563u); // Results in [0,1).
+            m_perm467[(index / 218089u) % 467u]) * float(0.9999998807907104 / 101847563u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton479(const unsigned index) const
 {
     return (m_perm479[index % 479u] * 229441u +
             m_perm479[(index / 479u) % 479u] * 479u +
-            m_perm479[(index / 229441u) % 479u]) * float(0x1.fffffcp-1 / 109902239u); // Results in [0,1).
+            m_perm479[(index / 229441u) % 479u]) * float(0.9999998807907104 / 109902239u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton487(const unsigned index) const
 {
     return (m_perm487[index % 487u] * 237169u +
             m_perm487[(index / 487u) % 487u] * 487u +
-            m_perm487[(index / 237169u) % 487u]) * float(0x1.fffffcp-1 / 115501303u); // Results in [0,1).
+            m_perm487[(index / 237169u) % 487u]) * float(0.9999998807907104 / 115501303u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton491(const unsigned index) const
 {
     return (m_perm491[index % 491u] * 241081u +
             m_perm491[(index / 491u) % 491u] * 491u +
-            m_perm491[(index / 241081u) % 491u]) * float(0x1.fffffcp-1 / 118370771u); // Results in [0,1).
+            m_perm491[(index / 241081u) % 491u]) * float(0.9999998807907104 / 118370771u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton499(const unsigned index) const
 {
     return (m_perm499[index % 499u] * 249001u +
             m_perm499[(index / 499u) % 499u] * 499u +
-            m_perm499[(index / 249001u) % 499u]) * float(0x1.fffffcp-1 / 124251499u); // Results in [0,1).
+            m_perm499[(index / 249001u) % 499u]) * float(0.9999998807907104 / 124251499u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton503(const unsigned index) const
 {
     return (m_perm503[index % 503u] * 253009u +
             m_perm503[(index / 503u) % 503u] * 503u +
-            m_perm503[(index / 253009u) % 503u]) * float(0x1.fffffcp-1 / 127263527u); // Results in [0,1).
+            m_perm503[(index / 253009u) % 503u]) * float(0.9999998807907104 / 127263527u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton509(const unsigned index) const
 {
     return (m_perm509[index % 509u] * 259081u +
             m_perm509[(index / 509u) % 509u] * 509u +
-            m_perm509[(index / 259081u) % 509u]) * float(0x1.fffffcp-1 / 131872229u); // Results in [0,1).
+            m_perm509[(index / 259081u) % 509u]) * float(0.9999998807907104 / 131872229u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton521(const unsigned index) const
 {
     return (m_perm521[index % 521u] * 271441u +
             m_perm521[(index / 521u) % 521u] * 521u +
-            m_perm521[(index / 271441u) % 521u]) * float(0x1.fffffcp-1 / 141420761u); // Results in [0,1).
+            m_perm521[(index / 271441u) % 521u]) * float(0.9999998807907104 / 141420761u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton523(const unsigned index) const
 {
     return (m_perm523[index % 523u] * 273529u +
             m_perm523[(index / 523u) % 523u] * 523u +
-            m_perm523[(index / 273529u) % 523u]) * float(0x1.fffffcp-1 / 143055667u); // Results in [0,1).
+            m_perm523[(index / 273529u) % 523u]) * float(0.9999998807907104 / 143055667u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton541(const unsigned index) const
 {
     return (m_perm541[index % 541u] * 292681u +
             m_perm541[(index / 541u) % 541u] * 541u +
-            m_perm541[(index / 292681u) % 541u]) * float(0x1.fffffcp-1 / 158340421u); // Results in [0,1).
+            m_perm541[(index / 292681u) % 541u]) * float(0.9999998807907104 / 158340421u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton547(const unsigned index) const
 {
     return (m_perm547[index % 547u] * 299209u +
             m_perm547[(index / 547u) % 547u] * 547u +
-            m_perm547[(index / 299209u) % 547u]) * float(0x1.fffffcp-1 / 163667323u); // Results in [0,1).
+            m_perm547[(index / 299209u) % 547u]) * float(0.9999998807907104 / 163667323u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton557(const unsigned index) const
 {
     return (m_perm557[index % 557u] * 310249u +
             m_perm557[(index / 557u) % 557u] * 557u +
-            m_perm557[(index / 310249u) % 557u]) * float(0x1.fffffcp-1 / 172808693u); // Results in [0,1).
+            m_perm557[(index / 310249u) % 557u]) * float(0.9999998807907104 / 172808693u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton563(const unsigned index) const
 {
     return (m_perm563[index % 563u] * 316969u +
             m_perm563[(index / 563u) % 563u] * 563u +
-            m_perm563[(index / 316969u) % 563u]) * float(0x1.fffffcp-1 / 178453547u); // Results in [0,1).
+            m_perm563[(index / 316969u) % 563u]) * float(0.9999998807907104 / 178453547u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton569(const unsigned index) const
 {
     return (m_perm569[index % 569u] * 323761u +
             m_perm569[(index / 569u) % 569u] * 569u +
-            m_perm569[(index / 323761u) % 569u]) * float(0x1.fffffcp-1 / 184220009u); // Results in [0,1).
+            m_perm569[(index / 323761u) % 569u]) * float(0.9999998807907104 / 184220009u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton571(const unsigned index) const
 {
     return (m_perm571[index % 571u] * 326041u +
             m_perm571[(index / 571u) % 571u] * 571u +
-            m_perm571[(index / 326041u) % 571u]) * float(0x1.fffffcp-1 / 186169411u); // Results in [0,1).
+            m_perm571[(index / 326041u) % 571u]) * float(0.9999998807907104 / 186169411u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton577(const unsigned index) const
 {
     return (m_perm577[index % 577u] * 332929u +
             m_perm577[(index / 577u) % 577u] * 577u +
-            m_perm577[(index / 332929u) % 577u]) * float(0x1.fffffcp-1 / 192100033u); // Results in [0,1).
+            m_perm577[(index / 332929u) % 577u]) * float(0.9999998807907104 / 192100033u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton587(const unsigned index) const
 {
     return (m_perm587[index % 587u] * 344569u +
             m_perm587[(index / 587u) % 587u] * 587u +
-            m_perm587[(index / 344569u) % 587u]) * float(0x1.fffffcp-1 / 202262003u); // Results in [0,1).
+            m_perm587[(index / 344569u) % 587u]) * float(0.9999998807907104 / 202262003u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton593(const unsigned index) const
 {
     return (m_perm593[index % 593u] * 351649u +
             m_perm593[(index / 593u) % 593u] * 593u +
-            m_perm593[(index / 351649u) % 593u]) * float(0x1.fffffcp-1 / 208527857u); // Results in [0,1).
+            m_perm593[(index / 351649u) % 593u]) * float(0.9999998807907104 / 208527857u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton599(const unsigned index) const
 {
     return (m_perm599[index % 599u] * 358801u +
             m_perm599[(index / 599u) % 599u] * 599u +
-            m_perm599[(index / 358801u) % 599u]) * float(0x1.fffffcp-1 / 214921799u); // Results in [0,1).
+            m_perm599[(index / 358801u) % 599u]) * float(0.9999998807907104 / 214921799u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton601(const unsigned index) const
 {
     return (m_perm601[index % 601u] * 361201u +
             m_perm601[(index / 601u) % 601u] * 601u +
-            m_perm601[(index / 361201u) % 601u]) * float(0x1.fffffcp-1 / 217081801u); // Results in [0,1).
+            m_perm601[(index / 361201u) % 601u]) * float(0.9999998807907104 / 217081801u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton607(const unsigned index) const
 {
     return (m_perm607[index % 607u] * 368449u +
             m_perm607[(index / 607u) % 607u] * 607u +
-            m_perm607[(index / 368449u) % 607u]) * float(0x1.fffffcp-1 / 223648543u); // Results in [0,1).
+            m_perm607[(index / 368449u) % 607u]) * float(0.9999998807907104 / 223648543u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton613(const unsigned index) const
 {
     return (m_perm613[index % 613u] * 375769u +
             m_perm613[(index / 613u) % 613u] * 613u +
-            m_perm613[(index / 375769u) % 613u]) * float(0x1.fffffcp-1 / 230346397u); // Results in [0,1).
+            m_perm613[(index / 375769u) % 613u]) * float(0.9999998807907104 / 230346397u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton617(const unsigned index) const
 {
     return (m_perm617[index % 617u] * 380689u +
             m_perm617[(index / 617u) % 617u] * 617u +
-            m_perm617[(index / 380689u) % 617u]) * float(0x1.fffffcp-1 / 234885113u); // Results in [0,1).
+            m_perm617[(index / 380689u) % 617u]) * float(0.9999998807907104 / 234885113u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton619(const unsigned index) const
 {
     return (m_perm619[index % 619u] * 383161u +
             m_perm619[(index / 619u) % 619u] * 619u +
-            m_perm619[(index / 383161u) % 619u]) * float(0x1.fffffcp-1 / 237176659u); // Results in [0,1).
+            m_perm619[(index / 383161u) % 619u]) * float(0.9999998807907104 / 237176659u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton631(const unsigned index) const
 {
     return (m_perm631[index % 631u] * 398161u +
             m_perm631[(index / 631u) % 631u] * 631u +
-            m_perm631[(index / 398161u) % 631u]) * float(0x1.fffffcp-1 / 251239591u); // Results in [0,1).
+            m_perm631[(index / 398161u) % 631u]) * float(0.9999998807907104 / 251239591u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton641(const unsigned index) const
 {
     return (m_perm641[index % 641u] * 410881u +
             m_perm641[(index / 641u) % 641u] * 641u +
-            m_perm641[(index / 410881u) % 641u]) * float(0x1.fffffcp-1 / 263374721u); // Results in [0,1).
+            m_perm641[(index / 410881u) % 641u]) * float(0.9999998807907104 / 263374721u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton643(const unsigned index) const
 {
     return (m_perm643[index % 643u] * 413449u +
             m_perm643[(index / 643u) % 643u] * 643u +
-            m_perm643[(index / 413449u) % 643u]) * float(0x1.fffffcp-1 / 265847707u); // Results in [0,1).
+            m_perm643[(index / 413449u) % 643u]) * float(0.9999998807907104 / 265847707u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton647(const unsigned index) const
 {
     return (m_perm647[index % 647u] * 418609u +
             m_perm647[(index / 647u) % 647u] * 647u +
-            m_perm647[(index / 418609u) % 647u]) * float(0x1.fffffcp-1 / 270840023u); // Results in [0,1).
+            m_perm647[(index / 418609u) % 647u]) * float(0.9999998807907104 / 270840023u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton653(const unsigned index) const
 {
     return (m_perm653[index % 653u] * 426409u +
             m_perm653[(index / 653u) % 653u] * 653u +
-            m_perm653[(index / 426409u) % 653u]) * float(0x1.fffffcp-1 / 278445077u); // Results in [0,1).
+            m_perm653[(index / 426409u) % 653u]) * float(0.9999998807907104 / 278445077u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton659(const unsigned index) const
 {
     return (m_perm659[index % 659u] * 434281u +
             m_perm659[(index / 659u) % 659u] * 659u +
-            m_perm659[(index / 434281u) % 659u]) * float(0x1.fffffcp-1 / 286191179u); // Results in [0,1).
+            m_perm659[(index / 434281u) % 659u]) * float(0.9999998807907104 / 286191179u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton661(const unsigned index) const
 {
     return (m_perm661[index % 661u] * 436921u +
             m_perm661[(index / 661u) % 661u] * 661u +
-            m_perm661[(index / 436921u) % 661u]) * float(0x1.fffffcp-1 / 288804781u); // Results in [0,1).
+            m_perm661[(index / 436921u) % 661u]) * float(0.9999998807907104 / 288804781u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton673(const unsigned index) const
 {
     return (m_perm673[index % 673u] * 452929u +
             m_perm673[(index / 673u) % 673u] * 673u +
-            m_perm673[(index / 452929u) % 673u]) * float(0x1.fffffcp-1 / 304821217u); // Results in [0,1).
+            m_perm673[(index / 452929u) % 673u]) * float(0.9999998807907104 / 304821217u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton677(const unsigned index) const
 {
     return (m_perm677[index % 677u] * 458329u +
             m_perm677[(index / 677u) % 677u] * 677u +
-            m_perm677[(index / 458329u) % 677u]) * float(0x1.fffffcp-1 / 310288733u); // Results in [0,1).
+            m_perm677[(index / 458329u) % 677u]) * float(0.9999998807907104 / 310288733u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton683(const unsigned index) const
 {
     return (m_perm683[index % 683u] * 466489u +
             m_perm683[(index / 683u) % 683u] * 683u +
-            m_perm683[(index / 466489u) % 683u]) * float(0x1.fffffcp-1 / 318611987u); // Results in [0,1).
+            m_perm683[(index / 466489u) % 683u]) * float(0.9999998807907104 / 318611987u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton691(const unsigned index) const
 {
     return (m_perm691[index % 691u] * 477481u +
             m_perm691[(index / 691u) % 691u] * 691u +
-            m_perm691[(index / 477481u) % 691u]) * float(0x1.fffffcp-1 / 329939371u); // Results in [0,1).
+            m_perm691[(index / 477481u) % 691u]) * float(0.9999998807907104 / 329939371u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton701(const unsigned index) const
 {
     return (m_perm701[index % 701u] * 491401u +
             m_perm701[(index / 701u) % 701u] * 701u +
-            m_perm701[(index / 491401u) % 701u]) * float(0x1.fffffcp-1 / 344472101u); // Results in [0,1).
+            m_perm701[(index / 491401u) % 701u]) * float(0.9999998807907104 / 344472101u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton709(const unsigned index) const
 {
     return (m_perm709[index % 709u] * 502681u +
             m_perm709[(index / 709u) % 709u] * 709u +
-            m_perm709[(index / 502681u) % 709u]) * float(0x1.fffffcp-1 / 356400829u); // Results in [0,1).
+            m_perm709[(index / 502681u) % 709u]) * float(0.9999998807907104 / 356400829u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton719(const unsigned index) const
 {
     return (m_perm719[index % 719u] * 516961u +
             m_perm719[(index / 719u) % 719u] * 719u +
-            m_perm719[(index / 516961u) % 719u]) * float(0x1.fffffcp-1 / 371694959u); // Results in [0,1).
+            m_perm719[(index / 516961u) % 719u]) * float(0.9999998807907104 / 371694959u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton727(const unsigned index) const
 {
     return (m_perm727[index % 727u] * 528529u +
             m_perm727[(index / 727u) % 727u] * 727u +
-            m_perm727[(index / 528529u) % 727u]) * float(0x1.fffffcp-1 / 384240583u); // Results in [0,1).
+            m_perm727[(index / 528529u) % 727u]) * float(0.9999998807907104 / 384240583u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton733(const unsigned index) const
 {
     return (m_perm733[index % 733u] * 537289u +
             m_perm733[(index / 733u) % 733u] * 733u +
-            m_perm733[(index / 537289u) % 733u]) * float(0x1.fffffcp-1 / 393832837u); // Results in [0,1).
+            m_perm733[(index / 537289u) % 733u]) * float(0.9999998807907104 / 393832837u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton739(const unsigned index) const
 {
     return (m_perm739[index % 739u] * 546121u +
             m_perm739[(index / 739u) % 739u] * 739u +
-            m_perm739[(index / 546121u) % 739u]) * float(0x1.fffffcp-1 / 403583419u); // Results in [0,1).
+            m_perm739[(index / 546121u) % 739u]) * float(0.9999998807907104 / 403583419u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton743(const unsigned index) const
 {
     return (m_perm743[index % 743u] * 552049u +
             m_perm743[(index / 743u) % 743u] * 743u +
-            m_perm743[(index / 552049u) % 743u]) * float(0x1.fffffcp-1 / 410172407u); // Results in [0,1).
+            m_perm743[(index / 552049u) % 743u]) * float(0.9999998807907104 / 410172407u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton751(const unsigned index) const
 {
     return (m_perm751[index % 751u] * 564001u +
             m_perm751[(index / 751u) % 751u] * 751u +
-            m_perm751[(index / 564001u) % 751u]) * float(0x1.fffffcp-1 / 423564751u); // Results in [0,1).
+            m_perm751[(index / 564001u) % 751u]) * float(0.9999998807907104 / 423564751u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton757(const unsigned index) const
 {
     return (m_perm757[index % 757u] * 573049u +
             m_perm757[(index / 757u) % 757u] * 757u +
-            m_perm757[(index / 573049u) % 757u]) * float(0x1.fffffcp-1 / 433798093u); // Results in [0,1).
+            m_perm757[(index / 573049u) % 757u]) * float(0.9999998807907104 / 433798093u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton761(const unsigned index) const
 {
     return (m_perm761[index % 761u] * 579121u +
             m_perm761[(index / 761u) % 761u] * 761u +
-            m_perm761[(index / 579121u) % 761u]) * float(0x1.fffffcp-1 / 440711081u); // Results in [0,1).
+            m_perm761[(index / 579121u) % 761u]) * float(0.9999998807907104 / 440711081u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton769(const unsigned index) const
 {
     return (m_perm769[index % 769u] * 591361u +
             m_perm769[(index / 769u) % 769u] * 769u +
-            m_perm769[(index / 591361u) % 769u]) * float(0x1.fffffcp-1 / 454756609u); // Results in [0,1).
+            m_perm769[(index / 591361u) % 769u]) * float(0.9999998807907104 / 454756609u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton773(const unsigned index) const
 {
     return (m_perm773[index % 773u] * 597529u +
             m_perm773[(index / 773u) % 773u] * 773u +
-            m_perm773[(index / 597529u) % 773u]) * float(0x1.fffffcp-1 / 461889917u); // Results in [0,1).
+            m_perm773[(index / 597529u) % 773u]) * float(0.9999998807907104 / 461889917u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton787(const unsigned index) const
 {
     return (m_perm787[index % 787u] * 619369u +
             m_perm787[(index / 787u) % 787u] * 787u +
-            m_perm787[(index / 619369u) % 787u]) * float(0x1.fffffcp-1 / 487443403u); // Results in [0,1).
+            m_perm787[(index / 619369u) % 787u]) * float(0.9999998807907104 / 487443403u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton797(const unsigned index) const
 {
     return (m_perm797[index % 797u] * 635209u +
             m_perm797[(index / 797u) % 797u] * 797u +
-            m_perm797[(index / 635209u) % 797u]) * float(0x1.fffffcp-1 / 506261573u); // Results in [0,1).
+            m_perm797[(index / 635209u) % 797u]) * float(0.9999998807907104 / 506261573u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton809(const unsigned index) const
 {
     return (m_perm809[index % 809u] * 654481u +
             m_perm809[(index / 809u) % 809u] * 809u +
-            m_perm809[(index / 654481u) % 809u]) * float(0x1.fffffcp-1 / 529475129u); // Results in [0,1).
+            m_perm809[(index / 654481u) % 809u]) * float(0.9999998807907104 / 529475129u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton811(const unsigned index) const
 {
     return (m_perm811[index % 811u] * 657721u +
             m_perm811[(index / 811u) % 811u] * 811u +
-            m_perm811[(index / 657721u) % 811u]) * float(0x1.fffffcp-1 / 533411731u); // Results in [0,1).
+            m_perm811[(index / 657721u) % 811u]) * float(0.9999998807907104 / 533411731u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton821(const unsigned index) const
 {
     return (m_perm821[index % 821u] * 674041u +
             m_perm821[(index / 821u) % 821u] * 821u +
-            m_perm821[(index / 674041u) % 821u]) * float(0x1.fffffcp-1 / 553387661u); // Results in [0,1).
+            m_perm821[(index / 674041u) % 821u]) * float(0.9999998807907104 / 553387661u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton823(const unsigned index) const
 {
     return (m_perm823[index % 823u] * 677329u +
             m_perm823[(index / 823u) % 823u] * 823u +
-            m_perm823[(index / 677329u) % 823u]) * float(0x1.fffffcp-1 / 557441767u); // Results in [0,1).
+            m_perm823[(index / 677329u) % 823u]) * float(0.9999998807907104 / 557441767u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton827(const unsigned index) const
 {
     return (m_perm827[index % 827u] * 683929u +
             m_perm827[(index / 827u) % 827u] * 827u +
-            m_perm827[(index / 683929u) % 827u]) * float(0x1.fffffcp-1 / 565609283u); // Results in [0,1).
+            m_perm827[(index / 683929u) % 827u]) * float(0.9999998807907104 / 565609283u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton829(const unsigned index) const
 {
     return (m_perm829[index % 829u] * 687241u +
             m_perm829[(index / 829u) % 829u] * 829u +
-            m_perm829[(index / 687241u) % 829u]) * float(0x1.fffffcp-1 / 569722789u); // Results in [0,1).
+            m_perm829[(index / 687241u) % 829u]) * float(0.9999998807907104 / 569722789u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton839(const unsigned index) const
 {
     return (m_perm839[index % 839u] * 703921u +
             m_perm839[(index / 839u) % 839u] * 839u +
-            m_perm839[(index / 703921u) % 839u]) * float(0x1.fffffcp-1 / 590589719u); // Results in [0,1).
+            m_perm839[(index / 703921u) % 839u]) * float(0.9999998807907104 / 590589719u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton853(const unsigned index) const
 {
     return (m_perm853[index % 853u] * 727609u +
             m_perm853[(index / 853u) % 853u] * 853u +
-            m_perm853[(index / 727609u) % 853u]) * float(0x1.fffffcp-1 / 620650477u); // Results in [0,1).
+            m_perm853[(index / 727609u) % 853u]) * float(0.9999998807907104 / 620650477u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton857(const unsigned index) const
 {
     return (m_perm857[index % 857u] * 734449u +
             m_perm857[(index / 857u) % 857u] * 857u +
-            m_perm857[(index / 734449u) % 857u]) * float(0x1.fffffcp-1 / 629422793u); // Results in [0,1).
+            m_perm857[(index / 734449u) % 857u]) * float(0.9999998807907104 / 629422793u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton859(const unsigned index) const
 {
     return (m_perm859[index % 859u] * 737881u +
             m_perm859[(index / 859u) % 859u] * 859u +
-            m_perm859[(index / 737881u) % 859u]) * float(0x1.fffffcp-1 / 633839779u); // Results in [0,1).
+            m_perm859[(index / 737881u) % 859u]) * float(0.9999998807907104 / 633839779u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton863(const unsigned index) const
 {
     return (m_perm863[index % 863u] * 744769u +
             m_perm863[(index / 863u) % 863u] * 863u +
-            m_perm863[(index / 744769u) % 863u]) * float(0x1.fffffcp-1 / 642735647u); // Results in [0,1).
+            m_perm863[(index / 744769u) % 863u]) * float(0.9999998807907104 / 642735647u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton877(const unsigned index) const
 {
     return (m_perm877[index % 877u] * 769129u +
             m_perm877[(index / 877u) % 877u] * 877u +
-            m_perm877[(index / 769129u) % 877u]) * float(0x1.fffffcp-1 / 674526133u); // Results in [0,1).
+            m_perm877[(index / 769129u) % 877u]) * float(0.9999998807907104 / 674526133u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton881(const unsigned index) const
 {
     return (m_perm881[index % 881u] * 776161u +
             m_perm881[(index / 881u) % 881u] * 881u +
-            m_perm881[(index / 776161u) % 881u]) * float(0x1.fffffcp-1 / 683797841u); // Results in [0,1).
+            m_perm881[(index / 776161u) % 881u]) * float(0.9999998807907104 / 683797841u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton883(const unsigned index) const
 {
     return (m_perm883[index % 883u] * 779689u +
             m_perm883[(index / 883u) % 883u] * 883u +
-            m_perm883[(index / 779689u) % 883u]) * float(0x1.fffffcp-1 / 688465387u); // Results in [0,1).
+            m_perm883[(index / 779689u) % 883u]) * float(0.9999998807907104 / 688465387u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton887(const unsigned index) const
 {
     return (m_perm887[index % 887u] * 786769u +
             m_perm887[(index / 887u) % 887u] * 887u +
-            m_perm887[(index / 786769u) % 887u]) * float(0x1.fffffcp-1 / 697864103u); // Results in [0,1).
+            m_perm887[(index / 786769u) % 887u]) * float(0.9999998807907104 / 697864103u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton907(const unsigned index) const
 {
     return (m_perm907[index % 907u] * 822649u +
             m_perm907[(index / 907u) % 907u] * 907u +
-            m_perm907[(index / 822649u) % 907u]) * float(0x1.fffffcp-1 / 746142643u); // Results in [0,1).
+            m_perm907[(index / 822649u) % 907u]) * float(0.9999998807907104 / 746142643u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton911(const unsigned index) const
 {
     return (m_perm911[index % 911u] * 829921u +
             m_perm911[(index / 911u) % 911u] * 911u +
-            m_perm911[(index / 829921u) % 911u]) * float(0x1.fffffcp-1 / 756058031u); // Results in [0,1).
+            m_perm911[(index / 829921u) % 911u]) * float(0.9999998807907104 / 756058031u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton919(const unsigned index) const
 {
     return (m_perm919[index % 919u] * 844561u +
             m_perm919[(index / 919u) % 919u] * 919u +
-            m_perm919[(index / 844561u) % 919u]) * float(0x1.fffffcp-1 / 776151559u); // Results in [0,1).
+            m_perm919[(index / 844561u) % 919u]) * float(0.9999998807907104 / 776151559u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton929(const unsigned index) const
 {
     return (m_perm929[index % 929u] * 863041u +
             m_perm929[(index / 929u) % 929u] * 929u +
-            m_perm929[(index / 863041u) % 929u]) * float(0x1.fffffcp-1 / 801765089u); // Results in [0,1).
+            m_perm929[(index / 863041u) % 929u]) * float(0.9999998807907104 / 801765089u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton937(const unsigned index) const
 {
     return (m_perm937[index % 937u] * 877969u +
             m_perm937[(index / 937u) % 937u] * 937u +
-            m_perm937[(index / 877969u) % 937u]) * float(0x1.fffffcp-1 / 822656953u); // Results in [0,1).
+            m_perm937[(index / 877969u) % 937u]) * float(0.9999998807907104 / 822656953u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton941(const unsigned index) const
 {
     return (m_perm941[index % 941u] * 885481u +
             m_perm941[(index / 941u) % 941u] * 941u +
-            m_perm941[(index / 885481u) % 941u]) * float(0x1.fffffcp-1 / 833237621u); // Results in [0,1).
+            m_perm941[(index / 885481u) % 941u]) * float(0.9999998807907104 / 833237621u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton947(const unsigned index) const
 {
     return (m_perm947[index % 947u] * 896809u +
             m_perm947[(index / 947u) % 947u] * 947u +
-            m_perm947[(index / 896809u) % 947u]) * float(0x1.fffffcp-1 / 849278123u); // Results in [0,1).
+            m_perm947[(index / 896809u) % 947u]) * float(0.9999998807907104 / 849278123u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton953(const unsigned index) const
 {
     return (m_perm953[index % 953u] * 908209u +
             m_perm953[(index / 953u) % 953u] * 953u +
-            m_perm953[(index / 908209u) % 953u]) * float(0x1.fffffcp-1 / 865523177u); // Results in [0,1).
+            m_perm953[(index / 908209u) % 953u]) * float(0.9999998807907104 / 865523177u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton967(const unsigned index) const
 {
     return (m_perm967[index % 967u] * 935089u +
             m_perm967[(index / 967u) % 967u] * 967u +
-            m_perm967[(index / 935089u) % 967u]) * float(0x1.fffffcp-1 / 904231063u); // Results in [0,1).
+            m_perm967[(index / 935089u) % 967u]) * float(0.9999998807907104 / 904231063u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton971(const unsigned index) const
 {
     return (m_perm971[index % 971u] * 942841u +
             m_perm971[(index / 971u) % 971u] * 971u +
-            m_perm971[(index / 942841u) % 971u]) * float(0x1.fffffcp-1 / 915498611u); // Results in [0,1).
+            m_perm971[(index / 942841u) % 971u]) * float(0.9999998807907104 / 915498611u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton977(const unsigned index) const
 {
     return (m_perm977[index % 977u] * 954529u +
             m_perm977[(index / 977u) % 977u] * 977u +
-            m_perm977[(index / 954529u) % 977u]) * float(0x1.fffffcp-1 / 932574833u); // Results in [0,1).
+            m_perm977[(index / 954529u) % 977u]) * float(0.9999998807907104 / 932574833u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton983(const unsigned index) const
 {
     return (m_perm983[index % 983u] * 966289u +
             m_perm983[(index / 983u) % 983u] * 983u +
-            m_perm983[(index / 966289u) % 983u]) * float(0x1.fffffcp-1 / 949862087u); // Results in [0,1).
+            m_perm983[(index / 966289u) % 983u]) * float(0.9999998807907104 / 949862087u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton991(const unsigned index) const
 {
     return (m_perm991[index % 991u] * 982081u +
             m_perm991[(index / 991u) % 991u] * 991u +
-            m_perm991[(index / 982081u) % 991u]) * float(0x1.fffffcp-1 / 973242271u); // Results in [0,1).
+            m_perm991[(index / 982081u) % 991u]) * float(0.9999998807907104 / 973242271u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton997(const unsigned index) const
 {
     return (m_perm997[index % 997u] * 994009u +
             m_perm997[(index / 997u) % 997u] * 997u +
-            m_perm997[(index / 994009u) % 997u]) * float(0x1.fffffcp-1 / 991026973u); // Results in [0,1).
+            m_perm997[(index / 994009u) % 997u]) * float(0.9999998807907104 / 991026973u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1009(const unsigned index) const
 {
     return (m_perm1009[index % 1009u] * 1018081u +
             m_perm1009[(index / 1009u) % 1009u] * 1009u +
-            m_perm1009[(index / 1018081u) % 1009u]) * float(0x1.fffffcp-1 / 1027243729u); // Results in [0,1).
+            m_perm1009[(index / 1018081u) % 1009u]) * float(0.9999998807907104 / 1027243729u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1013(const unsigned index) const
 {
     return (m_perm1013[index % 1013u] * 1026169u +
             m_perm1013[(index / 1013u) % 1013u] * 1013u +
-            m_perm1013[(index / 1026169u) % 1013u]) * float(0x1.fffffcp-1 / 1039509197u); // Results in [0,1).
+            m_perm1013[(index / 1026169u) % 1013u]) * float(0.9999998807907104 / 1039509197u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1019(const unsigned index) const
 {
     return (m_perm1019[index % 1019u] * 1038361u +
             m_perm1019[(index / 1019u) % 1019u] * 1019u +
-            m_perm1019[(index / 1038361u) % 1019u]) * float(0x1.fffffcp-1 / 1058089859u); // Results in [0,1).
+            m_perm1019[(index / 1038361u) % 1019u]) * float(0.9999998807907104 / 1058089859u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1021(const unsigned index) const
 {
     return (m_perm1021[index % 1021u] * 1042441u +
             m_perm1021[(index / 1021u) % 1021u] * 1021u +
-            m_perm1021[(index / 1042441u) % 1021u]) * float(0x1.fffffcp-1 / 1064332261u); // Results in [0,1).
+            m_perm1021[(index / 1042441u) % 1021u]) * float(0.9999998807907104 / 1064332261u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1031(const unsigned index) const
 {
     return (m_perm1031[index % 1031u] * 1062961u +
             m_perm1031[(index / 1031u) % 1031u] * 1031u +
-            m_perm1031[(index / 1062961u) % 1031u]) * float(0x1.fffffcp-1 / 1095912791u); // Results in [0,1).
+            m_perm1031[(index / 1062961u) % 1031u]) * float(0.9999998807907104 / 1095912791u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1033(const unsigned index) const
 {
     return (m_perm1033[index % 1033u] * 1067089u +
             m_perm1033[(index / 1033u) % 1033u] * 1033u +
-            m_perm1033[(index / 1067089u) % 1033u]) * float(0x1.fffffcp-1 / 1102302937u); // Results in [0,1).
+            m_perm1033[(index / 1067089u) % 1033u]) * float(0.9999998807907104 / 1102302937u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1039(const unsigned index) const
 {
     return (m_perm1039[index % 1039u] * 1079521u +
             m_perm1039[(index / 1039u) % 1039u] * 1039u +
-            m_perm1039[(index / 1079521u) % 1039u]) * float(0x1.fffffcp-1 / 1121622319u); // Results in [0,1).
+            m_perm1039[(index / 1079521u) % 1039u]) * float(0.9999998807907104 / 1121622319u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1049(const unsigned index) const
 {
     return (m_perm1049[index % 1049u] * 1100401u +
             m_perm1049[(index / 1049u) % 1049u] * 1049u +
-            m_perm1049[(index / 1100401u) % 1049u]) * float(0x1.fffffcp-1 / 1154320649u); // Results in [0,1).
+            m_perm1049[(index / 1100401u) % 1049u]) * float(0.9999998807907104 / 1154320649u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1051(const unsigned index) const
 {
     return (m_perm1051[index % 1051u] * 1104601u +
             m_perm1051[(index / 1051u) % 1051u] * 1051u +
-            m_perm1051[(index / 1104601u) % 1051u]) * float(0x1.fffffcp-1 / 1160935651u); // Results in [0,1).
+            m_perm1051[(index / 1104601u) % 1051u]) * float(0.9999998807907104 / 1160935651u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1061(const unsigned index) const
 {
     return (m_perm1061[index % 1061u] * 1125721u +
             m_perm1061[(index / 1061u) % 1061u] * 1061u +
-            m_perm1061[(index / 1125721u) % 1061u]) * float(0x1.fffffcp-1 / 1194389981u); // Results in [0,1).
+            m_perm1061[(index / 1125721u) % 1061u]) * float(0.9999998807907104 / 1194389981u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1063(const unsigned index) const
 {
     return (m_perm1063[index % 1063u] * 1129969u +
             m_perm1063[(index / 1063u) % 1063u] * 1063u +
-            m_perm1063[(index / 1129969u) % 1063u]) * float(0x1.fffffcp-1 / 1201157047u); // Results in [0,1).
+            m_perm1063[(index / 1129969u) % 1063u]) * float(0.9999998807907104 / 1201157047u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1069(const unsigned index) const
 {
     return (m_perm1069[index % 1069u] * 1142761u +
             m_perm1069[(index / 1069u) % 1069u] * 1069u +
-            m_perm1069[(index / 1142761u) % 1069u]) * float(0x1.fffffcp-1 / 1221611509u); // Results in [0,1).
+            m_perm1069[(index / 1142761u) % 1069u]) * float(0.9999998807907104 / 1221611509u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1087(const unsigned index) const
 {
     return (m_perm1087[index % 1087u] * 1181569u +
             m_perm1087[(index / 1087u) % 1087u] * 1087u +
-            m_perm1087[(index / 1181569u) % 1087u]) * float(0x1.fffffcp-1 / 1284365503u); // Results in [0,1).
+            m_perm1087[(index / 1181569u) % 1087u]) * float(0.9999998807907104 / 1284365503u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1091(const unsigned index) const
 {
     return (m_perm1091[index % 1091u] * 1190281u +
             m_perm1091[(index / 1091u) % 1091u] * 1091u +
-            m_perm1091[(index / 1190281u) % 1091u]) * float(0x1.fffffcp-1 / 1298596571u); // Results in [0,1).
+            m_perm1091[(index / 1190281u) % 1091u]) * float(0.9999998807907104 / 1298596571u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1093(const unsigned index) const
 {
     return (m_perm1093[index % 1093u] * 1194649u +
             m_perm1093[(index / 1093u) % 1093u] * 1093u +
-            m_perm1093[(index / 1194649u) % 1093u]) * float(0x1.fffffcp-1 / 1305751357u); // Results in [0,1).
+            m_perm1093[(index / 1194649u) % 1093u]) * float(0.9999998807907104 / 1305751357u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1097(const unsigned index) const
 {
     return (m_perm1097[index % 1097u] * 1203409u +
             m_perm1097[(index / 1097u) % 1097u] * 1097u +
-            m_perm1097[(index / 1203409u) % 1097u]) * float(0x1.fffffcp-1 / 1320139673u); // Results in [0,1).
+            m_perm1097[(index / 1203409u) % 1097u]) * float(0.9999998807907104 / 1320139673u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1103(const unsigned index) const
 {
     return (m_perm1103[index % 1103u] * 1216609u +
             m_perm1103[(index / 1103u) % 1103u] * 1103u +
-            m_perm1103[(index / 1216609u) % 1103u]) * float(0x1.fffffcp-1 / 1341919727u); // Results in [0,1).
+            m_perm1103[(index / 1216609u) % 1103u]) * float(0.9999998807907104 / 1341919727u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1109(const unsigned index) const
 {
     return (m_perm1109[index % 1109u] * 1229881u +
             m_perm1109[(index / 1109u) % 1109u] * 1109u +
-            m_perm1109[(index / 1229881u) % 1109u]) * float(0x1.fffffcp-1 / 1363938029u); // Results in [0,1).
+            m_perm1109[(index / 1229881u) % 1109u]) * float(0.9999998807907104 / 1363938029u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1117(const unsigned index) const
 {
     return (m_perm1117[index % 1117u] * 1247689u +
             m_perm1117[(index / 1117u) % 1117u] * 1117u +
-            m_perm1117[(index / 1247689u) % 1117u]) * float(0x1.fffffcp-1 / 1393668613u); // Results in [0,1).
+            m_perm1117[(index / 1247689u) % 1117u]) * float(0.9999998807907104 / 1393668613u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1123(const unsigned index) const
 {
     return (m_perm1123[index % 1123u] * 1261129u +
             m_perm1123[(index / 1123u) % 1123u] * 1123u +
-            m_perm1123[(index / 1261129u) % 1123u]) * float(0x1.fffffcp-1 / 1416247867u); // Results in [0,1).
+            m_perm1123[(index / 1261129u) % 1123u]) * float(0.9999998807907104 / 1416247867u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1129(const unsigned index) const
 {
     return (m_perm1129[index % 1129u] * 1274641u +
             m_perm1129[(index / 1129u) % 1129u] * 1129u +
-            m_perm1129[(index / 1274641u) % 1129u]) * float(0x1.fffffcp-1 / 1439069689u); // Results in [0,1).
+            m_perm1129[(index / 1274641u) % 1129u]) * float(0.9999998807907104 / 1439069689u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1151(const unsigned index) const
 {
     return (m_perm1151[index % 1151u] * 1324801u +
             m_perm1151[(index / 1151u) % 1151u] * 1151u +
-            m_perm1151[(index / 1324801u) % 1151u]) * float(0x1.fffffcp-1 / 1524845951u); // Results in [0,1).
+            m_perm1151[(index / 1324801u) % 1151u]) * float(0.9999998807907104 / 1524845951u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1153(const unsigned index) const
 {
     return (m_perm1153[index % 1153u] * 1329409u +
             m_perm1153[(index / 1153u) % 1153u] * 1153u +
-            m_perm1153[(index / 1329409u) % 1153u]) * float(0x1.fffffcp-1 / 1532808577u); // Results in [0,1).
+            m_perm1153[(index / 1329409u) % 1153u]) * float(0.9999998807907104 / 1532808577u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1163(const unsigned index) const
 {
     return (m_perm1163[index % 1163u] * 1352569u +
             m_perm1163[(index / 1163u) % 1163u] * 1163u +
-            m_perm1163[(index / 1352569u) % 1163u]) * float(0x1.fffffcp-1 / 1573037747u); // Results in [0,1).
+            m_perm1163[(index / 1352569u) % 1163u]) * float(0.9999998807907104 / 1573037747u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1171(const unsigned index) const
 {
     return (m_perm1171[index % 1171u] * 1371241u +
             m_perm1171[(index / 1171u) % 1171u] * 1171u +
-            m_perm1171[(index / 1371241u) % 1171u]) * float(0x1.fffffcp-1 / 1605723211u); // Results in [0,1).
+            m_perm1171[(index / 1371241u) % 1171u]) * float(0.9999998807907104 / 1605723211u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1181(const unsigned index) const
 {
     return (m_perm1181[index % 1181u] * 1394761u +
             m_perm1181[(index / 1181u) % 1181u] * 1181u +
-            m_perm1181[(index / 1394761u) % 1181u]) * float(0x1.fffffcp-1 / 1647212741u); // Results in [0,1).
+            m_perm1181[(index / 1394761u) % 1181u]) * float(0.9999998807907104 / 1647212741u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1187(const unsigned index) const
 {
     return (m_perm1187[index % 1187u] * 1408969u +
             m_perm1187[(index / 1187u) % 1187u] * 1187u +
-            m_perm1187[(index / 1408969u) % 1187u]) * float(0x1.fffffcp-1 / 1672446203u); // Results in [0,1).
+            m_perm1187[(index / 1408969u) % 1187u]) * float(0.9999998807907104 / 1672446203u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1193(const unsigned index) const
 {
     return (m_perm1193[index % 1193u] * 1423249u +
             m_perm1193[(index / 1193u) % 1193u] * 1193u +
-            m_perm1193[(index / 1423249u) % 1193u]) * float(0x1.fffffcp-1 / 1697936057u); // Results in [0,1).
+            m_perm1193[(index / 1423249u) % 1193u]) * float(0.9999998807907104 / 1697936057u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1201(const unsigned index) const
 {
     return (m_perm1201[index % 1201u] * 1442401u +
             m_perm1201[(index / 1201u) % 1201u] * 1201u +
-            m_perm1201[(index / 1442401u) % 1201u]) * float(0x1.fffffcp-1 / 1732323601u); // Results in [0,1).
+            m_perm1201[(index / 1442401u) % 1201u]) * float(0.9999998807907104 / 1732323601u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1213(const unsigned index) const
 {
     return (m_perm1213[index % 1213u] * 1471369u +
             m_perm1213[(index / 1213u) % 1213u] * 1213u +
-            m_perm1213[(index / 1471369u) % 1213u]) * float(0x1.fffffcp-1 / 1784770597u); // Results in [0,1).
+            m_perm1213[(index / 1471369u) % 1213u]) * float(0.9999998807907104 / 1784770597u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1217(const unsigned index) const
 {
     return (m_perm1217[index % 1217u] * 1481089u +
             m_perm1217[(index / 1217u) % 1217u] * 1217u +
-            m_perm1217[(index / 1481089u) % 1217u]) * float(0x1.fffffcp-1 / 1802485313u); // Results in [0,1).
+            m_perm1217[(index / 1481089u) % 1217u]) * float(0.9999998807907104 / 1802485313u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1223(const unsigned index) const
 {
     return (m_perm1223[index % 1223u] * 1495729u +
             m_perm1223[(index / 1223u) % 1223u] * 1223u +
-            m_perm1223[(index / 1495729u) % 1223u]) * float(0x1.fffffcp-1 / 1829276567u); // Results in [0,1).
+            m_perm1223[(index / 1495729u) % 1223u]) * float(0.9999998807907104 / 1829276567u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1229(const unsigned index) const
 {
     return (m_perm1229[index % 1229u] * 1510441u +
             m_perm1229[(index / 1229u) % 1229u] * 1229u +
-            m_perm1229[(index / 1510441u) % 1229u]) * float(0x1.fffffcp-1 / 1856331989u); // Results in [0,1).
+            m_perm1229[(index / 1510441u) % 1229u]) * float(0.9999998807907104 / 1856331989u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1231(const unsigned index) const
 {
     return (m_perm1231[index % 1231u] * 1515361u +
             m_perm1231[(index / 1231u) % 1231u] * 1231u +
-            m_perm1231[(index / 1515361u) % 1231u]) * float(0x1.fffffcp-1 / 1865409391u); // Results in [0,1).
+            m_perm1231[(index / 1515361u) % 1231u]) * float(0.9999998807907104 / 1865409391u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1237(const unsigned index) const
 {
     return (m_perm1237[index % 1237u] * 1530169u +
             m_perm1237[(index / 1237u) % 1237u] * 1237u +
-            m_perm1237[(index / 1530169u) % 1237u]) * float(0x1.fffffcp-1 / 1892819053u); // Results in [0,1).
+            m_perm1237[(index / 1530169u) % 1237u]) * float(0.9999998807907104 / 1892819053u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1249(const unsigned index) const
 {
     return (m_perm1249[index % 1249u] * 1560001u +
             m_perm1249[(index / 1249u) % 1249u] * 1249u +
-            m_perm1249[(index / 1560001u) % 1249u]) * float(0x1.fffffcp-1 / 1948441249u); // Results in [0,1).
+            m_perm1249[(index / 1560001u) % 1249u]) * float(0.9999998807907104 / 1948441249u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1259(const unsigned index) const
 {
     return (m_perm1259[index % 1259u] * 1585081u +
             m_perm1259[(index / 1259u) % 1259u] * 1259u +
-            m_perm1259[(index / 1585081u) % 1259u]) * float(0x1.fffffcp-1 / 1995616979u); // Results in [0,1).
+            m_perm1259[(index / 1585081u) % 1259u]) * float(0.9999998807907104 / 1995616979u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1277(const unsigned index) const
 {
     return (m_perm1277[index % 1277u] * 1630729u +
             m_perm1277[(index / 1277u) % 1277u] * 1277u +
-            m_perm1277[(index / 1630729u) % 1277u]) * float(0x1.fffffcp-1 / 2082440933u); // Results in [0,1).
+            m_perm1277[(index / 1630729u) % 1277u]) * float(0.9999998807907104 / 2082440933u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1279(const unsigned index) const
 {
     return (m_perm1279[index % 1279u] * 1635841u +
             m_perm1279[(index / 1279u) % 1279u] * 1279u +
-            m_perm1279[(index / 1635841u) % 1279u]) * float(0x1.fffffcp-1 / 2092240639u); // Results in [0,1).
+            m_perm1279[(index / 1635841u) % 1279u]) * float(0.9999998807907104 / 2092240639u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1283(const unsigned index) const
 {
     return (m_perm1283[index % 1283u] * 1646089u +
             m_perm1283[(index / 1283u) % 1283u] * 1283u +
-            m_perm1283[(index / 1646089u) % 1283u]) * float(0x1.fffffcp-1 / 2111932187u); // Results in [0,1).
+            m_perm1283[(index / 1646089u) % 1283u]) * float(0.9999998807907104 / 2111932187u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1289(const unsigned index) const
 {
     return (m_perm1289[index % 1289u] * 1661521u +
             m_perm1289[(index / 1289u) % 1289u] * 1289u +
-            m_perm1289[(index / 1661521u) % 1289u]) * float(0x1.fffffcp-1 / 2141700569u); // Results in [0,1).
+            m_perm1289[(index / 1661521u) % 1289u]) * float(0.9999998807907104 / 2141700569u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1291(const unsigned index) const
 {
     return (m_perm1291[index % 1291u] * 1666681u +
             m_perm1291[(index / 1291u) % 1291u] * 1291u +
-            m_perm1291[(index / 1666681u) % 1291u]) * float(0x1.fffffcp-1 / 2151685171u); // Results in [0,1).
+            m_perm1291[(index / 1666681u) % 1291u]) * float(0.9999998807907104 / 2151685171u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1297(const unsigned index) const
 {
     return (m_perm1297[index % 1297u] * 1682209u +
             m_perm1297[(index / 1297u) % 1297u] * 1297u +
-            m_perm1297[(index / 1682209u) % 1297u]) * float(0x1.fffffcp-1 / 2181825073u); // Results in [0,1).
+            m_perm1297[(index / 1682209u) % 1297u]) * float(0.9999998807907104 / 2181825073u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1301(const unsigned index) const
 {
     return (m_perm1301[index % 1301u] * 1692601u +
             m_perm1301[(index / 1301u) % 1301u] * 1301u +
-            m_perm1301[(index / 1692601u) % 1301u]) * float(0x1.fffffcp-1 / 2202073901u); // Results in [0,1).
+            m_perm1301[(index / 1692601u) % 1301u]) * float(0.9999998807907104 / 2202073901u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1303(const unsigned index) const
 {
     return (m_perm1303[index % 1303u] * 1697809u +
             m_perm1303[(index / 1303u) % 1303u] * 1303u +
-            m_perm1303[(index / 1697809u) % 1303u]) * float(0x1.fffffcp-1 / 2212245127u); // Results in [0,1).
+            m_perm1303[(index / 1697809u) % 1303u]) * float(0.9999998807907104 / 2212245127u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1307(const unsigned index) const
 {
     return (m_perm1307[index % 1307u] * 1708249u +
             m_perm1307[(index / 1307u) % 1307u] * 1307u +
-            m_perm1307[(index / 1708249u) % 1307u]) * float(0x1.fffffcp-1 / 2232681443u); // Results in [0,1).
+            m_perm1307[(index / 1708249u) % 1307u]) * float(0.9999998807907104 / 2232681443u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1319(const unsigned index) const
 {
     return (m_perm1319[index % 1319u] * 1739761u +
             m_perm1319[(index / 1319u) % 1319u] * 1319u +
-            m_perm1319[(index / 1739761u) % 1319u]) * float(0x1.fffffcp-1 / 2294744759u); // Results in [0,1).
+            m_perm1319[(index / 1739761u) % 1319u]) * float(0.9999998807907104 / 2294744759u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1321(const unsigned index) const
 {
     return (m_perm1321[index % 1321u] * 1745041u +
             m_perm1321[(index / 1321u) % 1321u] * 1321u +
-            m_perm1321[(index / 1745041u) % 1321u]) * float(0x1.fffffcp-1 / 2305199161u); // Results in [0,1).
+            m_perm1321[(index / 1745041u) % 1321u]) * float(0.9999998807907104 / 2305199161u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1327(const unsigned index) const
 {
     return (m_perm1327[index % 1327u] * 1760929u +
             m_perm1327[(index / 1327u) % 1327u] * 1327u +
-            m_perm1327[(index / 1760929u) % 1327u]) * float(0x1.fffffcp-1 / 2336752783u); // Results in [0,1).
+            m_perm1327[(index / 1760929u) % 1327u]) * float(0.9999998807907104 / 2336752783u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1361(const unsigned index) const
 {
     return (m_perm1361[index % 1361u] * 1852321u +
             m_perm1361[(index / 1361u) % 1361u] * 1361u +
-            m_perm1361[(index / 1852321u) % 1361u]) * float(0x1.fffffcp-1 / 2521008881u); // Results in [0,1).
+            m_perm1361[(index / 1852321u) % 1361u]) * float(0.9999998807907104 / 2521008881u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1367(const unsigned index) const
 {
     return (m_perm1367[index % 1367u] * 1868689u +
             m_perm1367[(index / 1367u) % 1367u] * 1367u +
-            m_perm1367[(index / 1868689u) % 1367u]) * float(0x1.fffffcp-1 / 2554497863u); // Results in [0,1).
+            m_perm1367[(index / 1868689u) % 1367u]) * float(0.9999998807907104 / 2554497863u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1373(const unsigned index) const
 {
     return (m_perm1373[index % 1373u] * 1885129u +
             m_perm1373[(index / 1373u) % 1373u] * 1373u +
-            m_perm1373[(index / 1885129u) % 1373u]) * float(0x1.fffffcp-1 / 2588282117u); // Results in [0,1).
+            m_perm1373[(index / 1885129u) % 1373u]) * float(0.9999998807907104 / 2588282117u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1381(const unsigned index) const
 {
     return (m_perm1381[index % 1381u] * 1907161u +
             m_perm1381[(index / 1381u) % 1381u] * 1381u +
-            m_perm1381[(index / 1907161u) % 1381u]) * float(0x1.fffffcp-1 / 2633789341u); // Results in [0,1).
+            m_perm1381[(index / 1907161u) % 1381u]) * float(0.9999998807907104 / 2633789341u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1399(const unsigned index) const
 {
     return (m_perm1399[index % 1399u] * 1957201u +
             m_perm1399[(index / 1399u) % 1399u] * 1399u +
-            m_perm1399[(index / 1957201u) % 1399u]) * float(0x1.fffffcp-1 / 2738124199u); // Results in [0,1).
+            m_perm1399[(index / 1957201u) % 1399u]) * float(0.9999998807907104 / 2738124199u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1409(const unsigned index) const
 {
     return (m_perm1409[index % 1409u] * 1985281u +
             m_perm1409[(index / 1409u) % 1409u] * 1409u +
-            m_perm1409[(index / 1985281u) % 1409u]) * float(0x1.fffffcp-1 / 2797260929u); // Results in [0,1).
+            m_perm1409[(index / 1985281u) % 1409u]) * float(0.9999998807907104 / 2797260929u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1423(const unsigned index) const
 {
     return (m_perm1423[index % 1423u] * 2024929u +
             m_perm1423[(index / 1423u) % 1423u] * 1423u +
-            m_perm1423[(index / 2024929u) % 1423u]) * float(0x1.fffffcp-1 / 2881473967u); // Results in [0,1).
+            m_perm1423[(index / 2024929u) % 1423u]) * float(0.9999998807907104 / 2881473967u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1427(const unsigned index) const
 {
     return (m_perm1427[index % 1427u] * 2036329u +
             m_perm1427[(index / 1427u) % 1427u] * 1427u +
-            m_perm1427[(index / 2036329u) % 1427u]) * float(0x1.fffffcp-1 / 2905841483u); // Results in [0,1).
+            m_perm1427[(index / 2036329u) % 1427u]) * float(0.9999998807907104 / 2905841483u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1429(const unsigned index) const
 {
     return (m_perm1429[index % 1429u] * 2042041u +
             m_perm1429[(index / 1429u) % 1429u] * 1429u +
-            m_perm1429[(index / 2042041u) % 1429u]) * float(0x1.fffffcp-1 / 2918076589u); // Results in [0,1).
+            m_perm1429[(index / 2042041u) % 1429u]) * float(0.9999998807907104 / 2918076589u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1433(const unsigned index) const
 {
     return (m_perm1433[index % 1433u] * 2053489u +
             m_perm1433[(index / 1433u) % 1433u] * 1433u +
-            m_perm1433[(index / 2053489u) % 1433u]) * float(0x1.fffffcp-1 / 2942649737u); // Results in [0,1).
+            m_perm1433[(index / 2053489u) % 1433u]) * float(0.9999998807907104 / 2942649737u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1439(const unsigned index) const
 {
     return (m_perm1439[index % 1439u] * 2070721u +
             m_perm1439[(index / 1439u) % 1439u] * 1439u +
-            m_perm1439[(index / 2070721u) % 1439u]) * float(0x1.fffffcp-1 / 2979767519u); // Results in [0,1).
+            m_perm1439[(index / 2070721u) % 1439u]) * float(0.9999998807907104 / 2979767519u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1447(const unsigned index) const
 {
     return (m_perm1447[index % 1447u] * 2093809u +
             m_perm1447[(index / 1447u) % 1447u] * 1447u +
-            m_perm1447[(index / 2093809u) % 1447u]) * float(0x1.fffffcp-1 / 3029741623u); // Results in [0,1).
+            m_perm1447[(index / 2093809u) % 1447u]) * float(0.9999998807907104 / 3029741623u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1451(const unsigned index) const
 {
     return (m_perm1451[index % 1451u] * 2105401u +
             m_perm1451[(index / 1451u) % 1451u] * 1451u +
-            m_perm1451[(index / 2105401u) % 1451u]) * float(0x1.fffffcp-1 / 3054936851u); // Results in [0,1).
+            m_perm1451[(index / 2105401u) % 1451u]) * float(0.9999998807907104 / 3054936851u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1453(const unsigned index) const
 {
     return (m_perm1453[index % 1453u] * 2111209u +
             m_perm1453[(index / 1453u) % 1453u] * 1453u +
-            m_perm1453[(index / 2111209u) % 1453u]) * float(0x1.fffffcp-1 / 3067586677u); // Results in [0,1).
+            m_perm1453[(index / 2111209u) % 1453u]) * float(0.9999998807907104 / 3067586677u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1459(const unsigned index) const
 {
     return (m_perm1459[index % 1459u] * 2128681u +
             m_perm1459[(index / 1459u) % 1459u] * 1459u +
-            m_perm1459[(index / 2128681u) % 1459u]) * float(0x1.fffffcp-1 / 3105745579u); // Results in [0,1).
+            m_perm1459[(index / 2128681u) % 1459u]) * float(0.9999998807907104 / 3105745579u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1471(const unsigned index) const
 {
     return (m_perm1471[index % 1471u] * 2163841u +
             m_perm1471[(index / 1471u) % 1471u] * 1471u +
-            m_perm1471[(index / 2163841u) % 1471u]) * float(0x1.fffffcp-1 / 3183010111u); // Results in [0,1).
+            m_perm1471[(index / 2163841u) % 1471u]) * float(0.9999998807907104 / 3183010111u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1481(const unsigned index) const
 {
     return (m_perm1481[index % 1481u] * 2193361u +
             m_perm1481[(index / 1481u) % 1481u] * 1481u +
-            m_perm1481[(index / 2193361u) % 1481u]) * float(0x1.fffffcp-1 / 3248367641u); // Results in [0,1).
+            m_perm1481[(index / 2193361u) % 1481u]) * float(0.9999998807907104 / 3248367641u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1483(const unsigned index) const
 {
     return (m_perm1483[index % 1483u] * 2199289u +
             m_perm1483[(index / 1483u) % 1483u] * 1483u +
-            m_perm1483[(index / 2199289u) % 1483u]) * float(0x1.fffffcp-1 / 3261545587u); // Results in [0,1).
+            m_perm1483[(index / 2199289u) % 1483u]) * float(0.9999998807907104 / 3261545587u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1487(const unsigned index) const
 {
     return (m_perm1487[index % 1487u] * 2211169u +
             m_perm1487[(index / 1487u) % 1487u] * 1487u +
-            m_perm1487[(index / 2211169u) % 1487u]) * float(0x1.fffffcp-1 / 3288008303u); // Results in [0,1).
+            m_perm1487[(index / 2211169u) % 1487u]) * float(0.9999998807907104 / 3288008303u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1489(const unsigned index) const
 {
     return (m_perm1489[index % 1489u] * 2217121u +
             m_perm1489[(index / 1489u) % 1489u] * 1489u +
-            m_perm1489[(index / 2217121u) % 1489u]) * float(0x1.fffffcp-1 / 3301293169u); // Results in [0,1).
+            m_perm1489[(index / 2217121u) % 1489u]) * float(0.9999998807907104 / 3301293169u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1493(const unsigned index) const
 {
     return (m_perm1493[index % 1493u] * 2229049u +
             m_perm1493[(index / 1493u) % 1493u] * 1493u +
-            m_perm1493[(index / 2229049u) % 1493u]) * float(0x1.fffffcp-1 / 3327970157u); // Results in [0,1).
+            m_perm1493[(index / 2229049u) % 1493u]) * float(0.9999998807907104 / 3327970157u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1499(const unsigned index) const
 {
     return (m_perm1499[index % 1499u] * 2247001u +
             m_perm1499[(index / 1499u) % 1499u] * 1499u +
-            m_perm1499[(index / 2247001u) % 1499u]) * float(0x1.fffffcp-1 / 3368254499u); // Results in [0,1).
+            m_perm1499[(index / 2247001u) % 1499u]) * float(0.9999998807907104 / 3368254499u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1511(const unsigned index) const
 {
     return (m_perm1511[index % 1511u] * 2283121u +
             m_perm1511[(index / 1511u) % 1511u] * 1511u +
-            m_perm1511[(index / 2283121u) % 1511u]) * float(0x1.fffffcp-1 / 3449795831u); // Results in [0,1).
+            m_perm1511[(index / 2283121u) % 1511u]) * float(0.9999998807907104 / 3449795831u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1523(const unsigned index) const
 {
     return (m_perm1523[index % 1523u] * 2319529u +
             m_perm1523[(index / 1523u) % 1523u] * 1523u +
-            m_perm1523[(index / 2319529u) % 1523u]) * float(0x1.fffffcp-1 / 3532642667u); // Results in [0,1).
+            m_perm1523[(index / 2319529u) % 1523u]) * float(0.9999998807907104 / 3532642667u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1531(const unsigned index) const
 {
     return (m_perm1531[index % 1531u] * 2343961u +
             m_perm1531[(index / 1531u) % 1531u] * 1531u +
-            m_perm1531[(index / 2343961u) % 1531u]) * float(0x1.fffffcp-1 / 3588604291u); // Results in [0,1).
+            m_perm1531[(index / 2343961u) % 1531u]) * float(0.9999998807907104 / 3588604291u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1543(const unsigned index) const
 {
     return (m_perm1543[index % 1543u] * 2380849u +
             m_perm1543[(index / 1543u) % 1543u] * 1543u +
-            m_perm1543[(index / 2380849u) % 1543u]) * float(0x1.fffffcp-1 / 3673650007u); // Results in [0,1).
+            m_perm1543[(index / 2380849u) % 1543u]) * float(0.9999998807907104 / 3673650007u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1549(const unsigned index) const
 {
     return (m_perm1549[index % 1549u] * 2399401u +
             m_perm1549[(index / 1549u) % 1549u] * 1549u +
-            m_perm1549[(index / 2399401u) % 1549u]) * float(0x1.fffffcp-1 / 3716672149u); // Results in [0,1).
+            m_perm1549[(index / 2399401u) % 1549u]) * float(0.9999998807907104 / 3716672149u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1553(const unsigned index) const
 {
     return (m_perm1553[index % 1553u] * 2411809u +
             m_perm1553[(index / 1553u) % 1553u] * 1553u +
-            m_perm1553[(index / 2411809u) % 1553u]) * float(0x1.fffffcp-1 / 3745539377u); // Results in [0,1).
+            m_perm1553[(index / 2411809u) % 1553u]) * float(0.9999998807907104 / 3745539377u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1559(const unsigned index) const
 {
     return (m_perm1559[index % 1559u] * 2430481u +
             m_perm1559[(index / 1559u) % 1559u] * 1559u +
-            m_perm1559[(index / 2430481u) % 1559u]) * float(0x1.fffffcp-1 / 3789119879u); // Results in [0,1).
+            m_perm1559[(index / 2430481u) % 1559u]) * float(0.9999998807907104 / 3789119879u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1567(const unsigned index) const
 {
     return (m_perm1567[index % 1567u] * 2455489u +
             m_perm1567[(index / 1567u) % 1567u] * 1567u +
-            m_perm1567[(index / 2455489u) % 1567u]) * float(0x1.fffffcp-1 / 3847751263u); // Results in [0,1).
+            m_perm1567[(index / 2455489u) % 1567u]) * float(0.9999998807907104 / 3847751263u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1571(const unsigned index) const
 {
     return (m_perm1571[index % 1571u] * 2468041u +
             m_perm1571[(index / 1571u) % 1571u] * 1571u +
-            m_perm1571[(index / 2468041u) % 1571u]) * float(0x1.fffffcp-1 / 3877292411u); // Results in [0,1).
+            m_perm1571[(index / 2468041u) % 1571u]) * float(0.9999998807907104 / 3877292411u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1579(const unsigned index) const
 {
     return (m_perm1579[index % 1579u] * 2493241u +
             m_perm1579[(index / 1579u) % 1579u] * 1579u +
-            m_perm1579[(index / 2493241u) % 1579u]) * float(0x1.fffffcp-1 / 3936827539u); // Results in [0,1).
+            m_perm1579[(index / 2493241u) % 1579u]) * float(0.9999998807907104 / 3936827539u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1583(const unsigned index) const
 {
     return (m_perm1583[index % 1583u] * 2505889u +
             m_perm1583[(index / 1583u) % 1583u] * 1583u +
-            m_perm1583[(index / 2505889u) % 1583u]) * float(0x1.fffffcp-1 / 3966822287u); // Results in [0,1).
+            m_perm1583[(index / 2505889u) % 1583u]) * float(0.9999998807907104 / 3966822287u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1597(const unsigned index) const
 {
     return (m_perm1597[index % 1597u] * 2550409u +
             m_perm1597[(index / 1597u) % 1597u] * 1597u +
-            m_perm1597[(index / 2550409u) % 1597u]) * float(0x1.fffffcp-1 / 4073003173u); // Results in [0,1).
+            m_perm1597[(index / 2550409u) % 1597u]) * float(0.9999998807907104 / 4073003173u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1601(const unsigned index) const
 {
     return (m_perm1601[index % 1601u] * 2563201u +
             m_perm1601[(index / 1601u) % 1601u] * 1601u +
-            m_perm1601[(index / 2563201u) % 1601u]) * float(0x1.fffffcp-1 / 4103684801u); // Results in [0,1).
+            m_perm1601[(index / 2563201u) % 1601u]) * float(0.9999998807907104 / 4103684801u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1607(const unsigned index) const
 {
     return (m_perm1607[index % 1607u] * 2582449u +
             m_perm1607[(index / 1607u) % 1607u] * 1607u +
-            m_perm1607[(index / 2582449u) % 1607u]) * float(0x1.fffffcp-1 / 4149995543u); // Results in [0,1).
+            m_perm1607[(index / 2582449u) % 1607u]) * float(0.9999998807907104 / 4149995543u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1609(const unsigned index) const
 {
     return (m_perm1609[index % 1609u] * 2588881u +
             m_perm1609[(index / 1609u) % 1609u] * 1609u +
-            m_perm1609[(index / 2588881u) % 1609u]) * float(0x1.fffffcp-1 / 4165509529u); // Results in [0,1).
+            m_perm1609[(index / 2588881u) % 1609u]) * float(0.9999998807907104 / 4165509529u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1613(const unsigned index) const
 {
     return (m_perm1613[index % 1613u] * 2601769u +
             m_perm1613[(index / 1613u) % 1613u] * 1613u +
-            m_perm1613[(index / 2601769u) % 1613u]) * float(0x1.fffffcp-1 / 4196653397u); // Results in [0,1).
+            m_perm1613[(index / 2601769u) % 1613u]) * float(0.9999998807907104 / 4196653397u); // Results in [0,1).
 }
 
 inline float Halton_sampler::halton1619(const unsigned index) const
 {
     return (m_perm1619[index % 1619u] * 2621161u +
             m_perm1619[(index / 1619u) % 1619u] * 1619u +
-            m_perm1619[(index / 2621161u) % 1619u]) * float(0x1.fffffcp-1 / 4243659659u); // Results in [0,1).
+            m_perm1619[(index / 2621161u) % 1619u]) * float(0.9999998807907104 / 4243659659u); // Results in [0,1).
 }
 
 #endif // HALTON_SAMPLER_H
-
