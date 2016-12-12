@@ -103,9 +103,9 @@ class RayTracer
 					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));
 
 					if (s == 0)
-						color = radiance(ray, 0, sampler, s);
+						color = radiance(ray, 0, sampler, (x + w*y)*SAMPLES + s);
 					else
-					color = (1.0*s*color + radiance(ray, 0, sampler, s))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
+					color = (1.0*s*color + radiance(ray, 0, sampler, (x + w*y)*SAMPLES + s))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
 
 					if (s > 0)
 					{
@@ -114,15 +114,11 @@ class RayTracer
 						//var = .5*var + .5*vars[clamp(0, w, x - 1) + w*clamp(0, h, y)];
 					}
 
-					/*if (s > MIN_SAMPLES && var < NOISE_THRESH)
-						s+=4;*/
-
 					if (s > 0 && var > NOISE_THRESH)
 						samps-=2;
 
 					s++;
 					samps++;
-                    p++;
 				}
 
 				vars[x + w*y] = var;
@@ -146,8 +142,8 @@ class RayTracer
 			return glm::dvec3(0, 0, 0);
 
 
-        float sx = halton_sampler.sample(0 + 2*depth, sample);
-        float sy = halton_sampler.sample(1 + 2*depth, sample);
+        float sx = .995*halton_sampler.sample(0 + 2*depth, sample) + .0005*(drand() );
+        float sy = .995*halton_sampler.sample(1 + 2*depth, sample) + .0005*(drand() );
 
         //std::cout << sample << "\n";
 
@@ -179,13 +175,13 @@ class RayTracer
 					if (d < 0)
 						d = 0;
 
-					double l = pow(d, 1);// / current->material.roughness);
+					double l = pow(d, 1 / current->material.roughness);
 
 					i += light->col*l;
 				}
 			}
 
-			glm::dvec2 p = hammersley2d(sample % 150, 150);
+			glm::dvec2 p = hammersley2d(rand() % 150, 150);
 
 			double z = abs(minNorm.z);
 
@@ -206,7 +202,8 @@ class RayTracer
 				//tmpNorm.z = -1.0*tmpNorm.z;
 			}
 
-			//refDir = glm::reflect(ray.dir, minNorm);
+			if(current->material.roughness < .001)
+				refDir = glm::reflect(ray.dir, minNorm);
 
 
 			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);// / current->material.roughness);

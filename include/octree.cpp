@@ -33,6 +33,8 @@ void Octree::push_back(Entity* object)
 void Octree::push_back(Light* light)
 {
 	lights.push_back(light);
+	//_root._entities.push_back(new sphere(light->pos, light->rad - SHADOW_BIAS, Material(new texture(glm::dvec3(0, 0, 0)), new texture(light->col), .0001, 1)));
+	valid = false;
 }
 
 void Octree::rebuild()
