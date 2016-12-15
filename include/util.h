@@ -12,15 +12,15 @@
 #endif
 #define MAX_ENTITIES_PER_LEAF 16
 #define MIN_LEAF_SIZE .03125
-#define MAX_SUBDIV_RATIO 0.85
+#define MAX_SUBDIV_RATIO 0.75
 #define EPSILON 0.0001
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.002
 #define AA_JITTER 1
 #define MAX_DEPTH 4
-#define NOISE_THRESH 0.005
+#define NOISE_THRESH 0.004
 #define MIN_SAMPLES 8
-#define SAMPLES 256
+#define SAMPLES 64
 #define FOCAL_BLUR 0
 
 

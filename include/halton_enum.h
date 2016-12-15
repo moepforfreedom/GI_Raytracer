@@ -62,12 +62,16 @@ private:
     unsigned m_y; // 2^m_p2 * ((3^m_p3)^(-1) mod 2^m_p2).
     float m_scale_x; // 2^m_p2.
     float m_scale_y; // 3^m_p3.
+    unsigned sx, sy;
     unsigned m_increment; // Product of prime powers, i.e. m_res2 * m_res3.
 };
 
 inline Halton_enum::Halton_enum(const unsigned width, const unsigned height)
 {
     assert(width && height);
+
+    sx = width;
+    sy = height;
 
     m_p2 = 0;
     unsigned w = 1;
@@ -111,12 +115,12 @@ inline unsigned Halton_enum::get_index(const unsigned i, const unsigned x, const
 
 inline float Halton_enum::scale_x(const float x) const
 {
-    return x * m_scale_x;
+    return (x * m_scale_x);
 }
 
 inline float Halton_enum::scale_y(const float y) const
 {
-    return y * m_scale_y;
+    return (y * m_scale_y);
 }
 
 inline std::pair<int, int> Halton_enum::extended_euclid(const int a, const int b)
@@ -151,4 +155,3 @@ inline unsigned Halton_enum::halton3_inverse(unsigned index, const unsigned digi
 }
 
 #endif // HALTON_ENUM_H
-
