@@ -1,5 +1,8 @@
 #pragma once
 
+#define GLM_FORCE_SSE2 // or GLM_FORCE_SSE42 if your processor supports it
+#define GLM_FORCE_ALIGNED
+
 #include <glm/glm.hpp>
 #include <QImage>
 #include <iostream>
@@ -14,6 +17,11 @@ struct texture
     virtual glm::dvec3 get(glm::dvec2& uv)
     {
         return color;
+    }
+
+    virtual double getAlpha(glm::dvec2& uv)
+    {
+        return 1;
     }
 
     glm::dvec3 color;
@@ -55,6 +63,16 @@ struct imageTexture : texture
 		auto p = image.pixelColor((int)(uv.x * image.width() * tile.x) % image.width(), (int)(uv.y * image.height() * tile.y) % image.height());
 
 		return{ p.red() / 255.0, p.green() / 255.0, p.blue() / 255.0 };//*qRed(p) / 255., qGreen(p) / 255., qBlue(p) / 255. };
+	}
+
+    virtual double getAlpha(glm::dvec2& uv)
+	{
+        if(!image.hasAlphaChannel())
+            return 1;
+
+		auto p = image.pixelColor((int)(uv.x * image.width() * tile.x) % image.width(), (int)(uv.y * image.height() * tile.y) % image.height());
+
+		return p.alpha() / 255.0;
 	}
 
 	int tiles;
