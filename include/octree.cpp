@@ -33,7 +33,7 @@ void Octree::push_back(Entity* object)
 void Octree::push_back(Light* light)
 {
 	lights.push_back(light);
-	//_root._entities.push_back(new sphere(light->pos, light->rad - SHADOW_BIAS, Material(new texture(glm::dvec3(0, 0, 0)), new texture(light->col), .0001, 1)));
+	_root._entities.push_back(new sphere(light->pos, light->rad - SHADOW_BIAS, Material(new texture(glm::dvec3(0, 0, 0)), new texture(0.0*light->col), 1, 1)));
 	valid = false;
 }
 
@@ -173,6 +173,28 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 			}
 		}
 	}
+
+	/*if (is_leaf() && _entities.size() > 0)
+	{
+		*mint = t0;
+		*maxt = t1;
+
+		//std::cout << t0 << "\n";
+		while (i < res.size() && t0 >= *res[i]->mint)
+			i++;
+
+		res.insert(res.begin() + i, this);
+	}
+	else
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if (_children[i]->_bbox.intersect(ray, tmin, tmax, t0, t1))
+			{
+				_children[i]->intersectSorted(ray, res, tmin, tmax);
+			}
+		}
+	}*/
 
 }
 

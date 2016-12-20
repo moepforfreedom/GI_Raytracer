@@ -111,9 +111,9 @@ class RayTracer
                     int idx = halton_enum.get_index(s, x, y);
 
 					if (s == 0)
-						color = radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + */s/* idx*/);
+						color = radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx);
 					else
-					color = (1.0*s*color + radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + */s /*idx*/))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
+					color = (1.0*s*color + radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
 
 					if (s > 0)
 					{
@@ -153,8 +153,10 @@ class RayTracer
         float sx = halton_sampler.sample(0 + 2*depth, sample);
         float sy = halton_sampler.sample(1 + 2*depth, sample);
 
-        //sx = fmod(halton_enum.scale_x(sx), 1.0);
-        //sy = fmod(halton_enum.scale_y(sy), 1.0);
+		double offset = SHADOW_BIAS;
+
+        sx = fmod(halton_enum.scale_x(sx), 1.0);
+        sy = fmod(halton_enum.scale_y(sy), 1.0);
 
         //std::cout << sx << ", " << sy << "\n";
 
@@ -168,6 +170,9 @@ class RayTracer
 		if (intersected)
 		{
 			glm::dvec3 i(0, 0, 0);
+
+			if (glm::dot(minNorm, ray.dir) > 0)
+				minNorm *= -1.0;
 
 			for (Light* light : _scene->lights)
 			{
@@ -216,15 +221,21 @@ class RayTracer
 			if(current->material.roughness < .001)
 				refDir = glm::reflect(ray.dir, minNorm);
 
+			if (current->material.opacity < 1)
+			{
+				refDir = glm::refract(ray.dir, minNorm, current->material.IOR);
+				offset *= -1;
+			}
+
 
 			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);// / current->material.roughness);
 
-			i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + SHADOW_BIAS*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample);
+			i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample);
 
-			return glm::clamp(current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV), 0.0, 1.0);
+			return current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);// , 0.0, 1.0);
 		}
 		else
-			return glm::dvec3(1, 1, 1);
+			return glm::dvec3(0, 0, 0);
 	}
 
 

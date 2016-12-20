@@ -88,5 +88,5 @@ struct Material
 	texture* emissive;
 	double roughness;
 	double opacity;
-	double IOR;
+	double IOR = .6;
 };

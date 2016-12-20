@@ -19,8 +19,8 @@
 #define AA_JITTER 1
 #define MAX_DEPTH 4
 #define NOISE_THRESH 0.004
-#define MIN_SAMPLES 8
-#define SAMPLES 64
+#define MIN_SAMPLES 64
+#define SAMPLES 128
 #define FOCAL_BLUR 0
 
 

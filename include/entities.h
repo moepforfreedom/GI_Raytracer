@@ -61,8 +61,10 @@ struct sphere: Entity
 		if (r < 0)
 			return false;
 
-		double t_1 = -1*dot - sqrt(r);
-		double t_2 = -1*dot + sqrt(r);
+		double sr = sqrt(r);
+
+		double t_1 = -1*dot - sr;
+		double t_2 = -1*dot + sr;
 
 
 		if (t_1 < 0 && t_2 < 0)
@@ -74,12 +76,17 @@ struct sphere: Entity
 			else
 				intersect = ray.origin + ray.dir*t_2;
 
-			normal = glm::normalize(intersect - pos);
+			glm::dvec3 hitNorm = glm::normalize(intersect - pos);
+
+			/*if (glm::dot(hitNorm, ray.dir) > 0)
+				hitNorm = -1.0*hitNorm;*/
+
+			normal = hitNorm;
 
 			glm::dvec3 d = (pos - intersect)/rad;
 
-			double v = .5 + asin(d.y) / M_PI;//.5*acos((intersect.y - pos.y) / rad) / (M_PI) + .5; 
-            double u = .5 + atan2(d.z, d.x) / (2 * M_PI);//.5*atan((intersect.z - pos.z) / (intersect.x - pos.x)) / (2*M_PI) + .5;
+			double v = .5 + asin(d.y) / M_PI;
+            double u = .5 + atan2(d.z, d.x) / (2 * M_PI);
 
             uv = glm::dvec2(u, v);
 			//std::cout << "intersection\n";
