@@ -164,6 +164,7 @@ class RayTracer
 		glm::dvec2 minUV;
 
 		Entity* current;
+        bool backface = false;
 
 		bool intersected = trace(ray, minHit, minNorm, minUV, current);
 
@@ -172,7 +173,10 @@ class RayTracer
 			glm::dvec3 i(0, 0, 0);
 
 			if (glm::dot(minNorm, ray.dir) > 0)
+            {
 				minNorm *= -1.0;
+                backface = true;
+            }
 
 			for (Light* light : _scene->lights)
 			{
@@ -209,7 +213,7 @@ class RayTracer
 			glm::dvec2 g = importance_sample_ggx(p.x, p.y, .5);
 			//glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 2 / current->material.roughness);
 
-			glm::dvec3 refDir = rot*hemisphereSample_cos(sx, sy, 2);
+			glm::dvec3 refDir;
 			//refDir = glm::refract(ray.dir, minNorm, .75);
 
 			if (minNorm.z < 0)
@@ -218,14 +222,48 @@ class RayTracer
 				//tmpNorm.z = -1.0*tmpNorm.z;
 			}
 
-			if(current->material.roughness < .001)
-				refDir = glm::reflect(ray.dir, minNorm);
+            double IOR = current->material.IOR;
 
-			if (current->material.opacity < 1)
+            double r0 = pow((1-IOR)/(1+IOR), 2);
+
+            //Schlicks approximation of the fresnel term
+            double fs = r0 + (1-r0)*pow(1-glm::dot(glm::reflect(ray.dir, minNorm), minNorm), 5);
+
+            //type of secondary ray, 0 for reflection, 1 for refraction, 2 for glossy
+            int type = 2;
+
+			if(current->material.roughness < .001)
+            {
+                type = 0;
+            }
+
+            if (current->material.opacity < 1)
+            {
+                if(drand() < fs)
+                    type = 0;
+                else
+                    type = 1;
+            }
+
+
+            if(type == 1)
 			{
-				refDir = glm::refract(ray.dir, minNorm, current->material.IOR);
+                if(backface)
+                {
+                    refDir = glm::refract(ray.dir, minNorm, -1.0 / current->material.IOR);
+                }
+                else
+                {
+                    refDir = glm::refract(ray.dir, minNorm, 1.0 / current->material.IOR);
+                }
 				offset *= -1;
 			}
+            else if (type == 0)
+				refDir = glm::reflect(ray.dir, minNorm);
+            else
+                refDir = rot*hemisphereSample_cos(sx, sy, 2);
+
+
 
 
 			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);// / current->material.roughness);
