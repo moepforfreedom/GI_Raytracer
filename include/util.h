@@ -17,10 +17,10 @@
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.002
 #define AA_JITTER 1
-#define MAX_DEPTH 4
+#define MAX_DEPTH 8
 #define NOISE_THRESH 0.004
-#define MIN_SAMPLES 64
-#define SAMPLES 128
+#define MIN_SAMPLES 4
+#define SAMPLES 32
 #define FOCAL_BLUR 0
 
 
@@ -46,6 +46,20 @@ inline int clamp(int min, int max, int val)
 	return val;
 }
 
+//faster pow, based on http://martin.ankerl.com/2012/01/25/optimized-approximative-pow-in-c-and-cpp/
+inline double fastPow(double a, double b)
+{
+  union
+  {
+    double d;
+    int x[2];
+  } u = { a };
+
+  u.x[1] = (int)(b * (u.x[1] - 1072632447) + 1072632447);
+  u.x[0] = 0;
+  return u.d;
+}
+
 inline float radicalInverse_VdC(unsigned int bits)
 {
 	bits = (bits << 16u) | (bits >> 16u);
@@ -54,6 +68,16 @@ inline float radicalInverse_VdC(unsigned int bits)
 	bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
 	bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
 	return float(bits) * 2.3283064365386963e-10; // / 0x100000000
+}
+
+inline glm::dvec3 refr(glm::dvec3 inc, glm::dvec3 norm, double eta)
+{
+	double d = glm::dot(norm, inc);
+	double k = 1.0 - eta * eta * (1.0 - d * d);
+    if (k < 0.000001)
+        return glm::reflect(inc, norm);
+    else
+        return eta * inc - (eta * d + sqrt(k)) * norm;
 }
 
 glm::dvec3 randomVec();

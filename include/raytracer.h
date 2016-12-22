@@ -111,9 +111,9 @@ class RayTracer
                     int idx = halton_enum.get_index(s, x, y);
 
 					if (s == 0)
-						color = radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx);
+						color = radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx, glm::dvec3(0, 0, 0));
 					else
-					color = (1.0*s*color + radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
+					color = (1.0*s*color + radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx, glm::dvec3(0, 0, 0)))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
 
 					if (s > 0)
 					{
@@ -144,7 +144,7 @@ class RayTracer
 		std::cout << "average intersection tests: " << avgTests << "\n";
     }
 
-	glm::dvec3 radiance(Ray ray, int depth, Halton_sampler& halton_sampler, Halton_enum& halton_enum, int sample)
+	glm::dvec3 radiance(Ray ray, int depth, Halton_sampler& halton_sampler, Halton_enum& halton_enum, int sample, glm::dvec3 contrib)
 	{
 		if (depth > MAX_DEPTH)
 			return glm::dvec3(0, 0, 0);
@@ -177,6 +177,12 @@ class RayTracer
 				minNorm *= -1.0;
                 backface = true;
             }
+
+            /*if (vecLengthSquared(minNorm) > 1)
+            {
+				minNorm *= .5;
+                backface = true;
+            }*/
 
 			for (Light* light : _scene->lights)
 			{
@@ -250,11 +256,11 @@ class RayTracer
 			{
                 if(backface)
                 {
-                    refDir = glm::refract(ray.dir, minNorm, -1.0 / current->material.IOR);
+                    refDir = refr(ray.dir, minNorm, current->material.IOR);
                 }
                 else
                 {
-                    refDir = glm::refract(ray.dir, minNorm, 1.0 / current->material.IOR);
+                    refDir = refr(ray.dir, minNorm, 1.0 / current->material.IOR);
                 }
 				offset *= -1;
 			}
@@ -265,12 +271,12 @@ class RayTracer
 
 
 
+            if(vecLengthSquared(contrib) > 0.001)
+            {
+                i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib);
+            }
 
-			double w = PowerCosHemispherePdfW(minNorm, refDir, 1);// / current->material.roughness);
-
-			i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample);
-
-			return current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);// , 0.0, 1.0);
+			return current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
 		}
 		else
 			return glm::dvec3(0, 0, 0);
