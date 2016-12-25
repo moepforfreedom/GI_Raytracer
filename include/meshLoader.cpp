@@ -28,6 +28,8 @@ void loadOBJ(Octree* o, const char* fname, glm::dvec3 pos, glm::dvec3 rotation, 
 	}
 	int faces = 0;
 
+	std::cout << "loading mesh: " << fname << "\n";
+
 	while (1)
 	{
 		char lineHeader[128];

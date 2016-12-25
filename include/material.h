@@ -51,10 +51,11 @@ struct imageTexture : texture
 {
 	const char* fname;
 	QImage image;
-	glm::dvec2 tile;
+	glm::dvec2 tile;	
 
 	imageTexture(const char* name, glm::dvec2 t) : texture(glm::dvec3(0, 0, 0)), fname(name), image(name), tile(t)
 	{
+		std::cout << "loading texture: " << fname << "\n";
 		std::cout << "bits per pixel: " << image.pixelFormat().redSize() << "\n";
 	}
 

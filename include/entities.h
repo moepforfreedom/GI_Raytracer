@@ -347,8 +347,8 @@ struct triangle: Entity
 
 			normal = a1*vertices[0]->norm + a2*vertices[1]->norm + a3*vertices[2]->norm;
 
-			if (glm::dot(hitNorm, normal) < 0)
-				normal = -1.0*normal;
+			/*if (glm::dot(hitNorm, normal) < 0)
+				normal = -1.0*normal;*/
 
 			//normal = tmpNorm;
 
@@ -408,9 +408,9 @@ struct triangle: Entity
 			if (vpos.z > max.z)	max.z = vpos.z;
 
       //special cases for axis aligned triangles
-      if(max.x <= min.x) max.x += EPSILON;
-      if(max.y <= min.y) max.y += EPSILON;
-      if(max.z <= min.z) max.z += EPSILON;
+      /*if(max.x <= min.x)*/ max.x += EPSILON;
+      /*if(max.y <= min.y)*/ max.y += EPSILON;
+     /* if(max.z <= min.z)*/ max.z += EPSILON;
 
       /*std::cout << "bbox min: " << min.x << ", " << min.y << ", " << min.z << "\n";
       std::cout << "bbox max: " << max.x << ", " << max.y << ", " << max.z << "\n";*/

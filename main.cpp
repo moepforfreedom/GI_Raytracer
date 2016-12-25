@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "gui.h"
 #include "meshLoader.h"
+#include "sceneLoader.h"
 #include "util.h"
 #include <ctime>
 #include <iomanip>
@@ -31,21 +32,21 @@ int main(int argc, char** argv)
     Octree* scene = new Octree({-70, -70, -70}, {70, 70, 70});
 
 
-	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 1, Material(new checkerboard(8, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .1, 1)));
+	/*scene->push_back(new sphere(glm::dvec3(0, 0, 0), 1, Material(new checkerboard(8, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .1, 1)));
 	scene->push_back(new sphere(glm::dvec3(2, -4.5, 0), .75, Material(new texture(glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .0001, .1)));
 	scene->push_back(new sphere(glm::dvec3(6, .5, .75), .25, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
-	glm::dvec3 pos = glm::dvec3(4.5, .5, .75);
+	glm::dvec3 pos = glm::dvec3(4.5, .5, .75);*/
 
-	std::vector<glm::dvec3> points;
+	/*std::vector<glm::dvec3> points;
 	points.reserve(25000);
 	subrandUnitVec(points, 25000);
 
 	Halton_sampler halton_sampler;
 
     halton_sampler.init_faure();
-	//const Halton_enum halton_enum(width, height);
+	const Halton_enum halton_enum(width, height);
 
-	/*for (int i = 0; i < 5500; i++)
+	for (int i = 0; i < 5500; i++)
 	{
 		glm::dvec2 p = hammersley2d(rand() % 5500, 5500);
 
@@ -71,11 +72,13 @@ int main(int argc, char** argv)
 	}*/
 	//scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
 	//scene->push_back(new cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
-	scene->push_back(new sphere(glm::dvec3(0, 0, 0), 75, Material(new texture(glm::dvec3(0, 0, 0)), new imageTexture("HDR_029_Sky_Cloudy_Bg", glm::dvec2(1, 1)), .75, 1)));
+	//scene->push_back(new sphere(glm::dvec3(0, 0, 0), 75, Material(new texture(glm::dvec3(0, 0, 0)), new imageTexture("HDR_029_Sky_Cloudy_Bg", glm::dvec2(1, 1)), 1, 1)));
 
-	scene->push_back(new coneMesh(scene, glm::dvec3(3, 0, 0), glm::dvec3(0.5, -.5, 0.0), 1.5, 3.0, 32, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
+	/*scene->push_back(new coneMesh(scene, glm::dvec3(3, 0, 0), glm::dvec3(0.5, -.5, 0.0), 1.5, 3.0, 32, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(0, 0, 0)), 1, 1)));
 
-	sphereMesh(scene, glm::dvec3(0, 0, -5), 3, 3, Material(new texture(glm::dvec3(1, 0, 1)), new texture(glm::dvec3(0, 0, 0)), .75, 1));
+	sphereMesh(scene, glm::dvec3(0, 0, -5), 3, 3, Material(new texture(glm::dvec3(1, 0, 1)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
+
+	//scene->push_back(new sphere(glm::dvec3(0, 0, -5), 3, Material(new texture(glm::dvec3(1, 0, 1)), new texture(glm::dvec3(0, 0, 0)), 1, 1)));
 
 	//scene->push_back(new quadMesh(scene, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 0), glm::dvec3(0, 0, 1), glm::dvec3(0, 1, .5), Material(glm::dvec3(0, 0, 1), glm::dvec3(0, 0, 0))));
 
@@ -83,9 +86,13 @@ int main(int argc, char** argv)
 
 	loadOBJ(scene, "teapot.obj", glm::dvec3(-6, 0, 4), glm::dvec3(0, 0, 1), Material(new texture(glm::dvec3(0.25, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .0002, .1));
 
-	loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -9, -10), glm::dvec3(0, 0, 0), Material(new imageTexture("Stone_01_Diffuse", glm::dvec2(16, 16)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
+	*///loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -9, -10), glm::dvec3(0, 0, 0), Material(new imageTexture("Stone_01_Diffuse", glm::dvec2(16, 16)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
 
-	scene->push_back(new Light(glm::dvec3(10, 10, 20), glm::dvec3(1, 1, 1), 1));
+	loadScene(scene, "test.scn");
+
+	//loadOBJ(scene, "test.obj", glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0), Material(new texture(glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
+	
+	scene->push_back(new Light(glm::dvec3(10, 10, 20), glm::dvec3(2.5, 2.5, 2.5), 1));
 
 
     raytracer.setScene(scene);
