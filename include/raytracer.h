@@ -176,30 +176,7 @@ class RayTracer
             {
 				minNorm *= -1.0;
                 backface = true;
-            }
-
-			for (Light* light : _scene->lights)
-			{
-				bool shadow = false;
-				glm::dvec3 lightDir = light->getPoint() - minHit;
-				double maxt = glm::length(lightDir);
-
-				Ray shadow_ray(minHit + SHADOW_BIAS*minNorm, lightDir);
-
-				shadow = !visible(shadow_ray, maxt);
-
-				if (!shadow)
-				{
-					double d = glm::dot(minNorm, glm::normalize(lightDir));
-
-					if (d < 0)
-						d = 0;
-
-					double l = pow(d, 1 / current->material.roughness);
-
-					i += light->col*l;
-				}
-			}
+            }			
 
 			double z = abs(minNorm.z);
 
@@ -264,7 +241,7 @@ class RayTracer
 			}
 			else
 			{
-				f = 1;// (1.0 / M_PI);
+				f = 1;
 				refDir = rot*hemisphereSample_cos(sx, sy, 2);
 
 				double dot = glm::dot(refDir, minNorm);
@@ -272,6 +249,29 @@ class RayTracer
 				glm::dvec3 inf = current->material.diffuse->get(minUV)*pow(dot, 1 / current->material.roughness);
 
 				contrib *= inf;
+			}
+
+			for (Light* light : _scene->lights)
+			{
+				bool shadow = false;
+				glm::dvec3 lightDir = light->getPoint() - minHit;
+				double maxt = glm::length(lightDir);
+
+				Ray shadow_ray(minHit + SHADOW_BIAS*minNorm, lightDir);
+
+				shadow = !visible(shadow_ray, maxt);
+
+				if (!shadow)
+				{
+					double d = glm::dot(refDir, glm::normalize(lightDir));
+
+					if (d < 0)
+						d = 0;
+
+					double l = pow(d, 1 / current->material.roughness);
+
+					i += light->col*l;
+				}
 			}
 			
 			//i = glm::dvec3(0, 0, 0);
@@ -282,7 +282,7 @@ class RayTracer
 				//i =  1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);
 			if (depth <= MIN_DEPTH || glm::length(contrib) > 0.0)
 			{
-				return /*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib); */current->material.diffuse->get(minUV)*(1.0 / M_PI)*i + current->material.diffuse->get(minUV)*f*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib) + current->material.emissive->get(minUV);
+				return /*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib); */current->material.diffuse->get(minUV)*i + current->material.diffuse->get(minUV)*f*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib) + current->material.emissive->get(minUV);
 			}
 			else
 				return glm::dvec3(0, 0, 0); /*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/// current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
