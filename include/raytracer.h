@@ -176,9 +176,9 @@ class RayTracer
             {
 				minNorm *= -1.0;
                 backface = true;
-            }			
+            }
 
-			double z = abs(minNorm.z);
+			double z = std::abs(minNorm.z);
 
 			glm::dmat3x3 rot(z + (1.0 / (1 + z))*-minNorm.y*-minNorm.y, (1.0 / (1 + z))*(minNorm.x*-minNorm.y), -minNorm.x,
 				(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
@@ -233,6 +233,7 @@ class RayTracer
 				offset *= -1;
 
 				contrib = glm::dvec3(1, 1, 1);
+
 			}
 			else if (type == 0)
 			{
@@ -263,20 +264,21 @@ class RayTracer
 
 				if (!shadow)
 				{
-					double d = glm::dot(refDir, glm::normalize(lightDir));
+					double d = glm::dot(minNorm, glm::normalize(lightDir));
 
 					if (d < 0)
 						d = 0;
 
-					double l = pow(d, 1 / current->material.roughness);
+					double l = std::pow(d, 1 / current->material.roughness);
 
 					i += light->col*l;
+
 				}
 			}
-			
+
 			//i = glm::dvec3(0, 0, 0);
 
-			
+
 				//i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib);
 			/*else*/
 				//i =  1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);
