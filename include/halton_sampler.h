@@ -884,7 +884,7 @@ inline float Halton_sampler::sample(const unsigned dimension, const unsigned ind
         case 254: return halton1613(index);
         case 255: return halton1619(index);
     }
-    return 0.f;
+	return (double)rand() / RAND_MAX;// 0.f;
 }
 
 inline unsigned short Halton_sampler::invert(const unsigned short base, const unsigned short digits,

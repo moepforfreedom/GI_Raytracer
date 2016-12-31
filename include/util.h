@@ -19,16 +19,22 @@
 #define AA_JITTER 1
 #define MIN_DEPTH 4
 #define MAX_DEPTH 4
-#define NOISE_THRESH 0.003
-#define MIN_SAMPLES 8
-#define SAMPLES 256
+#define NOISE_THRESH 0.002
+#define MIN_SAMPLES 16
+#define SAMPLES 64
 #define FOCAL_BLUR 0
+#define GAMMA 2.2
 
 
 //squared vector length
 inline double vecLengthSquared(glm::dvec3 vec)
 {
 	return vec.x*vec.x + vec.y*vec.y + vec.z*vec.z;
+}
+
+inline double compMax(glm::dvec3& vec)
+{
+	return std::max(std::max(vec.x, vec.y), vec.z);
 }
 
 inline double drand()
@@ -45,6 +51,12 @@ inline int clamp(int min, int max, int val)
 		return max;
 
 	return val;
+}
+
+//gamma correction
+inline glm::dvec3 gamma(glm::dvec3 col, double g)
+{
+	return glm::dvec3(std::pow(col.x, 1.0 / g), std::pow(col.y, 1.0 / g), std::pow(col.z, 1.0 / g));
 }
 
 //faster pow, based on http://martin.ankerl.com/2012/01/25/optimized-approximative-pow-in-c-and-cpp/

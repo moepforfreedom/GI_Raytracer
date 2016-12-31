@@ -92,7 +92,7 @@ int main(int argc, char** argv)
 
 	//loadOBJ(scene, "test.obj", glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0), Material(new texture(glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
 	
-	scene->push_back(new Light(glm::dvec3(10, 10, 20), glm::dvec3(1, 1, 1), 1));
+	scene->push_back(new Light(glm::dvec3(0, 5, 0), 10.0*glm::dvec3(1, 1, 1), 1));
 
 
     raytracer.setScene(scene);
