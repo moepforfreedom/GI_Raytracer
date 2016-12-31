@@ -178,9 +178,9 @@ class RayTracer
             {
 				minNorm *= -1.0;
                 backface = true;
-            }			
+            }
 
-			double z = abs(minNorm.z);
+			double z = std::abs(minNorm.z);
 
 			glm::dmat3x3 rot(z + (1.0 / (1 + z))*-minNorm.y*-minNorm.y, (1.0 / (1 + z))*(minNorm.x*-minNorm.y), -minNorm.x,
 				(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
@@ -249,7 +249,7 @@ class RayTracer
 			{
 				refDir = rot*hemisphereSample_cos(sx, sy, 1);
 
-				f = 1.0/M_PI;// glm::dot(refDir, minNorm);
+				f = 0.0/M_PI;// glm::dot(refDir, minNorm);
 
 				/*if (depth == 0)
 					f *= M_PI;*/
@@ -269,7 +269,7 @@ class RayTracer
 
 				double cos_alpha = (light->rad / sqrt(vecLengthSquared(lightDir) + std::pow(light->rad, 2)));				
 
-				double hfrac = 1 / (M_PI*maxt*maxt); //fraction of the hemisphere
+				double hfrac = 1 / (M_PI*vecLengthSquared(light->pos - minHit)); //fraction of the hemisphere
 
 
 				Ray shadow_ray(minHit + SHADOW_BIAS*minNorm, lightDir);
@@ -278,7 +278,7 @@ class RayTracer
 
 				if (!shadow)
 				{
-					double d = glm::dot(minNorm, glm::normalize(lightDir));
+					double d = glm::dot(minNorm, glm::normalize(light->pos - minHit));
 
 					if (d < 0)
 						d = 0;
@@ -288,10 +288,10 @@ class RayTracer
 					i += light->col*l*hfrac;
 				}
 			}
-			
+
 			//i = glm::dvec3(0, 0, 0);
 
-			
+
 				//i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib);
 			/*else*/
 				//i =  1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);
