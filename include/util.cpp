@@ -32,7 +32,7 @@ glm::dvec3 hemisphereSample_uniform(float u, float v)
 glm::dvec3 hemisphereSample_cos(float u, float v, double power)
 {
 	float phi = v * 2.0f * M_PI;
-	float cosTheta = pow(1.0f - u, (1.0f / power));
+	float cosTheta = std::pow(1.0f - u, (1.0f / power));
 	float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
 	return glm::dvec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 }

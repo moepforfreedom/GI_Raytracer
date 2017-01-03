@@ -13,15 +13,15 @@
 #define MAX_ENTITIES_PER_LEAF 16
 #define MIN_LEAF_SIZE .03125
 #define MAX_SUBDIV_RATIO 0.75
-#define EPSILON 0.0001
+#define EPSILON 0.00001
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.002
 #define AA_JITTER 1
 #define MIN_DEPTH 4
-#define MAX_DEPTH 4
+#define MAX_DEPTH 32
 #define NOISE_THRESH 0.002
-#define MIN_SAMPLES 16
-#define SAMPLES 64
+#define MIN_SAMPLES 8
+#define SAMPLES 16
 #define FOCAL_BLUR 0
 #define GAMMA 2.2
 
@@ -95,6 +95,24 @@ inline double fastPrecisePow(double a, double b) {
 	}
 
 	return r * u.d;
+}
+
+inline double fastPrecisePow(double a, int b) 
+{
+	int e = b;
+
+	// exponentiation by squaring with the exponent's integer part
+	// double r = u.d makes everything much slower, not sure why
+	double r = 1.0;
+	while (e) {
+		if (e & 1) {
+			r *= a;
+		}
+		a *= a;
+		e >>= 1;
+	}
+
+	return r;
 }
 
 inline float radicalInverse_VdC(unsigned int bits)

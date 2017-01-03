@@ -186,7 +186,7 @@ class RayTracer
 				(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
 				minNorm.x, minNorm.y, z);
 
-			//glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 2 / current->material.roughness);
+			//glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 1 / current->material.roughness);
 
 			glm::dvec3 refDir;
 			//refDir = glm::refract(ray.dir, minNorm, .75);
@@ -199,10 +199,10 @@ class RayTracer
 
             double IOR = current->material.IOR;
 
-            double r0 = pow((1-IOR)/(1+IOR), 2);
+            double r0 = std::pow((1-IOR)/(1+IOR), 2);
 
             //Schlicks approximation of the fresnel term
-            double fs = r0 + (1-r0)*pow(1-glm::dot(glm::reflect(ray.dir, minNorm), minNorm), 5);
+            double fs = r0 + (1-r0)*std::pow(1-glm::dot(glm::reflect(ray.dir, minNorm), minNorm), 5);
 
             //type of secondary ray, 0 for reflection, 1 for refraction, 2 for glossy
             int type = 2;
@@ -247,24 +247,31 @@ class RayTracer
 			}
 			else
 			{
-				refDir = rot*hemisphereSample_cos(sx, sy, 1);
+				refDir = rot*hemisphereSample_cos(sx, sy, 2);
 
-				f = 0.0/M_PI;// glm::dot(refDir, minNorm);
+				if (minNorm.z < 0)
+				{
+					refDir.z = -1.0*refDir.z;
+					//tmpNorm.z = -1.0*tmpNorm.z;
+				}
+
+				f = 1.0;
 
 				/*if (depth == 0)
 					f *= M_PI;*/
 
 				double dot = glm::dot(refDir, minNorm);
 
-				glm::dvec3 inf = current->material.diffuse->get(minUV)*pow(dot, 1 / current->material.roughness);
+				glm::dvec3 inf = current->material.diffuse->get(minUV);// *pow(dot, 1 / current->material.roughness);
 
-				contrib = inf;
+				contrib *= inf;
+				contrib = glm::mix(contrib, inf, 0.5);
 			}
 
 			for (Light* light : _scene->lights)
 			{
 				bool shadow = false;
-				glm::dvec3 lightDir = light->getPoint() - minHit;
+				glm::dvec3 lightDir = light->getPoint() - (minHit+SHADOW_BIAS*minNorm);
 				double maxt = glm::length(lightDir);
 
 				double cos_alpha = (light->rad / sqrt(vecLengthSquared(lightDir) + std::pow(light->rad, 2)));				
@@ -285,24 +292,20 @@ class RayTracer
 
 					double l = current->material.roughness > 0.9 ? d : 0;// pow(d, 1 / current->material.roughness);
 
-					i += light->col*l*hfrac;
+					i = light->col*l*hfrac;
 				}
 			}
 
-			//i = glm::dvec3(0, 0, 0);
-
-
-				//i += 1.0/*glm::dot(ray.dir, refDir)*/*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib);
-			/*else*/
-				//i =  1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);
-			//f = (depth <= MIN_DEPTH ? 1 : glm::dot(minNorm, refDir)); // PowerCosHemispherePdfW(minNorm, refDir, 1.0);// / (depth <= MIN_DEPTH ? 1 : compMax(contrib));
-			if (true || depth <= MIN_DEPTH || drand() < compMax(contrib))
+			double q = compMax(contrib);
+			
+			if (depth <= MIN_DEPTH || drand() < q)
 			{
+				f *= depth <= MIN_DEPTH ? 1.0 : (1.0 / q);
 				//diffuse*direct_light + diffuse*brdf*radiance + emmissive
 				return current->material.diffuse->get(minUV)*i + current->material.diffuse->get(minUV)*f*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib) + current->material.emissive->get(minUV);
 			}
 			else
-				return /*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
+				return glm::dvec3(0, 0, 0);///*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ //current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
 		}
 		else
 			return /*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ glm::dvec3(0, 0, 0);
@@ -313,7 +316,7 @@ class RayTracer
 	bool visible(Ray& ray, double mt)
 	{
 		bool hit = false;
-		std::vector<Entity*> shadow_objects = _scene->intersect(ray, SHADOW_BIAS, mt);
+		std::vector<Entity*> shadow_objects = _scene->intersect(ray, 0, mt-SHADOW_BIAS);
 
 		std::vector<Entity*>::iterator shadow_it = shadow_objects.begin();
 
@@ -324,7 +327,7 @@ class RayTracer
 
 			if (t->intersect(ray, t_shadow))
 			{
-				hit = (t_shadow < mt);
+				hit = (t_shadow < mt)&&(t_shadow > 0);
 			}
 			++shadow_it;
 		}
@@ -359,7 +362,7 @@ class RayTracer
 				Entity* tmp = *it;
 				if (tmp->intersect(ray, hit, norm, uv))
 				{
-					if ((!intersected || vecLengthSquared(hit - _camera.pos) < vecLengthSquared(minHit - _camera.pos)))
+					if ((!intersected || vecLengthSquared(hit - ray.origin) < vecLengthSquared(minHit - ray.origin)))
 					{
 						current = tmp;
 						minHit = hit;
@@ -367,7 +370,7 @@ class RayTracer
 						minUV = uv;
 						intersected = true;
 
-						if ((vecLengthSquared(hit - _camera.pos) < pow(*curNode->maxt, 2)))
+						if ((vecLengthSquared(hit - ray.origin) < std::pow(*curNode->maxt, 2)))
 							term = true;
 					}
 				}

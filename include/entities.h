@@ -27,7 +27,7 @@ struct Entity
 		glm::dvec3 hit, norm;
         glm::dvec2 uv;
 
-		bool i = intersect(ray,  hit, norm, uv);
+		bool i = intersect(ray, hit, norm, uv);
 
 		t = glm::length(hit - ray.origin);
 
