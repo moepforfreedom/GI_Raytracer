@@ -29,7 +29,6 @@ void loadScene(Octree* o, const char* fname)
 		std::cout << "error while opening file: " << fname << "\n";
 		return;
 	}
-	int faces = 0;
 
 	std::cout << "loading scene: " << fname << "\n";
 
@@ -124,7 +123,7 @@ void loadScene(Octree* o, const char* fname)
 		}
 	}
 
-	std::cout << "read faces: " << faces << "\n";
+	std::cout << "finished scene loading\n";
 
 	fclose(f);
 }
