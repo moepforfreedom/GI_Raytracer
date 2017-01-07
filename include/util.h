@@ -21,7 +21,8 @@
 #define MAX_DEPTH 256
 #define NOISE_THRESH 0.002
 #define MIN_SAMPLES 8
-#define SAMPLES 64
+#define SAMPLES 32
+#define RAYMARCH_STEPSIZE 0.1
 #define FOCAL_BLUR 0
 #define GAMMA 2.2
 
@@ -148,6 +149,8 @@ glm::dvec3 hemisphereSample_cos(float u, float v, double power);
 
 double PowerCosHemispherePdfW(const glm::dvec3  aNormal, glm::dvec3  aDirection, double  aPower);
 
+glm::dvec3 sample_phong(const glm::dvec3 &outdir, const glm::dvec3 &n, double power, double sx, double sy);
+
 glm::dvec2 importance_sample_ggx(double x, double y, double a);
 
 //generates a sequence of subrandom numbers
@@ -155,5 +158,7 @@ void subrand(std::vector<double>&out, int n);
 
 //generates a sequence of subrandom unit vectors
 void subrandUnitVec(std::vector<glm::dvec3>&out, int n);
+
+bool triBoxOverlap(glm::dvec3 boxcenter, glm::dvec3 boxhalfsize, glm::dvec3 triverts[3]);
 
 #endif

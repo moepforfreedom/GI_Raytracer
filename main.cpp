@@ -10,6 +10,7 @@
 #include "meshLoader.h"
 #include "sceneLoader.h"
 #include "util.h"
+#include "atmosphere.h"
 #include <ctime>
 #include <iomanip>
 #include <limits>
@@ -39,9 +40,9 @@ int main(int argc, char** argv)
 
 	/*std::vector<glm::dvec3> points;
 	points.reserve(25000);
-	subrandUnitVec(points, 25000);
+	subrandUnitVec(points, 25000);*/
 
-	Halton_sampler halton_sampler;
+	/*Halton_sampler halton_sampler;
 
     halton_sampler.init_faure();
 	const Halton_enum halton_enum(width, height);
@@ -65,9 +66,6 @@ int main(int argc, char** argv)
 
 		glm::dvec3 dir = rot*hemisphereSample_cos(sx, sy, 1);
 
-		if (norm.z < 0)
-			dir.z = -1.0*dir.z;
-
 		scene->push_back(new sphere(2.0*dir,  .01, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
 	}*/
 	//scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
@@ -88,7 +86,9 @@ int main(int argc, char** argv)
 
 	*///loadOBJ(scene, "terrain.obj", glm::dvec3(-0, -9, -10), glm::dvec3(0, 0, 0), Material(new imageTexture("Stone_01_Diffuse", glm::dvec2(16, 16)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
 
-	loadScene(scene, "test.scn");
+	loadScene(scene, "scenes/cornell/test.scn");
+
+	scene->push_back(new HeightFog(glm::dvec3(0, 0, 0), glm::dvec3(2, 2, 2), glm::dvec3(1, 1, 1), 0.5));
 
 	//loadOBJ(scene, "test.obj", glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0), Material(new texture(glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
 	

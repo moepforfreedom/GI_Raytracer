@@ -75,23 +75,23 @@ void loadScene(Octree* o, const char* fname)
 			int dif, em;
 			double r, o;
 			fscanf(f, "%d %d %lf %lf\n", &dif, &em, &r, &o);
-			std::cout << "creating mat: " << dif << ", " << em << "\n";
+			std::cout << "creating mat: " << dif << ", " << em << ", " << r << "\n";
 
 			mats.push_back(new Material(tex[dif], tex[em], r, o));
 		}
 		else if (std::strcmp(lineHeader, "mesh") == 0)
 		{
 			char fn[100];
-			std::string filePath = dir;
+			std::string filePath = dir + "/";
 			glm::dvec3 pos;
 			glm::dvec3 rot;
 			int mat;
 			fscanf(f, "%s %lf %lf %lf %lf %lf %lf %d\n", &fn, &pos.x, &pos.y, &pos.z, &rot.x, &rot.y, &rot.z, &mat);
 			filePath += fn;
 
-			std::cout << "loading mesh: " << fn << ", " << mat << "\n";
+			std::cout << "loading mesh: " << fn << " from " << filePath << ", " << mat << "\n";
 
-			loadOBJ(o, fn, pos, rot, *mats[mat]);
+			loadOBJ(o, filePath.c_str(), pos, rot, *mats[mat]);
 		}
 		else if (std::strcmp(lineHeader, "sphere") == 0)
 		{

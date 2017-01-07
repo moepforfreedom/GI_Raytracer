@@ -9,6 +9,7 @@
 
 #include "bbox.h"
 #include "light.h"
+#include "atmosphere.h"
 
 
 struct Entity;
@@ -29,6 +30,8 @@ class Octree {
 
 		void intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax) const;
 
+		double atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatter);
+
         BoundingBox _bbox;
 		double* mint = new double(0);
 		double* maxt = new double(0);
@@ -41,10 +44,12 @@ public:
 	Octree(glm::dvec3 min, glm::dvec3 max);
 
 	std::vector<Light*> lights;
+	std::vector<AtmosphereEntity*> at;
 
 	/// Store an entity in the correct position of the octree.
 	void push_back(Entity* object);
 	void push_back(Light* object);
+	void push_back(AtmosphereEntity* entity);
 
 	void rebuild();
 
@@ -52,6 +57,11 @@ public:
 	std::vector<Entity*> intersect(const Ray& ray, double tmin, double tmax) const;
 
 	std::vector<const Octree::Node*> intersectSorted(const Ray& ray, double tmin, double tmax) const;
+
+	// Returns density, color and scattering coefficient of the atmosphere at the specified position
+	double atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatter);
+
+	bool getAtmosphereBounds(Ray r, double& mint, double& maxt);
 
 	bool valid;
     Node _root;

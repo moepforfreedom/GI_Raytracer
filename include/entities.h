@@ -34,6 +34,11 @@ struct Entity
 		return i;
 	}
 
+	virtual bool intersect(BoundingBox bbox)
+	{
+		return true;
+	}
+
     /// Returns an axis-aligned bounding box of the entity.
     virtual BoundingBox boundingBox() const = 0;
 
@@ -389,6 +394,14 @@ struct triangle: Entity
 		t = t0;
 
 		return true;
+	}
+
+	virtual bool intersect(BoundingBox bbox)
+	{
+		BoundingBox tmpBox = BoundingBox(bbox.min - EPSILON, bbox.max + EPSILON);
+		glm::dvec3 verts[3] = { vertices[0]->pos, vertices[1]->pos , vertices[2]->pos };
+
+		return triBoxOverlap(tmpBox.center(), glm::dvec3(tmpBox.dx() / 2, tmpBox.dy() / 2, tmpBox.dz() / 2), verts);
 	}
 
 	virtual BoundingBox boundingBox() const

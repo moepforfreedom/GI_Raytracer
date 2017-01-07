@@ -160,7 +160,6 @@ class RayTracer
         sx = fmod(halton_enum.scale_x(sx), 1.0);
         sy = fmod(halton_enum.scale_y(sy), 1.0);
 
-        //std::cout << sx << ", " << sy << "\n";
 
 		glm::dvec3 minHit, minNorm;
 		glm::dvec2 minUV;
@@ -178,49 +177,14 @@ class RayTracer
             {
 				minNorm *= -1.0;
                 backface = true;
-            }
-
-			double z = std::abs(minNorm.z);
-
-			glm::dmat3x3 rot(z + (1.0 / (1 + z))*-minNorm.y*-minNorm.y, (1.0 / (1 + z))*(minNorm.x*-minNorm.y), -minNorm.x,
-				(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
-				minNorm.x, minNorm.y, z);
-
-			//glm::dvec3 tmpNorm = rot*hemisphereSample_cos(p.x, p.y, 1 / current->material.roughness);
+            }		
 
 			glm::dvec3 refDir;
-			//refDir = glm::refract(ray.dir, minNorm, .75);
-
-			if (minNorm.z < 0)
-			{
-				refDir.z = -1.0*refDir.z;
-				//tmpNorm.z = -1.0*tmpNorm.z;
-			}
-
-            double IOR = current->material.IOR;
-
-            double r0 = std::pow((1-IOR)/(1+IOR), 2);
-
-            //Schlicks approximation of the fresnel term
-            double fs = r0 + (1-r0)*std::pow(1-glm::dot(glm::reflect(ray.dir, minNorm), minNorm), 5);
+     
 
             //type of secondary ray, 0 for reflection, 1 for refraction, 2 for glossy
-            int type = 2;
+            int type = rayType(current, ray, minNorm);
 			double f = 1;
-
-			if(current->material.roughness < .001)
-            {
-                type = 0;
-            }
-
-            if (current->material.opacity < 1)
-            {
-                if(drand() < fs)
-                    type = 0;
-                else
-                    type = 1;
-            }
-
 
             if(type == 1)
 			{
@@ -243,11 +207,19 @@ class RayTracer
 				refDir = glm::reflect(ray.dir, minNorm);
 				contrib = glm::dvec3(1, 1, 1);
 
-				f = 1;
+				f = 1.0; // glm::dot(refDir, minNorm);
 			}
 			else
 			{
+				double z = std::abs(minNorm.z);
+
+				glm::dmat3x3 rot(z + (1.0 / (1 + z))*-minNorm.y*-minNorm.y, (1.0 / (1 + z))*(minNorm.x*-minNorm.y), -minNorm.x,
+					(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
+					minNorm.x, minNorm.y, z);
+
 				refDir = rot*hemisphereSample_cos(sx, sy, 2);
+
+				glm::dvec3 tmpNorm = hemisphereSample_cos(sx, sy, (1.0 / (current->material.roughness)) + 1);
 
 				if (minNorm.z < 0)
 				{
@@ -255,12 +227,16 @@ class RayTracer
 					//tmpNorm.z = -1.0*tmpNorm.z;
 				}
 
+				if (current->material.roughness < .9)
+				{
+					refDir = sample_phong(glm::reflect(ray.dir, minNorm), minNorm, (1.0 / (current->material.roughness)) + 1, sx, sy);
+
+					if (glm::dot(refDir, minNorm) < 0)
+						refDir = glm::reflect(refDir, minNorm);
+					
+				}		
+
 				f = 1.0;
-
-				/*if (depth == 0)
-					f *= M_PI;*/
-
-				double dot = glm::dot(refDir, minNorm);
 
 				glm::dvec3 inf = current->material.diffuse->get(minUV);// *pow(dot, 1 / current->material.roughness);
 
@@ -274,7 +250,7 @@ class RayTracer
 				glm::dvec3 lightDir = light->getPoint() - (minHit+SHADOW_BIAS*minNorm);
 				double maxt = glm::length(lightDir);
 
-				double cos_alpha = (light->rad / sqrt(vecLengthSquared(lightDir) + std::pow(light->rad, 2)));				
+				//double cos_alpha = (light->rad / sqrt(vecLengthSquared(lightDir) + std::pow(light->rad, 2)));				
 
 				double hfrac = 1 / (M_PI*vecLengthSquared(light->pos - minHit)); //fraction of the hemisphere
 
@@ -290,12 +266,13 @@ class RayTracer
 					if (d < 0)
 						d = 0;
 
-					double l = current->material.roughness > 0.9 ? d : 0;// pow(d, 1 / current->material.roughness);
+					double l = pow(d, (1.0 / current->material.roughness));
 
 					i = light->col*l*hfrac;
 				}
 			}
 
+			// continuation probability 
 			double q = compMax(contrib);
 			
 			if (depth <= MIN_DEPTH || drand() < q)
@@ -335,6 +312,7 @@ class RayTracer
 		return !hit;
 	}
 
+	//traces a ray against the scene geometry, returns true on intersection
 	bool trace(Ray& ray, glm::dvec3& minHit, glm::dvec3&minNorm, glm::dvec2& minUV, Entity*& obj)
 	{
 		glm::dvec3 hit, norm;
@@ -383,6 +361,40 @@ class RayTracer
 			obj = current;
 
 		return intersected;
+	}
+
+	//returns the type of the secondary ray, 0 for reflection, 1 for refraction, 2 for diffuse/glossy
+	int rayType(Entity* entity, Ray& ray, glm::dvec3 norm)
+	{
+		int type = 2;
+
+		double IOR = entity->material.IOR;
+
+		double r0 = std::pow((1 - IOR) / (1 + IOR), 2);
+
+		//Schlicks approximation of the fresnel term
+		double fs = r0 + (1 - r0)*std::pow(1 - glm::dot(glm::reflect(ray.dir, norm), norm), 5);
+
+		if (entity->material.roughness < .001)
+		{
+			type = 0;
+		}
+
+		if (entity->material.opacity < 1)
+		{
+			if (drand() < fs)
+				type = 0;
+			else
+				type = 1;
+		}
+
+		return type;
+	}
+
+	//uses raymarching to determine the intersection point of a ray with the atmosphere
+	glm::dvec3 raymarch(Ray& r, glm::dvec3& col, double mint, double maxt)
+	{
+
 	}
 
     bool running() const { return _running; }

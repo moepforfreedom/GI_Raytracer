@@ -10,6 +10,7 @@
 
 #include "bbox.h"
 #include "entities.h"
+#include "atmosphere.h"
 #include "octree.h"
 #include "light.h"
 
@@ -35,6 +36,11 @@ void Octree::push_back(Light* light)
 	lights.push_back(light);
 	//_root._entities.push_back(new sphere(light->pos, light->rad - SHADOW_BIAS, Material(new texture(glm::dvec3(0, 0, 0)), new texture(5.0*light->col), 1, 1)));
 	valid = false;
+}
+
+void Octree::push_back(AtmosphereEntity* entity)
+{
+	at.push_back(entity);
 }
 
 void Octree::rebuild()
@@ -116,6 +122,40 @@ std::vector<const Octree::Node*> Octree::intersectSorted(const Ray& ray, double 
 	return res;
 }
 
+double Octree::atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatter)
+{
+	double d = 0;
+	for (AtmosphereEntity* current : at)
+	{
+		if (current->bbox.contains(pos))
+		{
+			d += current->density(pos);
+		}
+	}
+	return d;
+}
+
+//returns true if the ray intersects an atmosphere entity and determines the distance bounds
+bool Octree::getAtmosphereBounds(Ray r, double& mint,  double& maxt)
+{
+	double min = 0;
+	double max = 0;
+	bool intersected = false;
+
+	for (AtmosphereEntity* current : at)
+	{
+		double tmpmin = 0;
+		double tmpmax = 0;
+
+		if (current->bbox.intersect(r, mint, maxt, tmpmin, tmpmax))
+		{
+			min = std::min(min, tmpmin);
+			max = std::max(max, tmpmax);
+			intersected = true;
+		}
+	}
+	return intersected;
+}
 
 Octree::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 
@@ -221,7 +261,7 @@ void Octree::Node::partition()
 
 		for (int i = 0; i < 8; i++)
 		{
-			if (_children[i]->_bbox.intersect(current->boundingBox()) && current->boundingBox().dx() > EPSILON)
+			if (_children[i]->_bbox.intersect(current->boundingBox()) && current->intersect(_children[i]->_bbox) && current->boundingBox().dx() > EPSILON)
 			{
 				_children[i]->_entities.push_back(current);
 			}

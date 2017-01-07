@@ -79,11 +79,13 @@ struct imageTexture : texture
 	int tiles;
 };
 
-/// Represents the material properties of an entity. For now it only contains color, but it should
-/// probably be extended to allow more options.
+/// Represents the material properties of an entity.
 struct Material
 {
-        Material(texture* dif, texture* em, double r, double o) : diffuse(dif), emissive(em), roughness(r), opacity(o) {}
+        Material(texture* dif, texture* em, double r, double o) : diffuse(dif), emissive(em), roughness(r), opacity(o) 
+		{
+			std::cout << "roughness: " << roughness << "\n";
+		}
 
     texture* diffuse;
 	texture* emissive;

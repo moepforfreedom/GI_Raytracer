@@ -12,7 +12,7 @@ find_package(Qt5Widgets)
 find_package(Threads)
 
 set(SOURCES main.cpp include/octree.cpp include/meshLoader.cpp include/sceneLoader.cpp include/util.cpp)
-set(HEADERS include/gui.h include/image.h include/ray.h include/entities.h include/camera.h include/halton_enum.h include/halton_sampler.h include/raytracer.h include/viewer.h include/octree.h include/bbox.h include/material.h include/util.h include/sceneLoader.h include/meshLoader.h include/light.h)
+set(HEADERS include/gui.h include/image.h include/ray.h include/atmosphere.h include/entities.h include/camera.h include/halton_enum.h include/halton_sampler.h include/raytracer.h include/viewer.h include/octree.h include/bbox.h include/material.h include/util.h include/sceneLoader.h include/meshLoader.h include/light.h)
 
 add_executable(global-illu ${SOURCES} ${HEADERS})
 include_directories(global-illu include 3rd_party)
