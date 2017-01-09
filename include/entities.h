@@ -290,11 +290,9 @@ struct vertex
 
 struct triangle: Entity
 {
-	glm::dmat3x3 rot;
 	vertex* vertices[3];
+	glm::dvec3 edges[3];
 	glm::dvec3 norm;
-	glm::dvec3 hitNorm;
-	glm::dvec3 tmpNorm;
 	double inv_area;
 
 	triangle(vertex* v1, vertex* v2, vertex* v3, const Material& material) : Entity(material)
@@ -303,13 +301,70 @@ struct triangle: Entity
 		vertices[1] = v2;
 		vertices[2] = v3;
 
+		edges[0] = vertices[1]->pos - vertices[0]->pos;
+		edges[1] = vertices[2]->pos - vertices[1]->pos;
+		edges[2] = vertices[0]->pos - vertices[2]->pos;
+
 		norm = glm::normalize(glm::cross((v2->pos - v1->pos), (v3->pos - v1->pos)));
 
 		inv_area = 1.0 / glm::length(glm::cross(vertices[0]->pos - vertices[1]->pos, vertices[0]->pos - vertices[2]->pos));
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
+	//Möller–Trumbore intersection test, based on https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
+	bool intersectMT(const glm::dvec3&   V1,  // Triangle vertices
+					 const glm::dvec3&   V2,
+					 const glm::dvec3&   V3,
+					 const glm::dvec3&    O,  //Ray origin
+					 const glm::dvec3&    D,  //Ray direction
+					 double& tout)
 	{
+		glm::dvec3 e1, e2;  //Edge1, Edge2
+		glm::dvec3 P, Q, T;
+		float det, inv_det, u, v;
+		float t;
+
+		//Find vectors for two edges sharing V1
+		//e1 = V2 - V1;
+		e2 = V3 - V1;
+		//Begin calculating determinant - also used to calculate u parameter
+		P = glm::cross(D, e2);
+		//if determinant is near zero, ray lies in plane of triangle or ray is parallel to plane of triangle
+		det = glm::dot(edges[0], P);
+		//NOT CULLING
+		if (det > -EPSILON && det < EPSILON) return 0;
+		inv_det = 1.f / det;
+
+		//calculate distance from V1 to ray origin
+		T = O - V1;
+
+		//Calculate u parameter and test bound
+		u = glm::dot(T, P) * inv_det;
+		//The intersection lies outside of the triangle
+		if (u < 0.f || u > 1.f) return 0;
+
+		//Prepare to test v parameter
+		Q = glm::cross(T, edges[0]);
+
+		//Calculate V parameter and test bound
+		v = glm::dot(D, Q) * inv_det;
+		//The intersection lies outside of the triangle
+		if (v < 0.f || u + v  > 1.f) return 0;
+
+		t = glm::dot(e2, Q) * inv_det;
+
+		if (t > EPSILON)
+		{ 
+			//ray intersection
+			tout = t;
+			return 1;
+		}
+
+		// No hit, no win
+		return 0;
+	}
+
+	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
+	{		
 		double dot = glm::dot(ray.dir, norm);
 
 		if (dot <= EPSILON && dot >= -EPSILON)
@@ -322,19 +377,25 @@ struct triangle: Entity
 
 		intersect = ray.origin + t*ray.dir;
 
-		if (glm::dot(glm::cross((vertices[1]->pos - vertices[0]->pos), (intersect - vertices[0]->pos)), norm) < 0)
+		if (glm::dot(glm::cross(edges[0], (intersect - vertices[0]->pos)), norm) < 0)
 			return false;
 
-		if (glm::dot(glm::cross((vertices[2]->pos - vertices[1]->pos), (intersect - vertices[1]->pos)), norm) < 0)
+		if (glm::dot(glm::cross(edges[1], (intersect - vertices[1]->pos)), norm) < 0)
 			return false;
 
-		if (glm::dot(glm::cross((vertices[0]->pos - vertices[2]->pos), (intersect - vertices[2]->pos)), norm) < 0)
+		if (glm::dot(glm::cross(edges[2], (intersect - vertices[2]->pos)), norm) < 0)
 			return false;
 
-		if (dot > 0)
+		/*if (dot > 0)
 			hitNorm = -1.0*norm;
 		else
-			hitNorm = norm;
+			hitNorm = norm;*/
+
+		/*double t;
+		if (!intersectMT(vertices[0]->pos, vertices[1]->pos, vertices[2]->pos, ray.origin, ray.dir, t))
+			return false;
+
+		intersect = ray.origin + t*ray.dir;*/
 
 		//Interpolate normal if vertex normals are set
 		if (vecLengthSquared(vertices[0]->norm) > 0 && vecLengthSquared(vertices[1]->norm) > 0 && vecLengthSquared(vertices[2]->norm) > 0)

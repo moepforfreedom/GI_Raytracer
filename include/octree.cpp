@@ -122,6 +122,7 @@ std::vector<const Octree::Node*> Octree::intersectSorted(const Ray& ray, double 
 	return res;
 }
 
+//returns the atmosphere density, color and scattering coefficient at the specified position
 double Octree::atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatter)
 {
 	double d = 0;
@@ -129,14 +130,15 @@ double Octree::atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatte
 	{
 		if (current->bbox.contains(pos))
 		{
-			d += current->density(pos);
+			col = current->col;
+			d += RAYMARCH_STEPSIZE*current->density(pos);
 		}
 	}
 	return d;
 }
 
 //returns true if the ray intersects an atmosphere entity and determines the distance bounds
-bool Octree::getAtmosphereBounds(Ray r, double& mint,  double& maxt)
+bool Octree::atmosphereBounds(Ray r, double& mint,  double& maxt)
 {
 	double min = 0;
 	double max = 0;
@@ -154,6 +156,9 @@ bool Octree::getAtmosphereBounds(Ray r, double& mint,  double& maxt)
 			intersected = true;
 		}
 	}
+
+	mint = std::max(mint, min);
+	maxt = std::min(maxt, max);
 	return intersected;
 }
 

@@ -16,13 +16,13 @@
 #define EPSILON 0.00001
 #define DUPLICATE_THRESHOLD 150
 #define SHADOW_BIAS 0.002
-#define AA_JITTER 1
+#define AA_JITTER 1.2
 #define MIN_DEPTH 4
 #define MAX_DEPTH 256
 #define NOISE_THRESH 0.002
 #define MIN_SAMPLES 8
 #define SAMPLES 32
-#define RAYMARCH_STEPSIZE 0.1
+#define RAYMARCH_STEPSIZE 0.04
 #define FOCAL_BLUR 0
 #define GAMMA 2.2
 
@@ -43,7 +43,7 @@ inline double drand()
 	return (double)rand() / RAND_MAX;
 }
 
-inline int clamp(int min, int max, int val)
+inline double clamp(double val, double min, double max)
 {
 	if (val < min)
 		return min;
@@ -74,7 +74,8 @@ inline double fastPow(double a, double b)
   return u.d;
 }
 
-inline double fastPrecisePow(double a, double b) {
+inline double fastPrecisePow(double a, double b) 
+{
 	// calculate approximation with fraction of the exponent
 	int e = (int)b;
 	union {
@@ -136,9 +137,14 @@ inline glm::dvec3 refr(glm::dvec3 inc, glm::dvec3 norm, double eta)
         return eta * inc - (eta * d + sqrt(k)) * norm;
 }
 
-glm::dvec3 randomVec();
+inline glm::dvec3 randomUnitVec(double x, double y)
+{
+	double theta = acos(2 * y - 1);
 
-glm::dvec3 randomUnitVec();
+	return glm::dvec3(sin(theta) * cos(2 * x*M_PI), sin(theta) * sin(2 * x*M_PI), cos(theta));
+}
+
+glm::dvec3 randomVec();
 
 // generates a point of the hammersley point set, based on http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
 glm::dvec2 hammersley2d(unsigned int i, unsigned int N);

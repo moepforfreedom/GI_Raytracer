@@ -61,7 +61,7 @@ public:
 	// Returns density, color and scattering coefficient of the atmosphere at the specified position
 	double atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatter);
 
-	bool getAtmosphereBounds(Ray r, double& mint, double& maxt);
+	bool atmosphereBounds(Ray r, double& mint, double& maxt);
 
 	bool valid;
     Node _root;

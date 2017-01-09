@@ -15,7 +15,7 @@ struct AtmosphereEntity
 	{		
 	}
 
-	//returns the density at the specified position
+	//returns the density at the specified position, defined as intersection probability per unit length
 	virtual double density(glm::dvec3& pos)
 	{
 		return 0;
@@ -29,15 +29,16 @@ struct AtmosphereEntity
 
 struct HeightFog : AtmosphereEntity
 {
-
-	HeightFog(glm::dvec3 position, glm::dvec3 size, glm::dvec3 color, double scatter) :AtmosphereEntity(position, size, color, scatter)
+	double d;
+	HeightFog(glm::dvec3 position, glm::dvec3 size, glm::dvec3 color, double density, double scatter, int noiseScale) : AtmosphereEntity(position, size, color, scatter), d(density)
 	{
 	}
 
-	//returns the density at the specified position
-	virtual double density(glm::dvec3& pos)
+	//returns the density at the specified position, defined as intersection probability per unit length
+	virtual double density(glm::dvec3& p)
 	{
-		return clamp(pos.y, 0, 1);
+		double ymax = pos.y + .5*bbox.dy();
+		return d*(ymax - p.y)/bbox.dy();
 	}
 
 };

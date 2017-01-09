@@ -10,11 +10,6 @@ glm::dvec3 randomVec()
 	return glm::dvec3((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
 }
 
-glm::dvec3 randomUnitVec()
-{
-	return glm::normalize(glm::dvec3(2 * drand() - 1, 2 * drand() - 1, 2 * drand() - 1));
-}
-
 // generates a point of the hammersley point set, based on http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
 glm::dvec2 hammersley2d(unsigned int i, unsigned int N)
 {
@@ -59,55 +54,9 @@ glm::dvec3 sample_phong(const glm::dvec3 &outdir, const glm::dvec3 &n, double po
 	}
 
 	return out;
-
-	/*glm::dmat3x3 mat;
-	glm::dvec3 ldir = glm::normalize(outdir);
-
-	glm::dvec3 ref = glm::reflect(ldir, n);
-
-	double ndotl = glm::dot(ldir, n);
-
-	if (1.0 - ndotl > EPSILON) {
-		glm::dvec3 ivec, kvec, jvec;
-
-		// build orthonormal basis
-		if (std::abs(ndotl) < EPSILON)
-		{
-			kvec = -glm::normalize(ldir);
-			jvec = n;
-			ivec = glm::cross(jvec, kvec);
-		}
-		else
-		{
-			ivec = glm::normalize(glm::cross(ldir, ref));
-			jvec = ref;
-			kvec = glm::cross(ref, ivec);
-		}
-
-		mat[0][0] = ivec.x;
-		mat[1][0] = ivec.y;
-		mat[2][0] = ivec.z;
-
-		mat[0][1] = jvec.x;
-		mat[1][1] = jvec.y;
-		mat[2][1] = jvec.z;
-
-		mat[0][2] = kvec.x;
-		mat[1][2] = kvec.y;
-		mat[2][2] = kvec.z;
-	}
-
-	double phi = acos(std::pow(sx, 1.0 / (power + 1)));
-	double theta = 2.0 * M_PI * sy;
-
-	glm::dvec3 v;
-	v.x = cos(theta) * sin(phi);
-	v.y = cos(phi);
-	v.z = sin(theta) * sin(phi);
-
-	return mat*v;*/
 }
 
+//generates a sequence of subrandom numbers using additive recurrence
 void subrand(std::vector<double>&out, int n)
 {
 	double primes[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31 };
