@@ -63,7 +63,7 @@ struct imageTexture : texture
 	{
 		auto p = image.pixelColor((int)(uv.x * image.width() * tile.x) % image.width(), (int)(uv.y * image.height() * tile.y) % image.height());
 
-		return{ p.red() / 255.0, p.green() / 255.0, p.blue() / 255.0 };//*qRed(p) / 255., qGreen(p) / 255., qBlue(p) / 255. };
+		return{ p.red() / 255.0, p.green() / 255.0, p.blue() / 255.0 };
 	}
 
     virtual double getAlpha(glm::dvec2& uv)

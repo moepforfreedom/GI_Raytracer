@@ -38,7 +38,7 @@ struct HeightFog : AtmosphereEntity
 	virtual double density(glm::dvec3& p)
 	{
 		double ymax = pos.y + .5*bbox.dy();
-		return d*(ymax - p.y)/bbox.dy();
+		return d*fastPow((ymax - p.y)/bbox.dy(), 2);
 	}
 
 };

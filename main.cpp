@@ -88,11 +88,11 @@ int main(int argc, char** argv)
 
 	loadScene(scene, "scenes/cornell/test.scn");
 
-	scene->push_back(new HeightFog(glm::dvec3(0, .5, 0), glm::dvec3(10, 1, 10), glm::dvec3(1, 1, 1), 8, 0.5, 1));
+	scene->push_back(new HeightFog(glm::dvec3(0, .5, 0), glm::dvec3(10, 1, 10), glm::dvec3(1, 1, 1), 10, 0.5, 1));
 
 	//loadOBJ(scene, "test.obj", glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0), Material(new texture(glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
 	
-	scene->push_back(new Light(glm::dvec3(0, 5, 0), 4.0*glm::dvec3(1, 1, 1), 1));
+	scene->push_back(new Light(glm::dvec3(0, 5, 0), 4.0*glm::dvec3(1, 1, 1), .25));
 
 
     raytracer.setScene(scene);
