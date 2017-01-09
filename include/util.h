@@ -18,11 +18,11 @@
 #define SHADOW_BIAS 0.002
 #define AA_JITTER 1.2
 #define MIN_DEPTH 4
-#define MAX_DEPTH 256
+#define MAX_DEPTH 128
 #define NOISE_THRESH 0.002
 #define MIN_SAMPLES 8
-#define SAMPLES 32
-#define RAYMARCH_STEPSIZE 0.04
+#define SAMPLES 128
+#define RAYMARCH_STEPSIZE 0.06
 #define FOCAL_BLUR 0
 #define GAMMA 2.2
 
