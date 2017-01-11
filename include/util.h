@@ -18,11 +18,11 @@
 #define SHADOW_BIAS 0.002
 #define AA_JITTER 1.2
 #define MIN_DEPTH 4
-#define MAX_DEPTH 128
+#define MAX_DEPTH 32
 #define NOISE_THRESH 0.002
 #define MIN_SAMPLES 8
 #define SAMPLES 128
-#define RAYMARCH_STEPSIZE 0.06
+#define RAYMARCH_STEPSIZE 0.04
 #define FOCAL_BLUR 0
 #define GAMMA 2.2
 
@@ -60,7 +60,7 @@ inline glm::dvec3 gamma(glm::dvec3 col, double g)
 	return glm::dvec3(std::pow(col.x, 1.0 / g), std::pow(col.y, 1.0 / g), std::pow(col.z, 1.0 / g));
 }
 
-//faster pow, based on http://martin.ankerl.com/2012/01/25/optimized-approximative-pow-in-c-and-cpp/
+//faster pow approximation for small exponents, based on http://martin.ankerl.com/2012/01/25/optimized-approximative-pow-in-c-and-cpp/
 inline double fastPow(double a, double b)
 {
   union
@@ -117,6 +117,7 @@ inline double fastPrecisePow(double a, int b)
 	return r;
 }
 
+//computes the binary inverse of a float number
 inline float radicalInverse_VdC(unsigned int bits)
 {
 	bits = (bits << 16u) | (bits >> 16u);
@@ -127,11 +128,12 @@ inline float radicalInverse_VdC(unsigned int bits)
 	return float(bits) * 2.3283064365386963e-10; // / 0x100000000
 }
 
+//computes refraction and total internal reflection for an input direction
 inline glm::dvec3 refr(glm::dvec3 inc, glm::dvec3 norm, double eta)
 {
 	double d = glm::dot(norm, inc);
 	double k = 1.0 - eta * eta * (1.0 - d * d);
-    if (k < 0.000001)
+    if (k < EPSILON)
         return glm::reflect(inc, norm);
     else
         return eta * inc - (eta * d + sqrt(k)) * norm;

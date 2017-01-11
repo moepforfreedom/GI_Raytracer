@@ -16,11 +16,13 @@ struct BoundingBox
         assert(min.z < max.z);
     }
 
-    double dx() const { return max.x - min.x; }
+	double dx() const { return max.x - min.x; }
     double dy() const { return max.y - min.y; }
     double dz() const { return max.z - min.z; }
 
 	glm::dvec3 center(){ return min + 0.5*(max-min); }
+
+	glm::dvec3 size() { return max - min; }
 
     const glm::dvec3 min;
     const glm::dvec3 max;

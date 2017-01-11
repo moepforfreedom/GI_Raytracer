@@ -180,6 +180,7 @@ class RayTracer
             }		
 
 			glm::dvec3 refDir;
+			glm::dvec3 color = current->material.diffuse->get(minUV);
 			double roughness = current->material.roughness;
 
             //type of secondary ray, 0 for reflection, 1 for refraction, 2 for glossy
@@ -200,14 +201,14 @@ class RayTracer
 
 				contrib = glm::dvec3(1, 1, 1);
 
-				f = 1.0*current->material.diffuse->get(minUV);
+				f = 1.0*color;
 			}
 			else if (type == 0)
 			{
 				refDir = glm::reflect(ray.dir, minNorm);
 				contrib = glm::dvec3(1, 1, 1);
 
-				f = 1.0*current->material.diffuse->get(minUV); // glm::dot(refDir, minNorm);
+				f = 1.0*color; // glm::dot(refDir, minNorm);
 			}
 			else
 			{
@@ -236,9 +237,9 @@ class RayTracer
 					
 				}		
 
-				f = 1.0*current->material.diffuse->get(minUV);
+				f = 1.0*color;
 
-				glm::dvec3 inf = current->material.diffuse->get(minUV);// *pow(dot, 1 / current->material.roughness);
+				glm::dvec3 inf = color;// *pow(dot, 1 / current->material.roughness);
 
 				contrib *= inf;
 				contrib = glm::mix(contrib, inf, 0.5);
@@ -258,8 +259,8 @@ class RayTracer
 					minHit = hit;
 					refDir = randomUnitVec(sx, sy);
 					f = 1.0*col;
+					color = col;
 					contrib = col;
-					i *= 0;
 					roughness = 1;
 					//std::cout << "atmosphere hit\n";
 				}
@@ -301,7 +302,7 @@ class RayTracer
 			{
 				f *= depth <= MIN_DEPTH ? 1.0 : (1.0 / q);
 				//diffuse*direct_light + diffuse*brdf*radiance + emmissive
-				return current->material.diffuse->get(minUV)*i + f*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib) + current->material.emissive->get(minUV);
+				return color*i + f*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib) + current->material.emissive->get(minUV);
 			}
 			else
 				return glm::dvec3(0, 0, 0);///*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ //current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
@@ -331,7 +332,20 @@ class RayTracer
 			++shadow_it;
 		}
 
-		return !hit;
+		if (hit)
+			return false;
+
+		double tmin = 0;
+		double tmax = mt;
+
+		if (_scene->atmosphereBounds(ray, tmin, tmax))
+		{
+			glm::dvec3 hit, col;
+
+			if (raymarch(ray, hit, col, tmin, tmax)) return false;
+		}
+
+		return true;
 	}
 
 	//traces a ray against the scene geometry, returns true on intersection
@@ -416,7 +430,7 @@ class RayTracer
 	//uses raymarching to determine the intersection point of a ray with the atmosphere
 	bool raymarch(Ray& r, glm::dvec3& hit, glm::dvec3& col, double mint, double maxt)
 	{
-		double t = mint;
+		double t = mint + SHADOW_BIAS;
 		double scatter;
 
 		glm::dvec3 current = r.origin + mint*r.dir;
