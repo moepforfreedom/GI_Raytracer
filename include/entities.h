@@ -311,7 +311,7 @@ struct triangle: Entity
 	}
 
 	//Möller–Trumbore intersection test, based on https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-	bool intersectMT(const glm::dvec3&   V1,  // Triangle vertices
+	inline bool intersectMT(const glm::dvec3&   V1,  // Triangle vertices
 					 const glm::dvec3&   V2,
 					 const glm::dvec3&   V3,
 					 const glm::dvec3&    O,  //Ray origin

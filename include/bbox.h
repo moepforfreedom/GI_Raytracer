@@ -2,9 +2,11 @@
 
 #include <array>
 #include <cassert>
+#include <iostream>
 
 #include <glm/glm.hpp>
 #include "ray.h"
+#include "util.h"
 
 /// Represents an axis-aligned bounding box.
 struct BoundingBox
@@ -56,8 +58,35 @@ struct BoundingBox
 				t0 = t1;
 				t1 = tmp;
 			}
+
 			tmin = t0 > tmin ? t0 : tmin;
 			tmax = t1 < tmax ? t1 : tmax;
+			if (tmax <= tmin)
+			{
+				toutmin = INFINITY;
+				toutmax = -INFINITY;
+				return false;
+			}
+		}
+		toutmin = tmin;
+		toutmax = tmax;
+		return true;
+	}
+
+	inline bool intersectMulti(const Ray& ray, double tmin, double tmax, double& toutmin, double& toutmax, float* t0, float*t1) const
+	{
+		for (int i = 0; i < 3; i++)
+		{
+
+			/*if ((&ray.invDir.x)[i] < 0.0)
+			{
+				double tmp = t0[i];
+				t0[i] = t1[i];
+				t1[i] = tmp;
+			}*/
+
+			tmin = t0[i] > tmin ? t0[i] : tmin;
+			tmax = t1[i] < tmax ? t1[i] : tmax;
 			if (tmax <= tmin)
 			{
 				toutmin = INFINITY;

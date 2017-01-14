@@ -117,7 +117,22 @@ std::vector<const Octree::Node*> Octree::intersectSorted(const Ray& ray, double 
 {
 	std::vector<const Octree::Node*> res;
 
-	_root.intersectSorted(ray, res, tmin, tmax);
+	float t0[24], t1[24];
+
+	for (int i = 0; i < 3; i++)
+	{
+		t0[i] = ((&(_root._bbox.min.x))[i] - (&ray.origin.x)[i]) * (&ray.invDir.x)[i];
+		t1[i] = ((&(_root._bbox.max.x))[i] - (&ray.origin.x)[i]) * (&ray.invDir.x)[i];
+
+		if ((&ray.invDir.x)[i] < 0.0)
+		{
+			double tmp = t0[i];
+			t0[i] = t1[i];
+			t1[i] = tmp;
+		}
+	}
+
+	_root.intersectSorted(ray, res, tmin, tmax, t0, t1, 0);
 
 	return res;
 }
@@ -189,11 +204,11 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 }
 
 //inserts the node into a sorted list if it intersects the given ray
-void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax) const
+void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const
 {
 	double t0, t1;
-	int i = 0;
-	if (_bbox.intersect(ray, tmin, tmax, t0, t1))
+	float ta[24], tb[24];	
+	if (/*_bbox.intersect(ray, tmin, tmax, t0, t1)*/_bbox.intersectMulti(ray, tmin, tmax, t0, t1, &(tval0[3*n]), &(tval1[3*n])))
 	{
 		if (is_leaf())
 		{
@@ -203,6 +218,7 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 			//std::cout << t0 << "\n";
 			if (_entities.size() > 0)
 			{
+				int i = 0;
 				while (i < res.size() && t0 >= *res[i]->mint)
 					i++;
 
@@ -211,9 +227,10 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 		}
 		else
 		{
+			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, 0, INFINITY);
 			for (int i = 0; i < 8; i++)
 			{
-				_children[i]->intersectSorted(ray, res, tmin, tmax);
+				_children[i]->intersectSorted(ray, res, tmin, tmax, ta, tb, i);
 
 			}
 		}
@@ -259,6 +276,18 @@ void Octree::Node::partition()
 	_children[7] = std::unique_ptr<Node>(new Node(BoundingBox(mid, _bbox.max)));
 
 	std::vector<Entity*>::iterator it = _entities.begin();
+
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 3; j++)
+			boxes[3 * i + j] = _children[i]->_bbox.min[j];
+	}
+
+	for (int i = 0; i < 8; i++)
+	{
+		for (int j = 0; j < 3; j++)
+			boxes[3 * i + j + 24] = _children[i]->_bbox.max[j];
+	}
 
 	while (it != _entities.end())
 	{

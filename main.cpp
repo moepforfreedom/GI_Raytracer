@@ -32,6 +32,14 @@ int main(int argc, char** argv)
     // Set up scene
     Octree* scene = new Octree({-70, -70, -70}, {70, 70, 70});
 
+	float test0[24], test1[24];
+	float boxes[48];
+
+	Ray r(glm::dvec3(0, 0, 0), glm::dvec3(0, 1, 0));
+
+
+	intersectSIMD(test0, test1, boxes, r.r, r.invD, 0, INFINITY);
+
 
 	/*scene->push_back(new sphere(glm::dvec3(0, 0, 0), 1, Material(new checkerboard(8, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .1, 1)));
 	scene->push_back(new sphere(glm::dvec3(2, -4.5, 0), .75, Material(new texture(glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .0001, .1)));
@@ -88,7 +96,7 @@ int main(int argc, char** argv)
 
 	loadScene(scene, "scenes/cornell/test.scn");
 
-	scene->push_back(new HeightFog(glm::dvec3(0, .5, 0), glm::dvec3(10, 1, 10), glm::dvec3(1, 1, 1), 25, 0.5, 4));
+	//scene->push_back(new HeightFog(glm::dvec3(0, .5, 0), glm::dvec3(10, 1, 10), glm::dvec3(1, 1, 1), 220, 0.5, 4));
 
 	//loadOBJ(scene, "test.obj", glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0), Material(new texture(glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
 	

@@ -28,13 +28,12 @@ class Octree {
 
 		void intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const;
 
-		void intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax) const;
-
-		double atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatter);
+		void intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const;
 
         BoundingBox _bbox;
 		double* mint = new double(0);
 		double* maxt = new double(0);
+		float boxes[48];
         std::vector<Entity*> _entities;
         std::array<std::unique_ptr<Node>, 8> _children;
     };

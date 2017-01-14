@@ -450,6 +450,7 @@ class RayTracer
 		return false;
 	}
 
+
     bool running() const { return _running; }
     void stop() { _running = false; }
     void start() { _running = true; }
