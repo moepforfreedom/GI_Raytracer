@@ -26,7 +26,7 @@ class Octree {
 
 		bool is_leaf() const;
 
-		void intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const;
+		void intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const;
 
 		void intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const;
 

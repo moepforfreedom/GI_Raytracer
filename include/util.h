@@ -146,14 +146,12 @@ inline glm::dvec3 randomUnitVec(double x, double y)
 	return glm::dvec3(sin(theta) * cos(2 * x*M_PI), sin(theta) * sin(2 * x*M_PI), cos(theta));
 }
 
-inline void intersectSIMD(float* t0, float* t1, const float* boxes, const float* ray, const float* invDir, float tmin, float tmax)
+inline void intersectSIMD(float* t0, float* t1, const float* boxes, const float* ray, const float* invDir, const float* invlz, float tmin, float tmax)
 {
 	//float t[48]; //layout: [min1.x, min1.y, min1.z, max1.x, ...]
 
 	for (int i = 0; i < 24; i++)
 	{
-		//float t0, t1;
-
 		t0[i] = (boxes[i] - ray[i])*invDir[i];
 		t1[i] = (boxes[i+24] - ray[i])*invDir[i];
 	}
@@ -167,12 +165,10 @@ inline void intersectSIMD(float* t0, float* t1, const float* boxes, const float*
 			t1[i] = tmp;
 		}*/
 
-		double tmp = t0[i];
-		int cond = (invDir[i] < 0.0);
-		int ncond = (invDir[i] >= 0.0);
+		float tmp = t0[i];
 
-		t0[i] = cond*t1[i] + ncond*t0[i];
-		t1[i] = cond*tmp + ncond*t1[i];
+		t0[i] = invlz[i]*t1[i] + (1.0f - invlz[i])*t0[i];
+		t1[i] = invlz[i] *tmp + (1.0f - invlz[i])*t1[i];
 
 		//float tmp = invDir[i] < 0.0 ? t[i] : t[i + 24];
 	}

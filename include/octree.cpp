@@ -23,7 +23,7 @@ Octree::Octree(glm::dvec3 min, glm::dvec3 max) : _root(Node({ min, max }))
 int nodes = 0;
 int skipped_subdiv = 0;
 
-/// Store an entity in the correct position of the octree.
+/// Store an entity in the root node
 void Octree::push_back(Entity* object)
 {
 	_root._entities.push_back(object);
@@ -98,7 +98,23 @@ std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax)
 
 	//return _root._entities;
 
-	_root.intersect(ray, res, tmin, tmax);
+	float t0[24];
+	float t1[24];
+
+	for (int i = 0; i < 3; i++)
+	{
+		t0[i] = ((&(_root._bbox.min.x))[i] - (&ray.origin.x)[i]) * (&ray.invDir.x)[i];
+		t1[i] = ((&(_root._bbox.max.x))[i] - (&ray.origin.x)[i]) * (&ray.invDir.x)[i];
+
+		if ((&ray.invDir.x)[i] < 0.0)
+		{
+			double tmp = t0[i];
+			t0[i] = t1[i];
+			t1[i] = tmp;
+		}
+	}
+
+	_root.intersect(ray, res, tmin, tmax, t0, t1, 0);
 
 
 	/*//remove duplicates if lots of objects are returned
@@ -117,7 +133,8 @@ std::vector<const Octree::Node*> Octree::intersectSorted(const Ray& ray, double 
 {
 	std::vector<const Octree::Node*> res;
 
-	float t0[24], t1[24];
+	float t0[24];
+	float t1[24];
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -180,9 +197,12 @@ bool Octree::atmosphereBounds(Ray r, double& mint,  double& maxt)
 Octree::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 
 //returns a list of objects within a node that can potentially intersect the given ray
-void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax) const
+void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const
 {
-	if (_bbox.intersectSimple(ray, tmin, tmax))
+	float ta[24];
+	float tb[24];
+
+	if (_bbox.intersectSimpleMulti(ray, tmin, tmax, &(tval0[3 * n]), &(tval1[3 * n])))
 	{
 		if (is_leaf())
 		{
@@ -193,9 +213,10 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 		}
 		else
 		{
+			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz, 0, INFINITY);
 			for (int i = 0; i < 8; i++)
 			{
-				_children[i]->intersect(ray, res, tmin, tmax);
+				_children[i]->intersect(ray, res, tmin, tmax, ta, tb, i);
 
 			}
 		}
@@ -207,7 +228,8 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const
 {
 	double t0, t1;
-	float ta[24], tb[24];	
+	float ta[24];
+	float tb[24];
 	if (/*_bbox.intersect(ray, tmin, tmax, t0, t1)*/_bbox.intersectMulti(ray, tmin, tmax, t0, t1, &(tval0[3*n]), &(tval1[3*n])))
 	{
 		if (is_leaf())
@@ -227,7 +249,7 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 		}
 		else
 		{
-			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, 0, INFINITY);
+			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz, 0, INFINITY);
 			for (int i = 0; i < 8; i++)
 			{
 				_children[i]->intersectSorted(ray, res, tmin, tmax, ta, tb, i);

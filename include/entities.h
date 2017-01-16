@@ -34,7 +34,7 @@ struct Entity
 		return i;
 	}
 
-	virtual bool intersect(BoundingBox bbox)
+	virtual inline bool intersect(BoundingBox bbox)
 	{
 		return true;
 	}

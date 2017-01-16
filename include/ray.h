@@ -12,10 +12,13 @@ struct Ray
 		{
 			r[i] = origin[i % 3];
 			invD[i] = invDir[i % 3];
+			invlz[i] = (invDir[i % 3] < 0.0);
 		}
 	}
 
-	float r[24], invD[24];
+	float r[24];
+	float invD[24];
+	float invlz[24];
     glm::dvec3 origin;
     glm::dvec3 dir; // normalized directional vector
 	glm::dvec3 invDir;

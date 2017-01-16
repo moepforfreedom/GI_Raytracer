@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 	Ray r(glm::dvec3(0, 0, 0), glm::dvec3(0, 1, 0));
 
 
-	intersectSIMD(test0, test1, boxes, r.r, r.invD, 0, INFINITY);
+	//intersectSIMD(test0, test1, boxes, r.r, r.invD, 0, INFINITY);
 
 
 	/*scene->push_back(new sphere(glm::dvec3(0, 0, 0), 1, Material(new checkerboard(8, glm::dvec3(1, 0, 0), glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), .1, 1)));
