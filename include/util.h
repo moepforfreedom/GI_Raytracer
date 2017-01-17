@@ -146,7 +146,7 @@ inline glm::dvec3 randomUnitVec(double x, double y)
 	return glm::dvec3(sin(theta) * cos(2 * x*M_PI), sin(theta) * sin(2 * x*M_PI), cos(theta));
 }
 
-inline void intersectSIMD(float* t0, float* t1, const float* boxes, const float* ray, const float* invDir, const float* invlz, float tmin, float tmax)
+inline void intersectSIMD(float* __restrict t0, float* __restrict t1, const float* boxes, const float* ray, const float* invDir, const float* invlz, float tmin, float tmax)
 {
 	//float t[48]; //layout: [min1.x, min1.y, min1.z, max1.x, ...]
 

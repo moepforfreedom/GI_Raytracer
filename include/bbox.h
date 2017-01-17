@@ -87,28 +87,33 @@ struct BoundingBox
 
 			tmin = t0[i] > tmin ? t0[i] : tmin;
 			tmax = t1[i] < tmax ? t1[i] : tmax;
-			if (tmax <= tmin)
+			/*if (tmax <= tmin)
 			{
-				toutmin = INFINITY;
-				toutmax = -INFINITY;
+				//toutmin = INFINITY;
+				//toutmax = -INFINITY;
 				return false;
-			}
+			}*/
 		}
-		toutmin = tmin;
-		toutmax = tmax;
-		return true;
+
+		if (tmax > tmin)
+		{
+			toutmin = tmin;
+			toutmax = tmax;
+			return true;
+		}
+		return false;
 	}
 
 	inline bool intersectSimpleMulti(const Ray& ray, double tmin, double tmax, float* t0, float*t1) const
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			tmin = t0[i] > tmin ? t0[i] : tmin;
+			tmin = t0[i] > tmin ? t0[i] : tmin;// std::max(t0[i], tmin);
 			tmax = t1[i] < tmax ? t1[i] : tmax;
-			if (tmax <= tmin)
-				return false;
+			/*if (tmax <= tmin)
+				return false;*/
 		}
-		return true;
+		return tmax > tmin;
 	}
 
 	//checks if a Ray intersects the bounding box, implementation based on Peter Shirleys algorithm
