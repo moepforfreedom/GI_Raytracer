@@ -365,6 +365,8 @@ struct triangle: Entity
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{		
+		glm::dvec3 d1, d2, d3;
+
 		double dot = glm::dot(ray.dir, norm);
 
 		if (dot <= EPSILON && dot >= -EPSILON)
@@ -377,14 +379,14 @@ struct triangle: Entity
 
 		intersect = ray.origin + t*ray.dir;
 
-		if (glm::dot(glm::cross(edges[0], (intersect - vertices[0]->pos)), norm) < 0)
-			return false;
+		d1 = intersect - vertices[0]->pos;
+		if (glm::dot(glm::cross(edges[0], d1), norm) < 0) return false;
 
-		if (glm::dot(glm::cross(edges[1], (intersect - vertices[1]->pos)), norm) < 0)
-			return false;
+		d2 = (intersect - vertices[1]->pos);
+		if (glm::dot(glm::cross(edges[1], d2), norm) < 0) return false;
 
-		if (glm::dot(glm::cross(edges[2], (intersect - vertices[2]->pos)), norm) < 0)
-			return false;
+		d3 = (intersect - vertices[2]->pos);
+		if (glm::dot(glm::cross(edges[2], d3), norm) < 0) return false;
 
 		/*if (dot > 0)
 			hitNorm = -1.0*norm;
@@ -399,12 +401,7 @@ struct triangle: Entity
 
 		//Interpolate normal if vertex normals are set
 		if (vecLengthSquared(vertices[0]->norm) > 0 && vecLengthSquared(vertices[1]->norm) > 0 && vecLengthSquared(vertices[2]->norm) > 0)
-		{
-
-			glm::dvec3 d1 = intersect - vertices[0]->pos;
-			glm::dvec3 d2 = intersect - vertices[1]->pos;
-			glm::dvec3 d3 = intersect - vertices[2]->pos;
-			
+		{			
 
 			double a1 = glm::length(glm::cross(d2, d3)) * inv_area;
 			double a2 = glm::length(glm::cross(d3, d1)) * inv_area;

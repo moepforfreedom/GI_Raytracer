@@ -213,7 +213,7 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 		}
 		else
 		{
-			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz, 0, INFINITY);
+			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz);
 			for (int i = 0; i < 8; i++)
 			{
 				_children[i]->intersect(ray, res, tmin, tmax, ta, tb, i);
@@ -249,7 +249,7 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 		}
 		else
 		{
-			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz, 0, INFINITY);
+			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz);
 			for (int i = 0; i < 8; i++)
 			{
 				_children[i]->intersectSorted(ray, res, tmin, tmax, ta, tb, i);

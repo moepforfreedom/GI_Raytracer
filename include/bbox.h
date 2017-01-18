@@ -110,8 +110,6 @@ struct BoundingBox
 		{
 			tmin = t0[i] > tmin ? t0[i] : tmin;// std::max(t0[i], tmin);
 			tmax = t1[i] < tmax ? t1[i] : tmax;
-			/*if (tmax <= tmin)
-				return false;*/
 		}
 		return tmax > tmin;
 	}

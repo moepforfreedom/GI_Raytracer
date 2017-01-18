@@ -117,6 +117,11 @@ inline double fastPrecisePow(double a, int b)
 	return r;
 }
 
+inline double fastLength(glm::dvec3& vec)
+{
+	return fastPow(vecLengthSquared(vec), 0.5);
+}
+
 //computes the binary inverse of a float number
 inline float radicalInverse_VdC(unsigned int bits)
 {
@@ -146,33 +151,18 @@ inline glm::dvec3 randomUnitVec(double x, double y)
 	return glm::dvec3(sin(theta) * cos(2 * x*M_PI), sin(theta) * sin(2 * x*M_PI), cos(theta));
 }
 
-inline void intersectSIMD(float* __restrict t0, float* __restrict t1, const float* boxes, const float* ray, const float* invDir, const float* invlz, float tmin, float tmax)
+inline void intersectSIMD(float* __restrict t0, float* __restrict t1, const float* boxes, const float* ray, const float* invDir, const float* invlz)
 {
 	//float t[48]; //layout: [min1.x, min1.y, min1.z, max1.x, ...]
 
 	for (int i = 0; i < 24; i++)
 	{
-		t0[i] = (boxes[i] - ray[i])*invDir[i];
-		t1[i] = (boxes[i+24] - ray[i])*invDir[i];
+		float tmp0 = (boxes[i] - ray[i])*invDir[i];
+		float tmp1 = (boxes[i + 24] - ray[i])*invDir[i];
+
+		t0[i] = invlz[i] * tmp1 + (1.0f - invlz[i])*tmp0;
+		t1[i] = invlz[i] * tmp0 + (1.0f - invlz[i])*tmp1;
 	}
-
-	for (int i = 0; i < 24; i++)
-	{
-		/*if (invDir[i] < 0.0)
-		{
-			float tmp = t0[i];
-			t0[i] = t1[i];
-			t1[i] = tmp;
-		}*/
-
-		float tmp = t0[i];
-
-		t0[i] = invlz[i]*t1[i] + (1.0f - invlz[i])*t0[i];
-		t1[i] = invlz[i] *tmp + (1.0f - invlz[i])*t1[i];
-
-		//float tmp = invDir[i] < 0.0 ? t[i] : t[i + 24];
-	}
-
 
 }
 

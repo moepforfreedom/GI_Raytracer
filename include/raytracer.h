@@ -184,7 +184,7 @@ class RayTracer
 			double roughness = current->material.roughness;
 
             //type of secondary ray, 0 for reflection, 1 for refraction, 2 for glossy
-            int type = rayType(current, ray, minNorm);
+            int type = rayType(current, ray, minNorm, minUV);
 			glm::dvec3 f(1, 1, 1);
 
             if(type == 1)
@@ -400,11 +400,13 @@ class RayTracer
 	}
 
 	//returns the type of the secondary ray, 0 for reflection, 1 for refraction, 2 for diffuse/glossy
-	int rayType(Entity* entity, Ray& ray, glm::dvec3 norm)
+	int rayType(Entity* entity, Ray& ray, glm::dvec3& norm, glm::dvec2& minUV)
 	{
 		int type = 2;
 
 		double IOR = entity->material.IOR;
+
+		double opacity = entity->material.diffuse->getAlpha(minUV) * entity->material.opacity;
 
 		double r0 = std::pow((1 - IOR) / (1 + IOR), 2);
 
@@ -416,7 +418,7 @@ class RayTracer
 			type = 0;
 		}
 
-		if (entity->material.opacity < 1)
+		if (drand() > opacity)
 		{
 			if (drand() < fs)
 				type = 0;
