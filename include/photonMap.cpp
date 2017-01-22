@@ -47,7 +47,9 @@ std::vector<Photon*> PhotonMap::getInRange(glm::dvec3& pos, double dist) const
 
 	//return _root._entities;
 
-	_root.get(pos, res, dist);
+	BoundingBox bounds = _root.getBounds(pos);
+
+	_root.get(bounds, res, dist);
 
 	return res;
 }
@@ -55,7 +57,7 @@ std::vector<Photon*> PhotonMap::getInRange(glm::dvec3& pos, double dist) const
 PhotonMap::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 
 //Returns list of photons in range of the given hit point
-void PhotonMap::Node::get(glm::dvec3& pos, std::vector<Photon*> res, double dist) const
+void PhotonMap::Node::get(BoundingBox bbox, std::vector<Photon*> res, double dist) const
 {
 	if (is_leaf())
 	{
@@ -66,12 +68,30 @@ void PhotonMap::Node::get(glm::dvec3& pos, std::vector<Photon*> res, double dist
 	}
 	else
 	{
+		for(int i = 0; i < 8; i++)
+		{
+			if (_children[i]->_bbox.intersect(bbox))
+				_children[i]->get(bbox, res, dist);
+		}
+	}
+
+}
+
+//Returns the bounding box of the node containing the given point
+BoundingBox PhotonMap::Node::getBounds(glm::dvec3& pos) const
+{
+	if (is_leaf())
+	{
+		return BoundingBox(_bbox.min - EPSILON, _bbox.max + EPSILON);
+	}
+	else
+	{
 		int i = 0;
 
 		while (!_children[i]->_bbox.contains(pos))
 			i++;
-		
-		_children[i]->get(pos, res, dist);
+
+		return _children[i]->getBounds(pos);
 	}
 
 }

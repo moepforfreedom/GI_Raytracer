@@ -22,7 +22,9 @@ class PhotonMap {
 
 		bool is_leaf() const;
 
-		void get(glm::dvec3& pos, std::vector<Photon*> res, double dist) const;
+		void get(BoundingBox bbox, std::vector<Photon*> res, double dist) const;
+
+        BoundingBox getBounds(glm::dvec3& pos) const;
 
         BoundingBox _bbox;
         std::vector<Photon*> _entities;
