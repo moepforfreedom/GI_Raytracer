@@ -176,6 +176,8 @@ glm::dvec3 hemisphereSample_uniform(float u, float v);
 
 glm::dvec3 hemisphereSample_cos(float u, float v, double power);
 
+glm::dvec3 hemisphereSample_cos(glm::dvec3 normal, float u, float v, double power);
+
 double PowerCosHemispherePdfW(const glm::dvec3  aNormal, glm::dvec3  aDirection, double  aPower);
 
 glm::dvec3 sample_phong(const glm::dvec3 &outdir, const glm::dvec3 &n, double power, double sx, double sy);

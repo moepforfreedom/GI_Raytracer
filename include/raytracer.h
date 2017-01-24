@@ -16,18 +16,26 @@
 #include "util.h"
 #include "halton_enum.h"
 #include "halton_sampler.h"
+#include "photonMap.h"
 
 int p = 0;
 int width, height;
 
 class RayTracer
 {
-  public:
+  public: 
     RayTracer() = delete;
-    RayTracer(const Camera& camera, glm::dvec3 light)
-        : _camera(camera), _light(light), _image(std::make_shared<Image>(0,0)){};
+	RayTracer(const Camera& camera, glm::dvec3 light)
+		: _camera(camera), _light(light), _image(std::make_shared<Image>(0, 0))
+	{
 
-    void setScene(Octree* scene) { _scene = scene; }
+	};
+
+    void setScene(Octree* scene) 
+	{
+		_scene = scene; 
+		_photon_map = new PhotonMap(_scene->_root._bbox.min, _scene->_root._bbox.max);
+	}
 
     void run(int w, int h)
 	{
@@ -173,77 +181,15 @@ class RayTracer
 		{
 			glm::dvec3 i(0, 0, 0);
 
-			if (glm::dot(minNorm, ray.dir) > 0)
-            {
-				minNorm *= -1.0;
-                backface = true;
-            }		
-
 			glm::dvec3 refDir;
 			glm::dvec3 color = current->material.diffuse->get(minUV);
 			double roughness = current->material.roughness;
 
             //type of secondary ray, 0 for reflection, 1 for refraction, 2 for glossy
-            int type = rayType(current, ray, minNorm, minUV);
+            // int type = rayType(current, ray, minNorm, minUV);
 			glm::dvec3 f(1, 1, 1);
 
-            if(type == 1)
-			{
-                if(backface)
-                {
-                    refDir = refr(ray.dir, minNorm, current->material.IOR);
-                }
-                else
-                {
-                    refDir = refr(ray.dir, minNorm, 1.0 / current->material.IOR);
-                }
-				offset *= -1;
-
-				contrib = glm::dvec3(1, 1, 1);
-
-				f = 1.0*color;
-			}
-			else if (type == 0)
-			{
-				refDir = glm::reflect(ray.dir, minNorm);
-				contrib = glm::dvec3(1, 1, 1);
-
-				f = 1.0*color; // glm::dot(refDir, minNorm);
-			}
-			else
-			{
-				double z = std::abs(minNorm.z);
-
-				glm::dmat3x3 rot(z + (1.0 / (1 + z))*-minNorm.y*-minNorm.y, (1.0 / (1 + z))*(minNorm.x*-minNorm.y), -minNorm.x,
-					(1.0 / (1 + z))*(minNorm.x*-minNorm.y), z + (1.0 / (1 + z))*-minNorm.x*-minNorm.x, -minNorm.y,
-					minNorm.x, minNorm.y, z);
-
-				refDir = rot*hemisphereSample_cos(sx, sy, 2);
-
-				glm::dvec3 tmpNorm = hemisphereSample_cos(sx, sy, (1.0 / (current->material.roughness)) + 1);
-
-				if (minNorm.z < 0)
-				{
-					refDir.z = -1.0*refDir.z;
-					//tmpNorm.z = -1.0*tmpNorm.z;
-				}
-
-				if (current->material.roughness < .9)
-				{
-					refDir = sample_phong(glm::reflect(ray.dir, minNorm), minNorm, (1.0 / (current->material.roughness)) + 1, sx, sy);
-
-					if (glm::dot(refDir, minNorm) < 0)
-						refDir = glm::reflect(refDir, minNorm);
-					
-				}		
-
-				f = 1.0*color;
-
-				glm::dvec3 inf = color;// *pow(dot, 1 / current->material.roughness);
-
-				contrib *= inf;
-				contrib = glm::mix(contrib, inf, 0.5);
-			}
+			secondaryRay(ray, current, minNorm, minUV, sx, sy, refDir, f, roughness, contrib, offset);
 
 			double tmin = 0;
 			double tmax = glm::length(minHit - ray.origin);			
@@ -348,8 +294,68 @@ class RayTracer
 		return true;
 	}
 
+	void secondaryRay(Ray& ray, Entity* current, glm::dvec3& norm, glm::dvec2& UV, double sx, double sy, glm::dvec3& refDir, glm::dvec3& f, double& roughness, glm::dvec3& contrib, double& offset)
+	{
+		bool backface = false;
+
+		if (glm::dot(norm, ray.dir) > 0)
+		{
+			norm *= -1.0;
+			backface = true;
+		}
+
+		glm::dvec3 color = current->material.diffuse->get(UV);
+		roughness = current->material.roughness;
+
+		int type = rayType(current, ray, norm, UV);
+
+		if (type == 1)
+		{
+			if (backface)
+			{
+				refDir = refr(ray.dir, norm, current->material.IOR);
+			}
+			else
+			{
+				refDir = refr(ray.dir, norm, 1.0 / current->material.IOR);
+			}
+			offset *= -1;
+
+			contrib = glm::dvec3(1, 1, 1);
+
+			f = 1.0*color;
+		}
+		else if (type == 0)
+		{
+			refDir = glm::reflect(ray.dir, norm);
+			contrib = glm::dvec3(1, 1, 1);
+
+			f = 1.0*color; // glm::dot(refDir, minNorm);
+		}
+		else
+		{
+			refDir = hemisphereSample_cos(norm, sx, sy, 2);
+
+			if (current->material.roughness < .9)
+			{
+				refDir = sample_phong(glm::reflect(ray.dir, norm), norm, (1.0 / (current->material.roughness)) + 1, sx, sy);
+
+				if (glm::dot(refDir, norm) < 0)
+					refDir = glm::reflect(refDir, norm);
+
+			}
+
+			f = 1.0*color;
+
+			glm::dvec3 inf = color;// *pow(dot, 1 / current->material.roughness);
+
+			contrib *= inf;
+			contrib = glm::mix(contrib, inf, 0.5);
+		}
+	}
+
 	//traces a ray against the scene geometry, returns true on intersection
-	bool trace(Ray& ray, glm::dvec3& minHit, glm::dvec3&minNorm, glm::dvec2& minUV, Entity*& obj)
+	bool trace(Ray& ray, glm::dvec3& minHit, glm::dvec3& minNorm, glm::dvec2& minUV, Entity*& obj)
 	{
 		glm::dvec3 hit, norm;
 		glm::dvec2 uv;
@@ -453,6 +459,38 @@ class RayTracer
 	}
 
 
+	void tracePhotons(int count)
+	{
+		for (Light* l : _scene->lights)
+		{
+			glm::dvec3 pos = l->getPoint();
+			glm::dvec3 dir = hemisphereSample_cos(glm::normalize(pos - l->pos), drand(), drand(), 2);
+
+			Ray r(pos, dir);
+
+			glm::dvec3 hit, norm;
+			glm::dvec2 UV;
+			Entity* current;
+
+			if (trace(r, hit, norm, UV, current))
+			{
+				if (current->material.roughness < 0.1)
+				{
+					double roughness;
+					glm::dvec3 refDir, col, contrib;
+					double offset = SHADOW_BIAS;
+					
+					secondaryRay(r, current, norm, UV, drand(), drand(), refDir, col, roughness, contrib, offset);
+				}
+				else
+				{
+					_photon_map->push_back(new Photon(hit, r.dir));
+				}
+			}
+		}
+	}
+
+
     bool running() const { return _running; }
     void stop() { _running = false; }
     void start() { _running = true; }
@@ -462,6 +500,7 @@ class RayTracer
   private:
     bool _running = false;
     Octree* _scene;
+	PhotonMap* _photon_map;
     Camera _camera;
     glm::dvec3 _light;
     std::shared_ptr<Image> _image;};

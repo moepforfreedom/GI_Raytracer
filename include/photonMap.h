@@ -8,9 +8,7 @@
 #include <glm/glm.hpp>
 
 #include "bbox.h"
-
-
-struct Photon;
+#include "photon.h"
 
 class PhotonMap {
   public:
