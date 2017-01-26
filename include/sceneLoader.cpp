@@ -13,6 +13,7 @@ void loadScene(Octree* o, const char* fname)
 	//std::cout << "loading scene: " << fname << "\n";
 	std::vector<texture*> tex;
 	std::vector<Material*> mats;
+	std::vector<std::vector<Material*>> multiMats;
 
 	#ifndef _MSC_VER
 		std::locale::global(std::locale("POSIX"));
@@ -71,13 +72,37 @@ void loadScene(Octree* o, const char* fname)
 			tex.push_back(new texture(col));
 		}
 		else if (std::strcmp(lineHeader, "mat") == 0)
-		{			
+		{
 			int dif, em;
 			double r, o;
 			fscanf(f, "%d %d %lf %lf\n", &dif, &em, &r, &o);
 			std::cout << "creating mat: " << dif << ", " << em << ", " << r << "\n";
 
 			mats.push_back(new Material(tex[dif], tex[em], r, o));
+		}
+		else if (std::strcmp(lineHeader, "multiMat") == 0)
+		{
+			char s[128];
+			char* line = s;
+			int offset = 0;
+			int length = 0;
+
+			fscanf(f, "%[0123456789 ]%n\n", &s, &length);
+
+			std::cout << "creating multiMat " << line << "\n";
+
+			std::vector<Material*> tmp;
+
+			int index = -1;
+			while(sscanf(line, " %d%n", &index, &offset) && length)
+			{
+				line += offset;
+				length -= offset;
+				std::cout << "adding mat: " << index << "\n";
+				tmp.push_back(mats[index]);
+			}
+
+			multiMats.push_back(tmp);
 		}
 		else if (std::strcmp(lineHeader, "mesh") == 0)
 		{
