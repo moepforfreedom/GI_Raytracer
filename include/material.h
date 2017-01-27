@@ -84,7 +84,6 @@ struct Material
 {
         Material(texture* dif, texture* em, double r, double o) : diffuse(dif), emissive(em), roughness(r), opacity(o)
 		{
-			std::cout << "roughness: " << roughness << "\n";
 		}
 
     texture* diffuse;

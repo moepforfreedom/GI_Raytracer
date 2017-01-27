@@ -11,6 +11,7 @@
 #define M_PI 3.1415926535897
 #endif
 #define MAX_ENTITIES_PER_LEAF 16
+#define MAX_PHOTONS_PER_LEAF 16
 #define MIN_LEAF_SIZE .03125
 #define MAX_SUBDIV_RATIO 0.75
 #define EPSILON 0.00001
@@ -18,7 +19,7 @@
 #define SHADOW_BIAS 0.002
 #define AA_JITTER 1.2
 #define MIN_DEPTH 4
-#define MAX_DEPTH 32
+#define MAX_DEPTH 8
 #define NOISE_THRESH 0.002
 #define MIN_SAMPLES 8
 #define SAMPLES 32

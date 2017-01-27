@@ -25,6 +25,11 @@ struct Light
 		return pos + rad*points[rand() % points.size()];
 	}
 
+	glm::dvec3 getPoint(int i)
+	{
+		return pos + rad*points[rand() + 1097*i % points.size()];
+	}
+
 	glm::dvec3 pos = { 0, 0, 0 };
 	glm::dvec3 col = { 0, 0, 0 };
 	double rad = 0;

@@ -38,10 +38,9 @@ struct BoundingBox
     }
 
     /// Check if a point lies within the bounding box.
-    inline bool contains(glm::dvec3& point) const
+    inline bool contains(glm::dvec3 point) const
 	{
-		return ((point - min).x > 0 && (point - min).y > 0 && (point - min).z > 0 && (point - max).x < 0 && (point - max).y < 0 && (point - max).z < 0);
-
+		return point.x >= min.x && point.y >= min.y && point.z >= min.z && point.x < max.x && point.y < max.y && point.z < max.z;
     }
 
 	//checks if a Ray intersects the bounding box, implementation based on Peter Shirleys algorithm

@@ -4,8 +4,24 @@
 
 struct Ray 
 {
-    Ray(glm::dvec3 origin, glm::dvec3 dir) : origin(std::move(origin)), dir(glm::normalize(dir))
+	Ray(glm::dvec3 origin, glm::dvec3 d) : origin(std::move(origin)), dir(glm::normalize(d))
 	{
+		/*invDir = glm::dvec3(1.0 / dir);
+
+		for (int i = 0; i < 24; i++)
+		{
+			r[i] = origin[i % 3];
+			invD[i] = invDir[i % 3];
+			invlz[i] = (invDir[i % 3] < 0.0);
+		}*/
+
+		setDir(d);
+	}
+
+	void setDir(glm::dvec3 d)
+	{
+		dir = glm::normalize(d);
+
 		invDir = glm::dvec3(1.0 / dir);
 
 		for (int i = 0; i < 24; i++)

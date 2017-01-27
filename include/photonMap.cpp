@@ -13,6 +13,8 @@
 #include "photon.h"
 
 
+int photons = 0;
+
 PhotonMap::PhotonMap(glm::dvec3 min, glm::dvec3 max) : _root(Node({ min, max }))
 {
 
@@ -22,25 +24,27 @@ PhotonMap::PhotonMap(glm::dvec3 min, glm::dvec3 max) : _root(Node({ min, max }))
 void PhotonMap::push_back(Photon* object)
 {
 	_root._entities.push_back(object);
-	valid = false;
+	//valid = false;
 }
 
 void PhotonMap::rebuild()
 {
-	std::cout << "total entities: " << _root._entities.size() << "\n";
+	std::cout << "total photons: " << _root._entities.size() << "\n";
 	std::cout << "rebuilding photon map...\n";
-	if (_root._entities.size() > MAX_ENTITIES_PER_LEAF)
+	if (_root._entities.size() > MAX_PHOTONS_PER_LEAF)
 	{
 		std::cout << "subdividing root...\n";
 		_root.partition();
 	}
+
+	std::cout << "done, total stored photons: " << photons << "\n";
 
 	valid = true;
 
 }
 
 /// Returns list of photons in range of the given hit point
-std::vector<Photon*> PhotonMap::getInRange(glm::dvec3& pos, double dist) const
+std::vector<Photon*> PhotonMap::getInRange(glm::dvec3& pos, double& scale, double dist) const
 {
 	std::vector<Photon*> res;
 	res.reserve(256);
@@ -49,7 +53,11 @@ std::vector<Photon*> PhotonMap::getInRange(glm::dvec3& pos, double dist) const
 
 	BoundingBox bounds = _root.getBounds(pos);
 
-	_root.get(bounds, res, dist);
+	scale = bounds.dx();
+
+	_root.get(BoundingBox(pos - bounds.dx()*dist, pos + bounds.dx()*dist), res, bounds.dx()*dist);
+
+	_root.getInRange(pos, res, 1);
 
 	return res;
 }
@@ -57,8 +65,11 @@ std::vector<Photon*> PhotonMap::getInRange(glm::dvec3& pos, double dist) const
 PhotonMap::Node::Node(const BoundingBox& bbox) : _bbox(bbox) {}
 
 //Returns list of photons in range of the given hit point
-void PhotonMap::Node::get(BoundingBox bbox, std::vector<Photon*> res, double dist) const
+void PhotonMap::Node::get(BoundingBox bbox, std::vector<Photon*>& res, double dist) const
 {
+	if (bbox.dx() <= 0)
+		return;
+
 	if (is_leaf())
 	{
 		if (_entities.size() > 0)
@@ -77,7 +88,27 @@ void PhotonMap::Node::get(BoundingBox bbox, std::vector<Photon*> res, double dis
 
 }
 
-//Returns the bounding box of the node containing the given point
+void PhotonMap::Node::getInRange(glm::dvec3 pos, std::vector<Photon*>& res, double dist) const
+{
+	if (is_leaf())
+	{
+		if (_entities.size() > 0)
+		{
+			res.insert(res.end(), _entities.begin(), _entities.end());
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			if (_children[i]->_bbox.contains(pos))
+				_children[i]->getInRange(pos, res, dist);
+		}
+	}
+
+}
+
+//Determines the bounding box of the node containing the given point
 BoundingBox PhotonMap::Node::getBounds(glm::dvec3& pos) const
 {
 	if (is_leaf())
@@ -88,10 +119,13 @@ BoundingBox PhotonMap::Node::getBounds(glm::dvec3& pos) const
 	{
 		int i = 0;
 
-		while (!_children[i]->_bbox.contains(pos))
+		while (i < 8 && !_children[i]->_bbox.contains(pos))
 			i++;
 
-		return _children[i]->getBounds(pos);
+		if (i < 8)
+			return _children[i]->getBounds(pos);
+		else
+			return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0));
 	}
 
 }
@@ -145,7 +179,7 @@ void PhotonMap::Node::partition()
 
 	for (int i = 0; i < 8; i++)
 	{
-		if (_children[i]->_entities.size() > MAX_ENTITIES_PER_LEAF && _children[i]->_bbox.dx() > MIN_LEAF_SIZE)
+		if (_children[i]->_entities.size() > MAX_PHOTONS_PER_LEAF && _children[i]->_bbox.dx() > MIN_LEAF_SIZE)
 		{
 			//std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
 			_children[i]->partition();

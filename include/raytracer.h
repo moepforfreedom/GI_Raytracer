@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <memory>
 #include <set>
-//#include <future>
 
 #include <glm/glm.hpp>
 
@@ -39,17 +38,26 @@ class RayTracer
 
     void run(int w, int h)
 	{
+		srand(std::time(0));
+
         _image = std::make_shared<Image>(w, h);
 
         width = w;
-        height = h;
+        height = h;		
 
 		if (!_scene->valid)
 		{
 			_scene->rebuild();
 		}
 
-		srand(std::time(0));
+		if (!_photon_map->valid)
+		{
+			std::cout << "emitting photons...\n";
+			tracePhoton(5);
+
+			_photon_map->rebuild();
+			//_scene->rebuild();
+		}	
 
 		//glm::dmat3x3 crot = glm::eulerAngleXYZ(0.0, 0.02, 0.0);
 		//_camera.pos =  _camera.pos*crot;
@@ -141,7 +149,7 @@ class RayTracer
 
 				//vars[x + w*y] = var;
 
-                #pragma omp critical
+                #pragma omp critical (im_update)
                 {
                   _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var*//**glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
                 }
@@ -240,6 +248,8 @@ class RayTracer
 				}
 			}
 			
+			glm::dvec3 caustic =  depth == 0 ? samplePhotons(minHit, minNorm, 1) : glm::dvec3(0, 0, 0);
+
 
 			// continuation probability 
 			double q = compMax(contrib);
@@ -248,7 +258,7 @@ class RayTracer
 			{
 				f *= depth <= MIN_DEPTH ? 1.0 : (1.0 / q);
 				//diffuse*direct_light + diffuse*brdf*radiance + emmissive
-				return color*i + f*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib) + current->material.emissive->get(minUV);
+				return color*i + f*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib) + current->material.emissive->get(minUV) + color*caustic;
 			}
 			else
 				return glm::dvec3(0, 0, 0);///*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ //current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
@@ -458,34 +468,124 @@ class RayTracer
 		return false;
 	}
 
-
-	void tracePhotons(int count)
+	glm::dvec3 samplePhotons(glm::dvec3 pos, glm::dvec3 dir, int count)
 	{
-		for (Light* l : _scene->lights)
+		double dist = .9;
+		glm::dvec3 res(0, 0, 0);
+		double scale = 0;
+
+		std::vector<Photon*> photons = _photon_map->getInRange(pos, scale, dist);
+
+		std::sort(photons.begin(), photons.end(), [pos](const Photon* lhs, const Photon* rhs) {return glm::length(lhs->origin - pos) < glm::length(rhs->origin - pos); });
+
+		double maxDist = 0;
+
+		//std::cout << photons.size() << "\n";
+
+		for (int i = 0; i < std::min(32, (int)photons.size()); i++)
 		{
-			glm::dvec3 pos = l->getPoint();
-			glm::dvec3 dir = hemisphereSample_cos(glm::normalize(pos - l->pos), drand(), drand(), 2);
+			Photon* p = photons[i];
 
-			Ray r(pos, dir);
+			double curDist = glm::length(p->origin - pos);
 
-			glm::dvec3 hit, norm;
-			glm::dvec2 UV;
-			Entity* current;
+			//if (curDist < 10*scale*dist)
+			//{
+				maxDist = std::max(maxDist, curDist);
 
-			if (trace(r, hit, norm, UV, current))
+				res += .1*p->col*glm::dot(p->dir, dir);
+			//}
+		}
+
+		if(photons.size() > 0)
+			res /= (M_PI*maxDist*maxDist);
+
+		return res;
+	}
+
+	void tracePhoton(int maxDepth)
+	{
+		int count = 128000;
+		#pragma omp parallel
+		{
+			std::vector<Photon*> tmp;
+
+			#pragma omp for
+			for (int i = 0; i < count; i++)
 			{
-				if (current->material.roughness < 0.1)
+				for (Light* l : _scene->lights)
 				{
-					double roughness;
-					glm::dvec3 refDir, col, contrib;
-					double offset = SHADOW_BIAS;
-					
-					secondaryRay(r, current, norm, UV, drand(), drand(), refDir, col, roughness, contrib, offset);
+					int tries = 0;
+					bool stored = false;
+
+					srand(i);
+
+					while (!stored && tries < 500)
+					{
+						glm::dvec3 pos = l->getPoint();
+						glm::dvec3 dir = hemisphereSample_cos(glm::normalize(pos - l->pos), fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), 2);
+
+						Ray r(pos + SHADOW_BIAS*glm::normalize(pos - l->pos), dir);
+
+						glm::dvec3 hit, norm;
+						glm::dvec3 col = (1.0/count)*l->col;
+						glm::dvec2 UV;
+						Entity* current;
+
+						int depth = 0;
+						bool term = false;
+						bool isCaustic = false;
+
+						if (!trace(r, hit, norm, UV, current))
+							continue;
+
+						while (depth < maxDepth && !term)
+						{
+							//std::cout << "tracing photon, depth: " << depth << "\n";
+							if (current->material.roughness < 0.1)
+							{
+								//std::cout << "tracing caustics photon at depth: " << depth << "\n";
+								if (!trace(r, hit, norm, UV, current))
+								{
+									term = true;
+									continue;
+								}
+
+								double roughness = current->material.roughness;
+								glm::dvec3 refDir, f, contrib;
+								double offset = SHADOW_BIAS;
+
+								secondaryRay(r, current, norm, UV, fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), refDir, f, roughness, contrib, offset);
+
+								col *= f;
+								r.origin = hit + offset*norm;
+								r.setDir(refDir);
+
+								isCaustic = true;
+							}
+
+							if (depth > 0 && isCaustic && current->material.roughness >= 0.1)
+							{
+								//std::cout << "photon stored\n";
+
+								tmp.push_back(new Photon(hit, r.dir, col));
+								term = true;
+								stored = true;
+
+								//_scene->push_back(new sphere(hit, 0.01, Material(new texture(col), new texture(glm::dvec3(0, 0, 0)), 1, 1)));
+
+							}
+
+							depth++;
+						}
+						tries++;
+					}
 				}
-				else
-				{
-					_photon_map->push_back(new Photon(hit, r.dir));
-				}
+			}
+
+			#pragma omp critical
+			for (Photon* p : tmp)
+			{
+				_photon_map->push_back(p);
 			}
 		}
 	}

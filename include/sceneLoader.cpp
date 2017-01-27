@@ -142,7 +142,7 @@ void loadScene(Octree* o, const char* fname)
 			glm::dvec3 pos;
 			glm::dvec3 col;
 			double rad;
-			fscanf(f, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %d\n", &pos.x, &pos.y, &pos.z, &col.x, &col.y, &rad);
+			fscanf(f, "%lf %lf %lf %lf %lf %lf %lf\n", &pos.x, &pos.y, &pos.z, &col.x, &col.y, &col.z, &rad);
 
 			o->push_back(new Light(pos, col, rad));
 		}

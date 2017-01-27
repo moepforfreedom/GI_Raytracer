@@ -4,7 +4,7 @@
 
 struct Photon
 {
-	Photon(glm::dvec3 origin, glm::dvec3 dir) : origin(std::move(origin)), dir(glm::normalize(dir))
+	Photon(glm::dvec3 origin, glm::dvec3 dir, glm::dvec3 color) : origin(std::move(origin)), dir(glm::normalize(dir)), col(color)
 	{
 
 	}
