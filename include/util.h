@@ -11,15 +11,15 @@
 #define M_PI 3.1415926535897
 #endif
 #define MAX_ENTITIES_PER_LEAF 16
-#define MAX_PHOTONS_PER_LEAF 16
-#define MIN_LEAF_SIZE .03125
+#define MAX_PHOTONS_PER_LEAF 64
+#define MIN_LEAF_SIZE .015
 #define MAX_SUBDIV_RATIO 0.75
 #define EPSILON 0.00001
 #define DUPLICATE_THRESHOLD 150
-#define SHADOW_BIAS 0.002
+#define SHADOW_BIAS 0.0001
 #define AA_JITTER 1.2
 #define MIN_DEPTH 4
-#define MAX_DEPTH 8
+#define MAX_DEPTH 32
 #define NOISE_THRESH 0.002
 #define MIN_SAMPLES 8
 #define SAMPLES 32
@@ -158,8 +158,8 @@ inline void intersectSIMD(float* __restrict t0, float* __restrict t1, const floa
 
 	for (int i = 0; i < 24; i++)
 	{
-		float tmp0 = (boxes[i] - ray[i])*invDir[i];
-		float tmp1 = (boxes[i + 24] - ray[i])*invDir[i];
+		float tmp0 = (boxes[i] - ray[i])*invDir[i]; //t0
+		float tmp1 = (boxes[i + 24] - ray[i])*invDir[i]; //t1
 
 		t0[i] = invlz[i] * tmp1 + (1.0f - invlz[i])*tmp0;
 		t1[i] = invlz[i] * tmp0 + (1.0f - invlz[i])*tmp1;

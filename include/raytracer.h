@@ -40,6 +40,11 @@ class RayTracer
 	{
 		srand(std::time(0));
 
+		Halton_sampler sampler;
+		sampler.init_faure();
+
+		Halton_enum halton_enum(w, h);
+
         _image = std::make_shared<Image>(w, h);
 
         width = w;
@@ -53,11 +58,11 @@ class RayTracer
 		if (!_photon_map->valid)
 		{
 			std::cout << "emitting photons...\n";
-			tracePhoton(5);
+			tracePhotons(5, 850000, sampler, halton_enum);
 
 			_photon_map->rebuild();
 			//_scene->rebuild();
-		}	
+		}
 
 		//glm::dmat3x3 crot = glm::eulerAngleXYZ(0.0, 0.02, 0.0);
 		//_camera.pos =  _camera.pos*crot;
@@ -83,12 +88,7 @@ class RayTracer
 		std::vector<double> xrand;
 		subrand(xrand, 25000);
 		std::vector<double> yrand;
-		subrand(yrand, 25000);
-
-        Halton_sampler sampler;
-        sampler.init_faure();
-
-        Halton_enum halton_enum(w, h);
+		subrand(yrand, 25000);        
 
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10) //OpenMP
@@ -250,6 +250,7 @@ class RayTracer
 			
 			glm::dvec3 caustic =  depth == 0 ? samplePhotons(minHit, minNorm, 1) : glm::dvec3(0, 0, 0);
 
+			//return color*caustic;
 
 			// continuation probability 
 			double q = compMax(contrib);
@@ -378,6 +379,11 @@ class RayTracer
 
 		//avgTests += objects.size();
 
+		if (drand() < .5 && nodes.size() > 500)
+		{
+			std::cout << nodes.size() << ", ray: " << ray.origin.x << ", " << ray.origin.y << ", " << ray.origin.z << "\n";
+		}		
+
 		Entity* current;
 		bool term = false;
 
@@ -468,6 +474,7 @@ class RayTracer
 		return false;
 	}
 
+	//computes a radiance estimate from the photons surrounding the hit point
 	glm::dvec3 samplePhotons(glm::dvec3 pos, glm::dvec3 dir, int count)
 	{
 		double dist = .9;
@@ -482,7 +489,7 @@ class RayTracer
 
 		//std::cout << photons.size() << "\n";
 
-		for (int i = 0; i < std::min(32, (int)photons.size()); i++)
+		for (int i = 0; i < std::min(42, (int)photons.size()); i++)
 		{
 			Photon* p = photons[i];
 
@@ -502,9 +509,10 @@ class RayTracer
 		return res;
 	}
 
-	void tracePhoton(int maxDepth)
+	//traces caustic photons from every light source
+	void tracePhotons(int maxDepth, int count, Halton_sampler& halton_sampler, Halton_enum& halton_enum)
 	{
-		int count = 128000;
+		//int count = 268000;
 		#pragma omp parallel
 		{
 			std::vector<Photon*> tmp;
@@ -517,11 +525,19 @@ class RayTracer
 					int tries = 0;
 					bool stored = false;
 
-					srand(i);
+					srand(i);					
 
 					while (!stored && tries < 500)
 					{
-						glm::dvec3 pos = l->getPoint();
+						float sx = halton_sampler.sample(0, i * 500 + tries);
+						float sy = halton_sampler.sample(1, i * 500 + tries);
+
+						//sx = fmod(halton_enum.scale_x(sx), 1.0);
+						//sy = fmod(halton_enum.scale_y(sy), 1.0);
+
+						//std::cout << i * 500 + tries << ": " << sx << ", " << sy << "\n";
+
+						glm::dvec3 pos = l->getPoint(sx, sy);
 						glm::dvec3 dir = hemisphereSample_cos(glm::normalize(pos - l->pos), fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), 2);
 
 						Ray r(pos + SHADOW_BIAS*glm::normalize(pos - l->pos), dir);
@@ -536,7 +552,11 @@ class RayTracer
 						bool isCaustic = false;
 
 						if (!trace(r, hit, norm, UV, current))
+						{
+							tries++;
 							continue;
+						}
+							
 
 						while (depth < maxDepth && !term)
 						{
@@ -553,6 +573,12 @@ class RayTracer
 								double roughness = current->material.roughness;
 								glm::dvec3 refDir, f, contrib;
 								double offset = SHADOW_BIAS;
+
+								sx = halton_sampler.sample(0, maxDepth*(i * 500 + tries) + depth);
+								sy = halton_sampler.sample(1, maxDepth*(i * 500 + tries) + depth);
+
+								//sx = fmod(halton_enum.scale_x(sx), 1.0);
+								//sy = fmod(halton_enum.scale_y(sy), 1.0);
 
 								secondaryRay(r, current, norm, UV, fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), refDir, f, roughness, contrib, offset);
 

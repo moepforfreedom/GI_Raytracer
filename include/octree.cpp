@@ -35,7 +35,7 @@ void Octree::push_back(Light* light)
 {
 	lights.push_back(light);
 	//_root._entities.push_back(new sphere(light->pos, light->rad - SHADOW_BIAS, Material(new texture(glm::dvec3(0, 0, 0)), new texture(5.0*light->col), 1, 1)));
-	valid = false;
+	//valid = false;
 }
 
 void Octree::push_back(AtmosphereEntity* entity)
@@ -202,7 +202,7 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 	float ta[24];
 	float tb[24];
 
-	if (_bbox.intersectSimpleMulti(ray, tmin, tmax, &(tval0[3 * n]), &(tval1[3 * n])))
+	if (_bbox.intersectSimple(ray, tmin, tmax)/*_bbox.intersectSimpleMulti(ray, tmin, tmax, &(tval0[3 * n]), &(tval1[3 * n]))*/)
 	{
 		if (is_leaf())
 		{
@@ -213,7 +213,7 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 		}
 		else
 		{
-			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz);
+			//intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz);
 			for (int i = 0; i < 8; i++)
 			{
 				_children[i]->intersect(ray, res, tmin, tmax, ta, tb, i);
@@ -230,7 +230,7 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 	double t0, t1;
 	float ta[24];
 	float tb[24];
-	if (/*_bbox.intersect(ray, tmin, tmax, t0, t1)*/_bbox.intersectMulti(ray, tmin, tmax, t0, t1, &(tval0[3*n]), &(tval1[3*n])))
+	if (_bbox.intersect(ray, tmin, tmax, t0, t1)/*_bbox.intersectMulti(ray, tmin, tmax, t0, t1, &(tval0[3*n]), &(tval1[3*n]))*/)
 	{
 		if (is_leaf())
 		{
@@ -249,7 +249,7 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 		}
 		else
 		{
-			intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz);
+			//intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz);
 			for (int i = 0; i < 8; i++)
 			{
 				_children[i]->intersectSorted(ray, res, tmin, tmax, ta, tb, i);
@@ -348,9 +348,11 @@ void Octree::Node::partition()
 		{
 			//std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
 			_children[i]->partition();
-			nodes++;
+			//nodes++;
 		}
 	}
+
+	nodes += 8;
 };
 
 bool Octree::Node::is_leaf() const { return _children[0] == nullptr; }

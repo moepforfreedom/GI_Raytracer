@@ -179,7 +179,7 @@ void PhotonMap::Node::partition()
 
 	for (int i = 0; i < 8; i++)
 	{
-		if (_children[i]->_entities.size() > MAX_PHOTONS_PER_LEAF && _children[i]->_bbox.dx() > MIN_LEAF_SIZE)
+		if (_children[i]->_entities.size() > MAX_PHOTONS_PER_LEAF /*&& _children[i]->_bbox.dx() > MIN_LEAF_SIZE*/)
 		{
 			//std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
 			_children[i]->partition();
