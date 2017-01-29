@@ -146,6 +146,16 @@ void loadScene(Octree* o, const char* fname)
 
 			o->push_back(new Light(pos, col, rad));
 		}
+		else if (std::strcmp(lineHeader, "heightFog") == 0)
+		{
+			glm::dvec3 pos;
+			glm::dvec3 size;
+			glm::dvec3 col;
+			double density, scatter, scale;
+			fscanf(f, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", &pos.x, &pos.y, &pos.z, &size.x, &size.y, &size.z, &col.x, &col.y, &col.z, &density, &scatter, &scale);
+
+			o->push_back(new HeightFog(pos, size, col, density, scatter, scale));
+		}
 	}
 
 	std::cout << "finished scene loading\n";

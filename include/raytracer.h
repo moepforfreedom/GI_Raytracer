@@ -265,7 +265,7 @@ class RayTracer
 				return glm::dvec3(0, 0, 0);///*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ //current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
 		}
 		else
-			return /*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ glm::dvec3(0, 0, 0);
+			return /*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ glm::dvec3(0.04, 0.04, 0.04);
 	}
 
 
@@ -477,13 +477,13 @@ class RayTracer
 	//computes a radiance estimate from the photons surrounding the hit point
 	glm::dvec3 samplePhotons(glm::dvec3 pos, glm::dvec3 dir, int count)
 	{
-		double dist = .9;
+		double dist = .2;
 		glm::dvec3 res(0, 0, 0);
 		double scale = 0;
 
 		std::vector<Photon*> photons = _photon_map->getInRange(pos, scale, dist);
 
-		std::sort(photons.begin(), photons.end(), [pos](const Photon* lhs, const Photon* rhs) {return glm::length(lhs->origin - pos) < glm::length(rhs->origin - pos); });
+		std::sort(photons.begin(), photons.end(), [pos](const Photon* lhs, const Photon* rhs) {return vecLengthSquared(lhs->origin - pos) < vecLengthSquared(rhs->origin - pos); });
 
 		double maxDist = 0;
 
@@ -493,7 +493,7 @@ class RayTracer
 		{
 			Photon* p = photons[i];
 
-			double curDist = glm::length(p->origin - pos);
+			double curDist = vecLengthSquared(p->origin - pos);
 
 			//if (curDist < 10*scale*dist)
 			//{
@@ -504,7 +504,7 @@ class RayTracer
 		}
 
 		if(photons.size() > 0)
-			res /= (M_PI*maxDist*maxDist);
+			res /= (M_PI*maxDist);
 
 		return res;
 	}
@@ -560,17 +560,18 @@ class RayTracer
 
 						while (depth < maxDepth && !term)
 						{
+							double roughness = current->material.roughness;
 							//std::cout << "tracing photon, depth: " << depth << "\n";
-							if (current->material.roughness < 0.1)
+							if (roughness < 0.1)
 							{
 								//std::cout << "tracing caustics photon at depth: " << depth << "\n";
 								if (!trace(r, hit, norm, UV, current))
 								{
 									term = true;
 									continue;
-								}
+								}								
 
-								double roughness = current->material.roughness;
+								roughness = current->material.roughness;
 								glm::dvec3 refDir, f, contrib;
 								double offset = SHADOW_BIAS;
 
@@ -580,16 +581,36 @@ class RayTracer
 								//sx = fmod(halton_enum.scale_x(sx), 1.0);
 								//sy = fmod(halton_enum.scale_y(sy), 1.0);
 
-								secondaryRay(r, current, norm, UV, fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), refDir, f, roughness, contrib, offset);
+								secondaryRay(r, current, norm, UV, fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), refDir, f, roughness, contrib, offset);								
+
+								double tmin = 0;
+								double tmax = glm::length(hit - r.origin);
+
+								if (_scene->atmosphereBounds(r, tmin, tmax))
+								{
+									glm::dvec3 ahit, color;
+
+									//std::cout << "atmosphere bounds hit: " << tmin << ", " << tmax << "\n";
+
+									if (raymarch(r, ahit, color, tmin, tmax))
+									{
+										hit = ahit;
+										refDir = randomUnitVec(fmod(rand() + 13 * i, 1), fmod(drand() + 7 * i, 1));
+										f = 1.0*color;
+										roughness = 1;
+										//std::cout << "atmosphere hit\n";
+									}
+								}
 
 								col *= f;
+
 								r.origin = hit + offset*norm;
 								r.setDir(refDir);
 
 								isCaustic = true;
 							}
 
-							if (depth > 0 && isCaustic && current->material.roughness >= 0.1)
+							if (depth > 0 && isCaustic && roughness >= 0.1)
 							{
 								//std::cout << "photon stored\n";
 
