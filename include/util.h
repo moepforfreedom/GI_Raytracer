@@ -11,7 +11,7 @@
 #define M_PI 3.1415926535897
 #endif
 #define MAX_ENTITIES_PER_LEAF 16
-#define MAX_PHOTONS_PER_LEAF 64
+#define MAX_PHOTONS_PER_LEAF 16
 #define MIN_LEAF_SIZE .015
 #define MAX_SUBDIV_RATIO 0.75
 #define EPSILON 0.00001
@@ -20,7 +20,7 @@
 #define AA_JITTER 1.2
 #define MIN_DEPTH 4
 #define MAX_DEPTH 32
-#define NOISE_THRESH 0.002
+#define NOISE_THRESH 0.0015
 #define MIN_SAMPLES 8
 #define SAMPLES 32
 #define RAYMARCH_STEPSIZE 0.04
@@ -75,7 +75,7 @@ inline double fastPow(double a, double b)
   return u.d;
 }
 
-inline double fastPrecisePow(double a, double b) 
+inline double fastPrecisePow(double a, double b)
 {
 	// calculate approximation with fraction of the exponent
 	int e = (int)b;
@@ -100,7 +100,7 @@ inline double fastPrecisePow(double a, double b)
 	return r * u.d;
 }
 
-inline double fastPrecisePow(double a, int b) 
+inline double fastPrecisePow(double a, int b)
 {
 	int e = b;
 

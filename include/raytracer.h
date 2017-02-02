@@ -22,7 +22,7 @@ int width, height;
 
 class RayTracer
 {
-  public: 
+  public:
     RayTracer() = delete;
 	RayTracer(const Camera& camera, glm::dvec3 light)
 		: _camera(camera), _light(light), _image(std::make_shared<Image>(0, 0))
@@ -30,9 +30,9 @@ class RayTracer
 
 	};
 
-    void setScene(Octree* scene) 
+    void setScene(Octree* scene)
 	{
-		_scene = scene; 
+		_scene = scene;
 		_photon_map = new PhotonMap(_scene->_root._bbox.min, _scene->_root._bbox.max);
 	}
 
@@ -48,7 +48,7 @@ class RayTracer
         _image = std::make_shared<Image>(w, h);
 
         width = w;
-        height = h;		
+        height = h;
 
 		if (!_scene->valid)
 		{
@@ -57,15 +57,16 @@ class RayTracer
 
 		if (!_photon_map->valid)
 		{
+            long start = clock();
 			std::cout << "emitting photons...\n";
-			tracePhotons(5, 850000, sampler, halton_enum);
+			tracePhotons(5, 750000, sampler, halton_enum);
+
+            std::cout << "photon time: " << (clock() - start)/CLOCKS_PER_SEC << "\n";
 
 			_photon_map->rebuild();
 			//_scene->rebuild();
 		}
 
-		//glm::dmat3x3 crot = glm::eulerAngleXYZ(0.0, 0.02, 0.0);
-		//_camera.pos =  _camera.pos*crot;
 		_camera.forward = glm::normalize(glm::dvec3(0, 0, 0) - _camera.pos);
 
 		_camera.up = glm::dvec3(0, 1.0, 0);
@@ -88,7 +89,7 @@ class RayTracer
 		std::vector<double> xrand;
 		subrand(xrand, 25000);
 		std::vector<double> yrand;
-		subrand(yrand, 25000);        
+		subrand(yrand, 25000);
 
         // The structure of the for loop should remain for incremental rendering.
         #pragma omp parallel for schedule(dynamic, 10) //OpenMP
@@ -130,7 +131,7 @@ class RayTracer
 						color = radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx, glm::dvec3(1, 1, 1));
 					else
 					color = (1.0*s*color + radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx, glm::dvec3(1, 1, 1)))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
-					
+
 					if (s > 0)
 					{
 						var = (1.0*5*var + glm::length(color - lastCol))*(1.0 / (5 + 1));
@@ -151,7 +152,7 @@ class RayTracer
 
                 #pragma omp critical (im_update)
                 {
-                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var*//**glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
+                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var s**glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
                 }
             }
           }
@@ -200,7 +201,7 @@ class RayTracer
 			secondaryRay(ray, current, minNorm, minUV, sx, sy, refDir, f, roughness, contrib, offset);
 
 			double tmin = 0;
-			double tmax = glm::length(minHit - ray.origin);			
+			double tmax = glm::length(minHit - ray.origin);
 
 			if (_scene->atmosphereBounds(ray, tmin, tmax))
 			{
@@ -226,7 +227,7 @@ class RayTracer
 				glm::dvec3 lightDir = light->getPoint() - (minHit+SHADOW_BIAS*minNorm);
 				double maxt = glm::length(lightDir);
 
-				//double cos_alpha = (light->rad / sqrt(vecLengthSquared(lightDir) + std::pow(light->rad, 2)));				
+				//double cos_alpha = (light->rad / sqrt(vecLengthSquared(lightDir) + std::pow(light->rad, 2)));
 
 				double hfrac = 1 / (M_PI*vecLengthSquared(light->pos - minHit)); //fraction of the hemisphere
 
@@ -247,14 +248,14 @@ class RayTracer
 					i = light->col*l*hfrac;
 				}
 			}
-			
-			glm::dvec3 caustic =  depth == 0 ? samplePhotons(minHit, minNorm, 1) : glm::dvec3(0, 0, 0);
+
+			glm::dvec3 caustic =  depth == 0 ? samplePhotons(minHit, minNorm, 42) : glm::dvec3(0, 0, 0);
 
 			//return color*caustic;
 
-			// continuation probability 
+			// continuation probability
 			double q = compMax(contrib);
-			
+
 			if (depth <= MIN_DEPTH || drand() < q)
 			{
 				f *= depth <= MIN_DEPTH ? 1.0 : (1.0 / q);
@@ -382,7 +383,7 @@ class RayTracer
 		if (drand() < .5 && nodes.size() > 500)
 		{
 			std::cout << nodes.size() << ", ray: " << ray.origin.x << ", " << ray.origin.y << ", " << ray.origin.z << "\n";
-		}		
+		}
 
 		Entity* current;
 		bool term = false;
@@ -477,34 +478,49 @@ class RayTracer
 	//computes a radiance estimate from the photons surrounding the hit point
 	glm::dvec3 samplePhotons(glm::dvec3 pos, glm::dvec3 dir, int count)
 	{
-		double dist = .2;
+		double dist = .0;
 		glm::dvec3 res(0, 0, 0);
 		double scale = 0;
 
 		std::vector<Photon*> photons = _photon_map->getInRange(pos, scale, dist);
 
-		std::sort(photons.begin(), photons.end(), [pos](const Photon* lhs, const Photon* rhs) {return vecLengthSquared(lhs->origin - pos) < vecLengthSquared(rhs->origin - pos); });
+        /*if(photons.size() > 9*MAX_PHOTONS_PER_LEAF && drand() < .01)
+        {
+            std::cout << "photons: " << photons.size() << "\n";
+        }*/
+
+        count = std::min(count, (int)photons.size());
+
+		std::partial_sort(photons.begin(), photons.begin() + count, photons.end(), [pos](const Photon* lhs, const Photon* rhs) {return vecLengthSquared(lhs->origin - pos) < vecLengthSquared(rhs->origin - pos); });
 
 		double maxDist = 0;
 
 		//std::cout << photons.size() << "\n";
 
-		for (int i = 0; i < std::min(42, (int)photons.size()); i++)
+        double lastDist = 0;
+
+        if(photons.size() > 0)
+            lastDist = vecLengthSquared(photons[0]->origin - pos);
+
+		for (int i = 0; i < std::max(count - 1, 0); i++)
 		{
 			Photon* p = photons[i];
 
-			double curDist = vecLengthSquared(p->origin - pos);
+            /*if((vecLengthSquared(p->origin - pos) - lastDist) < 0)
+            {
+                std::cout << "non-ascending photon distance: " << lastDist << ", " << vecLengthSquared(p->origin - pos) << "\n";
+            }
 
-			//if (curDist < 10*scale*dist)
-			//{
-				maxDist = std::max(maxDist, curDist);
+            lastDist = vecLengthSquared(p->origin - pos);*/
 
-				res += .1*p->col*glm::dot(p->dir, dir);
-			//}
+			res += .1*p->col*glm::dot(p->dir, dir);
 		}
 
-		if(photons.size() > 0)
+		if(photons.size() > 1)
+        {
+            maxDist = vecLengthSquared(photons[count - 2]->origin - pos);
 			res /= (M_PI*maxDist);
+        }
 
 		return res;
 	}
@@ -512,7 +528,6 @@ class RayTracer
 	//traces caustic photons from every light source
 	void tracePhotons(int maxDepth, int count, Halton_sampler& halton_sampler, Halton_enum& halton_enum)
 	{
-		//int count = 268000;
 		#pragma omp parallel
 		{
 			std::vector<Photon*> tmp;
@@ -525,7 +540,7 @@ class RayTracer
 					int tries = 0;
 					bool stored = false;
 
-					srand(i);					
+					srand(i);
 
 					while (!stored && tries < 500)
 					{
@@ -537,7 +552,7 @@ class RayTracer
 
 						//std::cout << i * 500 + tries << ": " << sx << ", " << sy << "\n";
 
-						glm::dvec3 pos = l->getPoint(sx, sy);
+						glm::dvec3 pos = l->getPointInRange(1, sx, sy);
 						glm::dvec3 dir = hemisphereSample_cos(glm::normalize(pos - l->pos), fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), 2);
 
 						Ray r(pos + SHADOW_BIAS*glm::normalize(pos - l->pos), dir);
@@ -556,7 +571,7 @@ class RayTracer
 							tries++;
 							continue;
 						}
-							
+
 
 						while (depth < maxDepth && !term)
 						{
@@ -569,7 +584,7 @@ class RayTracer
 								{
 									term = true;
 									continue;
-								}								
+								}
 
 								roughness = current->material.roughness;
 								glm::dvec3 refDir, f, contrib;
@@ -581,7 +596,7 @@ class RayTracer
 								//sx = fmod(halton_enum.scale_x(sx), 1.0);
 								//sy = fmod(halton_enum.scale_y(sy), 1.0);
 
-								secondaryRay(r, current, norm, UV, fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), refDir, f, roughness, contrib, offset);								
+								secondaryRay(r, current, norm, UV, fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), refDir, f, roughness, contrib, offset);
 
 								double tmin = 0;
 								double tmax = glm::length(hit - r.origin);

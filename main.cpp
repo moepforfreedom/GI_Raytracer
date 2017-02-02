@@ -91,12 +91,12 @@ int main(int argc, char** argv)
 	if(argc > 1)
 		loadScene(scene, argv[1]);
 	else
-		loadScene(scene, "scenes/caustics/caustics.scn");
+		loadScene(scene, "scenes/caustics_02/caustics.scn");
 
 	//scene->push_back(new HeightFog(glm::dvec3(0, .5, 0), glm::dvec3(10, 1, 10), glm::dvec3(1, 1, 1), 220, 0.5, 4));
 
 	//loadOBJ(scene, "test.obj", glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0), Material(new texture(glm::dvec3(1, 1, 1)), new texture(glm::dvec3(0, 0, 0)), 1, 1));
-	
+
 	//scene->push_back(new Light(glm::dvec3(0, 5, 0), 4.0*glm::dvec3(1, 1, 1), .5));
 
 

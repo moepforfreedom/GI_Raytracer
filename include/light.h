@@ -11,12 +11,20 @@ struct Light
 {
 
 	std::vector<glm::dvec3> points;
+	glm::dvec3 dir;
 	int count = 0;
 
 	Light(glm::dvec3 position, glm::dvec3 color, double radius) : pos(position), col(color), rad(radius)
 	{
 		points.reserve(250);
 		subrandUnitVec(points, 250);
+	}
+
+	Light(glm::dvec3 position, glm::dvec3 target, glm::dvec3 color, double radius) : pos(position), col(color), rad(radius)
+	{
+		points.reserve(250);
+		subrandUnitVec(points, 250);
+		dir = glm::normalize(target - position);
 	}
 
 	//returns a point on the surface of the light source
@@ -33,6 +41,11 @@ struct Light
 	glm::dvec3 getPoint(double x, double y)
 	{
 		return pos + rad*randomUnitVec(x, y);
+	}
+
+	glm::dvec3 getPointInRange(double angle, double x, double y)
+	{
+		return pos + rad*hemisphereSample_cos(dir, x, y, 1);
 	}
 
 	glm::dvec3 pos = { 0, 0, 0 };

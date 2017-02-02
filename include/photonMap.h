@@ -22,8 +22,8 @@ class PhotonMap {
 
 		void get(BoundingBox bbox, std::vector<Photon*>& res, double dist) const;
 
-		BoundingBox PhotonMap::Node::getBounds(glm::dvec3& pos) const;
-		void PhotonMap::Node::getInRange(glm::dvec3 pos, std::vector<Photon*>& res, double dist) const;
+		BoundingBox getBounds(glm::dvec3& pos) const;
+		void getInRange(glm::dvec3 pos, std::vector<Photon*>& res, double dist) const;
 
         BoundingBox _bbox;
         std::vector<Photon*> _entities;
@@ -40,7 +40,7 @@ public:
 	void rebuild();
 
 	/// Returns list of entities that have the possibility to be intersected by the ray.
-	std::vector<Photon*> PhotonMap::getInRange(glm::dvec3& pos, double& scale, double dist) const;
+	std::vector<Photon*> getInRange(glm::dvec3& pos, double& scale, double dist) const;
 
 	bool valid = false;
     Node _root;

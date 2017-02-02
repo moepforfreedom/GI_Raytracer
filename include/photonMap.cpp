@@ -55,9 +55,9 @@ std::vector<Photon*> PhotonMap::getInRange(glm::dvec3& pos, double& scale, doubl
 
 	scale = bounds.dx();
 
-	_root.get(BoundingBox(bounds.min - bounds.dx()*dist, bounds.max + bounds.dx()*dist), res, bounds.dx()*dist);
+	_root.get(BoundingBox(bounds.min/* - bounds.dx()*dist*/, bounds.max/* + bounds.dx()*dist*/), res, dist);
 
-	_root.getInRange(pos, res, 1);
+	//_root.getInRange(pos, res, 1);
 
 	return res;
 }
@@ -81,7 +81,7 @@ void PhotonMap::Node::get(BoundingBox bbox, std::vector<Photon*>& res, double di
 	{
 		for(int i = 0; i < 8; i++)
 		{
-			if (_children[i]->_bbox.intersect(bbox))
+			if (BoundingBox(_children[i]->_bbox.min, _children[i]->_bbox.max).intersect(bbox))
 				_children[i]->get(bbox, res, dist);
 		}
 	}
@@ -125,7 +125,7 @@ BoundingBox PhotonMap::Node::getBounds(glm::dvec3& pos) const
 		if (i < 8)
 			return _children[i]->getBounds(pos);
 		else
-			return BoundingBox(glm::dvec3(0, 0, 0), glm::dvec3(0, 0, 0));
+			return BoundingBox(glm::dvec3(-INFINITY, -INFINITY, -INFINITY), glm::dvec3(-INFINITY, -INFINITY, -INFINITY));
 	}
 
 }
