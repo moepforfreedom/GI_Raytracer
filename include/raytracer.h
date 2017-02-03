@@ -60,7 +60,7 @@ class RayTracer
 		{
             auto start = std::chrono::high_resolution_clock::now();
 			std::cout << "emitting photons...\n";
-			tracePhotons(5, 7500000, sampler, halton_enum);
+			tracePhotons(5, 850000, sampler, halton_enum);
             auto end = std::chrono::high_resolution_clock::now();
 
             std::cout << "photon time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()/1000.0 << " s\n";
@@ -154,7 +154,7 @@ class RayTracer
 
                 #pragma omp critical (im_update)
                 {
-                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var s**glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
+                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var s*//*glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
                 }
             }
           }

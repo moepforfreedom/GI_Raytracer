@@ -46,7 +46,31 @@ void Octree::push_back(AtmosphereEntity* entity)
 void Octree::rebuild()
 {
 	std::cout << "total entities: " << _root._entities.size() << "\n";
+	std::cout << "precomputing photon bounds...\n";
+
+
+	for(Light* l : lights)
+	{
+		double maxAngle = 0;
+
+		for(Entity* current : _root._entities)
+		{
+			if(current->material.roughness < 0.1)
+			{
+				BoundingBox bbox = current->boundingBox();
+
+				double angle = 1.0 - acos(glm::dot(l->dir, glm::normalize(l->pos - bbox.min)))/M_PI;
+
+				maxAngle = std::max(maxAngle, angle);
+			}
+		}
+
+		std::cout << "max photon angle: " << maxAngle << "\n";
+		l->angle = maxAngle;
+	}
+
 	std::cout << "rebuilding scene octree...\n";
+
 	if (_root._entities.size() > MAX_ENTITIES_PER_LEAF)
 	{
 		std::cout << "subdividing root...\n";
