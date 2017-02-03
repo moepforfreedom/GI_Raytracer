@@ -47,28 +47,22 @@ int main(int argc, char** argv)
 	/*Halton_sampler halton_sampler;
 
     halton_sampler.init_faure();
-	const Halton_enum halton_enum(width, height);
+	//const Halton_enum halton_enum(width, height);
 
 	for (int i = 0; i < 5500; i++)
 	{
 		glm::dvec2 p = hammersley2d(rand() % 5500, 5500);
 
-		glm::dvec3 norm = glm::normalize(glm::dvec3(0, 1, -1));
+		glm::dvec3 norm = glm::normalize(glm::dvec3(0, 1, 0.5));
 
 		//const unsigned index = halton_enum.get_index(i, x, y);
 
 		const float sx = halton_sampler.sample(0, i);
         const float sy = halton_sampler.sample(1, i);
 
-		double z = abs(norm.z);
+		glm::dvec3 dir = sphereCapSample_cos(norm, sx, sy, 1, .01);
 
-		glm::dmat3x3 rot(z + (1.0 / (1 + z))*-norm.y*-norm.y, (1.0 / (1 + z))*(norm.x*-norm.y), -norm.x,
-						 (1.0 / (1 + z))*(norm.x*-norm.y), z + (1.0 / (1 + z))*-norm.x*-norm.x, -norm.y,
-						 norm.x, norm.y, z);
-
-		glm::dvec3 dir = rot*hemisphereSample_cos(sx, sy, 1);
-
-		scene->push_back(new sphere(2.0*dir,  .01, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
+		scene->push_back(new sphere(4.0*dir,  .01, Material(new texture(glm::dvec3(0, 0, 1)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));
 	}*/
 	//scene->push_back(new triangle(new vertex(glm::dvec3(0, 0, 0)), new vertex(glm::dvec3(0, 3, 0)), new vertex(glm::dvec3(0, 0, 3)), Material(new texture(glm::dvec3(0, 1, 0)), new texture(glm::dvec3(0, 0, 0)), .75, 1)));
 	//scene->push_back(new cone(glm::dvec3(2.5, 0, .75), glm::dvec3(0, 0, 0), .35, 1, Material(new texture(glm::dvec3(1, 0, 0)), new texture(glm::dvec3(.125, 0, 0)), .75, 1)));

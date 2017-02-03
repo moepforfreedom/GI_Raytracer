@@ -28,7 +28,7 @@ glm::dvec3 hemisphereSample_cos(float u, float v, double power)
 {
 	float phi = v * 2.0f * M_PI;
 	float cosTheta = fastPrecisePow(1.0f - u, (1.0f / power));
-	float sinTheta = fastPow(1.0f - cosTheta * cosTheta, 0.5);
+	float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
 	return glm::dvec3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 }
 
@@ -44,7 +44,32 @@ glm::dvec3 hemisphereSample_cos(glm::dvec3 normal, float u, float v, double powe
 
 	float phi = v * 2.0f * M_PI;
 	float cosTheta = fastPrecisePow(1.0f - u, (1.0f / power));
-	float sinTheta = fastPow(1.0f - cosTheta * cosTheta, 0.5);
+	float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
+	glm::dvec3 res(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+
+	res = rot*res;
+
+	if (normal.z < 0)
+	{
+		res.z *= -1.0;
+	}
+
+	return res;
+}
+
+glm::dvec3 sphereCapSample_cos(glm::dvec3 normal, float u, float v, double power, double frac)
+{
+
+	double z = std::abs(normal.z);
+
+	glm::dmat3x3 rot(z + (1.0 / (1 + z))*-normal.y*-normal.y, (1.0 / (1 + z))*(normal.x*-normal.y), -normal.x,
+		(1.0 / (1 + z))*(normal.x*-normal.y), z + (1.0 / (1 + z))*-normal.x*-normal.x, -normal.y,
+		normal.x, normal.y, z);
+
+
+	float phi = v * 2.0f * M_PI;
+	float cosTheta = frac*fastPrecisePow(1.0f - u, (1.0f / power))+(1-frac);
+	float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
 	glm::dvec3 res(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 
 	res = rot*res;
@@ -63,7 +88,7 @@ double PowerCosHemispherePdfW(glm::dvec3  aNormal, glm::dvec3  aDirection, doubl
 	return (aPower + 1.0) * std::pow(cosTheta, aPower) * ((1.0 / M_PI) * 0.5);
 }
 
-glm::dvec3 sample_phong(const glm::dvec3 &outdir, const glm::dvec3 &n, double power, double sx, double sy) 
+glm::dvec3 sample_phong(const glm::dvec3 &outdir, const glm::dvec3 &n, double power, double sx, double sy)
 {
 	double z = std::abs(outdir.z);
 
@@ -140,7 +165,7 @@ glm::dvec2 importance_sample_ggx(double x, double y, double a)
 
 /********************************************************/
 /* AABB-triangle overlap test code                      */
-/* by Tomas Akenine-Möller                              */
+/* by Tomas Akenine-Mï¿½ller                              */
 /* Function: int triBoxOverlap(float boxcenter[3],      */
 /*          float boxhalfsize[3],float triverts[3][3]); */
 /* History:                                             */

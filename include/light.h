@@ -13,6 +13,7 @@ struct Light
 	std::vector<glm::dvec3> points;
 	glm::dvec3 dir;
 	int count = 0;
+	double angle = .125;
 
 	Light(glm::dvec3 position, glm::dvec3 color, double radius) : pos(position), col(color), rad(radius)
 	{
@@ -43,9 +44,9 @@ struct Light
 		return pos + rad*randomUnitVec(x, y);
 	}
 
-	glm::dvec3 getPointInRange(double angle, double x, double y)
+	glm::dvec3 getPointInRange(double x, double y)
 	{
-		return pos + rad*hemisphereSample_cos(dir, x, y, 1);
+		return pos + rad*sphereCapSample_cos(dir, x, y, 1, angle);
 	}
 
 	glm::dvec3 pos = { 0, 0, 0 };

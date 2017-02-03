@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <memory>
 #include <set>
+#include <chrono>
 
 #include <glm/glm.hpp>
 
@@ -57,11 +58,12 @@ class RayTracer
 
 		if (!_photon_map->valid)
 		{
-            long start = clock();
+            auto start = std::chrono::high_resolution_clock::now();
 			std::cout << "emitting photons...\n";
-			tracePhotons(5, 750000, sampler, halton_enum);
+			tracePhotons(5, 7500000, sampler, halton_enum);
+            auto end = std::chrono::high_resolution_clock::now();
 
-            std::cout << "photon time: " << (clock() - start)/CLOCKS_PER_SEC << "\n";
+            std::cout << "photon time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()/1000.0 << " s\n";
 
 			_photon_map->rebuild();
 			//_scene->rebuild();
@@ -528,9 +530,11 @@ class RayTracer
 	//traces caustic photons from every light source
 	void tracePhotons(int maxDepth, int count, Halton_sampler& halton_sampler, Halton_enum& halton_enum)
 	{
+        int total = 0;
 		#pragma omp parallel
 		{
 			std::vector<Photon*> tmp;
+            int tmpCount = 0;
 
 			#pragma omp for
 			for (int i = 0; i < count; i++)
@@ -552,8 +556,8 @@ class RayTracer
 
 						//std::cout << i * 500 + tries << ": " << sx << ", " << sy << "\n";
 
-						glm::dvec3 pos = l->getPointInRange(1, sx, sy);
-						glm::dvec3 dir = hemisphereSample_cos(glm::normalize(pos - l->pos), fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), 2);
+						glm::dvec3 pos = l->getPointInRange(sx, sy);
+						glm::dvec3 dir = sphereCapSample_cos(glm::normalize(pos - l->pos), fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), 2, l->angle);
 
 						Ray r(pos + SHADOW_BIAS*glm::normalize(pos - l->pos), dir);
 
@@ -641,15 +645,21 @@ class RayTracer
 						}
 						tries++;
 					}
+                    tmpCount += tries;
 				}
 			}
 
 			#pragma omp critical
-			for (Photon* p : tmp)
-			{
-				_photon_map->push_back(p);
-			}
+            {
+    			for (Photon* p : tmp)
+    			{
+    				_photon_map->push_back(p);
+    			}
+                total += tmpCount;
+            }
 		}
+
+        std::cout << "total photon tests: " << total << "\n";
 	}
 
 
