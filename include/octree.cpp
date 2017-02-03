@@ -48,10 +48,29 @@ void Octree::rebuild()
 	std::cout << "total entities: " << _root._entities.size() << "\n";
 	std::cout << "precomputing photon bounds...\n";
 
+	glm::dvec3 avgPos(0, 0, 0);
+	double count = 0;
+
+	for(Entity* current : _root._entities)
+	{
+		if(current->material.roughness < 0.1)
+		{
+			BoundingBox bbox = current->boundingBox();
+			avgPos += bbox.center();
+
+			count++;
+		}
+	}
+
+	avgPos /= count;
+
+	std::cout << "average pos: " << avgPos.x  << ", " << avgPos.y << ", " << avgPos.z << "\n";
 
 	for(Light* l : lights)
 	{
 		double maxAngle = 0;
+
+		l->dir = glm::normalize(avgPos - l->pos);
 
 		for(Entity* current : _root._entities)
 		{
@@ -59,9 +78,12 @@ void Octree::rebuild()
 			{
 				BoundingBox bbox = current->boundingBox();
 
+				avgPos += bbox.center();
+
 				double angle = 1.0 - acos(glm::dot(l->dir, glm::normalize(l->pos - bbox.min)))/M_PI;
 
 				maxAngle = std::max(maxAngle, angle);
+				count++;
 			}
 		}
 
