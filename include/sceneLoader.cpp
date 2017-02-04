@@ -5,10 +5,11 @@
 #include "material.h"
 #include "sceneLoader.h"
 #include "meshLoader.h"
+#include "raytracer.h"
 #include <cstring>
 
 //imports a scene frm a file
-void loadScene(Octree* o, const char* fname)
+void loadScene(Octree* o, RayTracer& r, const char* fname)
 {
 	//std::cout << "loading scene: " << fname << "\n";
 	std::vector<texture*> tex;
@@ -155,6 +156,14 @@ void loadScene(Octree* o, const char* fname)
 			fscanf(f, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf\n", &pos.x, &pos.y, &pos.z, &size.x, &size.y, &size.z, &col.x, &col.y, &col.z, &density, &scatter, &scale);
 
 			o->push_back(new HeightFog(pos, size, col, density, scatter, scale));
+		}
+		else if (std::strcmp(lineHeader, "photons") == 0)
+		{
+			int count, depth;
+			fscanf(f, "%d %d\n", &count, &depth);
+
+			r.photons = count;
+			r.photon_depth = depth;
 		}
 	}
 

@@ -20,6 +20,11 @@ PhotonMap::PhotonMap(glm::dvec3 min, glm::dvec3 max) : _root(Node({ min, max }))
 
 }
 
+void PhotonMap::reserve(int n)
+{
+	_root._entities.reserve(n);
+}
+
 /// Store an entity in the root node
 void PhotonMap::push_back(Photon* object)
 {

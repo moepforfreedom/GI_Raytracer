@@ -18,12 +18,12 @@
 #include "halton_sampler.h"
 #include "photonMap.h"
 
-int p = 0;
-int width, height;
-
 class RayTracer
 {
   public:
+	int p = 0;
+	int width, height;
+
     RayTracer() = delete;
 	RayTracer(const Camera& camera, glm::dvec3 light)
 		: _camera(camera), _light(light), _image(std::make_shared<Image>(0, 0))
@@ -60,7 +60,7 @@ class RayTracer
 		{
             auto start = std::chrono::high_resolution_clock::now();
 			std::cout << "emitting photons...\n";
-			tracePhotons(5, 850000, sampler, halton_enum);
+			tracePhotons(5, photons, sampler, halton_enum);
             auto end = std::chrono::high_resolution_clock::now();
 
             std::cout << "photon time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count()/1000.0 << " s\n";
@@ -530,6 +530,8 @@ class RayTracer
 	//traces caustic photons from every light source
 	void tracePhotons(int maxDepth, int count, Halton_sampler& halton_sampler, Halton_enum& halton_enum)
 	{
+		_photon_map->reserve(count);
+
         int total = 0;
 		#pragma omp parallel
 		{
@@ -655,6 +657,7 @@ class RayTracer
     			{
     				_photon_map->push_back(p);
     			}
+
                 total += tmpCount;
             }
 		}
@@ -666,6 +669,9 @@ class RayTracer
     bool running() const { return _running; }
     void stop() { _running = false; }
     void start() { _running = true; }
+
+	int photons = PHOTONS;
+	int photon_depth = PHOTON_DEPTH;
 
     std::shared_ptr<Image> getImage() const { return _image; }
 

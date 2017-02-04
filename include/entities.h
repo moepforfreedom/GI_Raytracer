@@ -103,6 +103,41 @@ struct sphere: Entity
 	{
 		return BoundingBox(pos + rad*glm::dvec3(-1, -1, -1), (pos + rad*glm::dvec3(1, 1, 1)));
 	}
+
+	virtual inline bool intersect(BoundingBox bbox)
+	{
+		auto check = [&](
+			const double pn,
+			const double bmin,
+			const double bmax) -> double
+		{
+			double out = 0;
+			double v = pn;
+
+			if (v < bmin)
+			{
+				double val = (bmin - v);
+				out += val * val;
+			}
+
+			if (v > bmax)
+			{
+				double val = (v - bmax);
+				out += val * val;
+			}
+
+			return out;
+		};
+
+		// Squared distance
+		double sq = 0.0;
+
+		sq += check(pos.x, bbox.min.x, bbox.max.x);
+		sq += check(pos.y, bbox.min.y, bbox.max.y);
+		sq += check(pos.z, bbox.min.z, bbox.max.z);
+
+		return sq <= (rad*rad);
+	}
 };
 
 struct cone : Entity
@@ -426,7 +461,7 @@ struct triangle: Entity
 
 	virtual bool intersect(const Ray& ray, double& t)
 	{
-		glm::dvec3 hit;
+		glm::dvec3 d1, d2, d3;
 
 		double dot = glm::dot(ray.dir, norm);
 
@@ -435,19 +470,19 @@ struct triangle: Entity
 
 		double t0 = glm::dot((vertices[0]->pos - ray.origin), norm) / dot;
 
-		if (t0 < 0)
+		if (t < 0)
 			return false;
 
-		hit = ray.origin + t0*ray.dir;
+		glm::dvec3 intersect = ray.origin + t0*ray.dir;
 
-		if (glm::dot(glm::cross((vertices[1]->pos - vertices[0]->pos), (hit - vertices[0]->pos)), norm) < 0)
-			return false;
+		d1 = intersect - vertices[0]->pos;
+		if (glm::dot(glm::cross(edges[0], d1), norm) < 0) return false;
 
-		if (glm::dot(glm::cross((vertices[2]->pos - vertices[1]->pos), (hit - vertices[1]->pos)), norm) < 0)
-			return false;
+		d2 = (intersect - vertices[1]->pos);
+		if (glm::dot(glm::cross(edges[1], d2), norm) < 0) return false;
 
-		if (glm::dot(glm::cross((vertices[0]->pos - vertices[2]->pos), (hit - vertices[2]->pos)), norm) < 0)
-			return false;
+		d3 = (intersect - vertices[2]->pos);
+		if (glm::dot(glm::cross(edges[2], d3), norm) < 0) return false;
 
 		t = t0;
 
