@@ -470,7 +470,7 @@ struct triangle: Entity
 
 		double t0 = glm::dot((vertices[0]->pos - ray.origin), norm) / dot;
 
-		if (t < 0)
+		if (t0 < 0)
 			return false;
 
 		glm::dvec3 intersect = ray.origin + t0*ray.dir;

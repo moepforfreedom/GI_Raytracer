@@ -181,6 +181,7 @@ void PhotonMap::Node::partition()
 	}
 
 	_entities.clear();
+	_entities.shrink_to_fit();
 
 	for (int i = 0; i < 8; i++)
 	{

@@ -23,6 +23,8 @@
 #define NOISE_THRESH 0.0015
 #define MIN_SAMPLES 8
 #define SAMPLES 32
+#define PHOTONS 75000
+#define PHOTON_DEPTH 5
 #define RAYMARCH_STEPSIZE 0.04
 #define FOCAL_BLUR 0
 #define GAMMA 2.2

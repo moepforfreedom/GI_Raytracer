@@ -640,7 +640,6 @@ class RayTracer
 								stored = true;
 
 								//_scene->push_back(new sphere(hit, 0.01, Material(new texture(col), new texture(glm::dvec3(0, 0, 0)), 1, 1)));
-
 							}
 
 							depth++;
