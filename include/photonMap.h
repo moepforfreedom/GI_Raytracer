@@ -34,7 +34,7 @@ public:
 
 	PhotonMap(glm::dvec3 min, glm::dvec3 max);
 
-	void PhotonMap::reserve(int n);
+	void reserve(int n);
 
 	/// Store an entity in the correct position of the octree.
 	void push_back(Photon* object);

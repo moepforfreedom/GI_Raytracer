@@ -33,7 +33,7 @@ class Octree {
         BoundingBox _bbox;
 		double* mint = new double(0);
 		double* maxt = new double(0);
-		float boxes[48];
+		//float boxes[48];
         std::vector<Entity*> _entities;
         std::array<std::unique_ptr<Node>, 8> _children;
     };

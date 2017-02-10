@@ -499,10 +499,10 @@ class RayTracer
 
 		//std::cout << photons.size() << "\n";
 
-        double lastDist = 0;
+        /*double lastDist = 0;
 
         if(photons.size() > 0)
-            lastDist = vecLengthSquared(photons[0]->origin - pos);
+            lastDist = vecLengthSquared(photons[0]->origin - pos);*/
 
 		for (int i = 0; i < std::max(count - 1, 0); i++)
 		{
@@ -515,7 +515,7 @@ class RayTracer
 
             lastDist = vecLengthSquared(p->origin - pos);*/
 
-			res += .1*p->col*glm::dot(p->dir, dir);
+			res += p->col*glm::dot(p->dir, dir);
 		}
 
 		if(photons.size() > 1)
@@ -564,7 +564,7 @@ class RayTracer
 						Ray r(pos + SHADOW_BIAS*glm::normalize(pos - l->pos), dir);
 
 						glm::dvec3 hit, norm;
-						glm::dvec3 col = (1.0/count)*l->col;
+						glm::dvec3 col = (1.0/count)*.5*l->angle*l->col;
 						glm::dvec2 UV;
 						Entity* current;
 

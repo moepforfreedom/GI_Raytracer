@@ -1,5 +1,3 @@
-#pragma once
-
 #include <array>
 #include <memory>
 #include <vector>
@@ -345,7 +343,7 @@ void Octree::Node::partition()
 
 	std::vector<Entity*>::iterator it = _entities.begin();
 
-	for (int i = 0; i < 8; i++)
+	/*for (int i = 0; i < 8; i++)
 	{
 		for (int j = 0; j < 3; j++)
 			boxes[3 * i + j] = _children[i]->_bbox.min[j];
@@ -355,7 +353,7 @@ void Octree::Node::partition()
 	{
 		for (int j = 0; j < 3; j++)
 			boxes[3 * i + j + 24] = _children[i]->_bbox.max[j];
-	}
+	}*/
 
 	while (it != _entities.end())
 	{
