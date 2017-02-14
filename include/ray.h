@@ -1,20 +1,11 @@
 #pragma once
-
+#include "util.h"
 #include <glm/glm.hpp>
 
 struct Ray
 {
-	Ray(glm::dvec3 origin, glm::dvec3 d) : origin(std::move(origin)), dir(std::move(d))
+	Ray(glm::dvec3 origin, glm::dvec3 d) : origin(std::move(origin)), dir(d)
 	{
-		/*invDir = glm::dvec3(1.0 / dir);
-
-		for (int i = 0; i < 24; i++)
-		{
-			r[i] = origin[i % 3];
-			invD[i] = invDir[i % 3];
-			invlz[i] = (invDir[i % 3] < 0.0);
-		}*/
-
 		setDir(d);
 	}
 

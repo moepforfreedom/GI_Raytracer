@@ -36,6 +36,13 @@ inline double vecLengthSquared(glm::dvec3 vec)
 	return vec.x*vec.x + vec.y*vec.y + vec.z*vec.z;
 }
 
+inline glm::dvec3 fastNorm(glm::dvec3& vec)
+{
+	double l = vecLengthSquared(vec);
+
+	return l == 1 ? vec : vec / sqrt(l);
+}
+
 inline double compMax(glm::dvec3& vec)
 {
 	return std::max(std::max(vec.x, vec.y), vec.z);

@@ -159,11 +159,11 @@ void loadScene(Octree* o, RayTracer& r, const char* fname)
 		}
 		else if (std::strcmp(lineHeader, "photons") == 0)
 		{
-			int count, depth;
-			fscanf(f, "%d %d\n", &count, &depth);
-
-			r.photons = count;
-			r.photon_depth = depth;
+			fscanf(f, "%d %d\n", &r.photons, &r.photon_depth);
+		}
+		else if (std::strcmp(lineHeader, "samples") == 0)
+		{
+			fscanf(f, "%d %d %f\n", &r.min_samples, &r.max_samples, &r.noise_thresh);
 		}
 	}
 

@@ -412,6 +412,10 @@ struct triangle: Entity
 		if (t < 0)
 			return false;
 
+		/*double t;
+		if (!intersectMT(vertices[0]->pos, vertices[1]->pos, vertices[2]->pos, ray.origin, ray.dir, t))
+			return false;*/
+
 		intersect = ray.origin + t*ray.dir;
 
 		d1 = intersect - vertices[0]->pos;
@@ -426,13 +430,7 @@ struct triangle: Entity
 		/*if (dot > 0)
 			hitNorm = -1.0*norm;
 		else
-			hitNorm = norm;*/
-
-		/*double t;
-		if (!intersectMT(vertices[0]->pos, vertices[1]->pos, vertices[2]->pos, ray.origin, ray.dir, t))
-			return false;
-
-		intersect = ray.origin + t*ray.dir;*/
+			hitNorm = norm;*/		
 
 		//Interpolate normal if vertex normals are set
 		if (vecLengthSquared(vertices[0]->norm) > 0 && vecLengthSquared(vertices[1]->norm) > 0 && vecLengthSquared(vertices[2]->norm) > 0)

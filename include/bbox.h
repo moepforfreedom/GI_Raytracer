@@ -86,21 +86,21 @@ struct BoundingBox
 
 			tmin = t0[i] > tmin ? t0[i] : tmin;
 			tmax = t1[i] < tmax ? t1[i] : tmax;
-			/*if (tmax <= tmin)
+			if (tmax < tmin)
 			{
-				//toutmin = INFINITY;
-				//toutmax = -INFINITY;
+				toutmin = INFINITY;
+				toutmax = -INFINITY;
 				return false;
-			}*/
+			}
 		}
 
-		if (tmax > tmin)
-		{
+		//if (tmax > tmin)
+		//{
 			toutmin = tmin;
 			toutmax = tmax;
 			return true;
-		}
-		return false;
+		//}
+		//return false;
 	}
 
 	inline bool intersectSimpleMulti(const Ray& ray, double tmin, double tmax, float* t0, float*t1) const

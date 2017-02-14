@@ -109,17 +109,17 @@ class RayTracer
 				int samps = 0;
 				int s = 0;
 
-				while (s < SAMPLES && samps < MIN_SAMPLES)
+				while (s < max_samples && samps < min_samples)
 				{
 					lastCol = color;
 
-					double xr = 1*xrand[((x + w*y)*SAMPLES + s) % xrand.size()] + 0*drand();
-					double yr = 1*yrand[((x + w*y)*SAMPLES + s) % yrand.size()] + 0*drand();
+					double xr = 1*xrand[((x + w*y)*max_samples + s) % xrand.size()] + 0*drand();
+					double yr = 1*yrand[((x + w*y)*max_samples + s) % yrand.size()] + 0*drand();
 
 					//std::cout << (xr - yr) << "\n";
 
-					double dx = (double)x + AA_JITTER*xrand[((x + w*y)*SAMPLES + s) % xrand.size()];
-					double dy = (double)y + AA_JITTER*yrand[((x + w*y)*SAMPLES + s) % yrand.size()];
+					double dx = (double)x + AA_JITTER*xrand[((x + w*y)*max_samples + s) % xrand.size()];
+					double dy = (double)y + AA_JITTER*yrand[((x + w*y)*max_samples + s) % yrand.size()];
 
 					glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*(dx / w - .5))*cameraRight - (sensorHalfHeight*(dy / h - .5))*_camera.up;
 
@@ -141,7 +141,7 @@ class RayTracer
 						//var = .5*var + .5*vars[clamp(0, w, x - 1) + w*clamp(0, h, y)];
 					}
 
-					if (s > 0 && var > NOISE_THRESH)
+					if (s > 0 && var > noise_thresh)
 						samps-=2;
 
 					s++;
@@ -154,7 +154,7 @@ class RayTracer
 
                 #pragma omp critical (im_update)
                 {
-                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / SAMPLES/*SAMPLES*4*var s*//*glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
+                  _image->setPixel(x, y, glm::clamp(/*color*/1.0*(double)s / max_samples*glm::dvec3(1, 1, 1), 0.0, 1.0));
                 }
             }
           }
@@ -196,8 +196,8 @@ class RayTracer
 			glm::dvec3 color = current->material.diffuse->get(minUV);
 			double roughness = current->material.roughness;
 
-            //type of secondary ray, 0 for reflection, 1 for refraction, 2 for glossy
-            // int type = rayType(current, ray, minNorm, minUV);
+			//type of secondary ray, 0 for reflection, 1 for refraction, 2 for glossy
+			// int type = rayType(current, ray, minNorm, minUV);
 			glm::dvec3 f(1, 1, 1);
 
 			secondaryRay(ray, current, minNorm, minUV, sx, sy, refDir, f, roughness, contrib, offset);
@@ -226,7 +226,7 @@ class RayTracer
 			for (Light* light : _scene->lights)
 			{
 				bool shadow = false;
-				glm::dvec3 lightDir = light->getPoint() - (minHit+SHADOW_BIAS*minNorm);
+				glm::dvec3 lightDir = light->getPoint() - (minHit + SHADOW_BIAS*minNorm);
 				double maxt = glm::length(lightDir);
 
 				//double cos_alpha = (light->rad / sqrt(vecLengthSquared(lightDir) + std::pow(light->rad, 2)));
@@ -251,7 +251,7 @@ class RayTracer
 				}
 			}
 
-			glm::dvec3 caustic =  depth == 0 ? samplePhotons(minHit, minNorm, 42) : glm::dvec3(0, 0, 0);
+			glm::dvec3 caustic = depth == 0 ? samplePhotons(minHit, minNorm, 32) : glm::dvec3(0, 0, 0);
 
 			//return color*caustic;
 
@@ -409,7 +409,7 @@ class RayTracer
 						minUV = uv;
 						intersected = true;
 
-						if ((vecLengthSquared(hit - ray.origin) < std::pow(*curNode->maxt, 2)))
+						if (curNode->_bbox.contains(hit) && (vecLengthSquared(hit - ray.origin) < std::pow(*curNode->maxt, 2)))
 							term = true;
 					}
 				}
@@ -504,7 +504,7 @@ class RayTracer
         if(photons.size() > 0)
             lastDist = vecLengthSquared(photons[0]->origin - pos);*/
 
-		for (int i = 0; i < std::max(count - 1, 0); i++)
+		for (int i = 0; i < count; i++)
 		{
 			Photon* p = photons[i];
 
@@ -514,13 +514,13 @@ class RayTracer
             }
 
             lastDist = vecLengthSquared(p->origin - pos);*/
-
-			res += p->col*glm::dot(p->dir, dir);
+			//if (vecLengthSquared(p->origin - pos) < .01 && visible(Ray(pos + SHADOW_BIAS*dir, p->origin - pos - SHADOW_BIAS*dir), glm::length(p->origin - pos - SHADOW_BIAS*dir)))
+				res += p->col*glm::dot(p->dir, dir);
 		}
 
-		if(photons.size() > 1)
+		if(photons.size() > 0)
         {
-            maxDist = vecLengthSquared(photons[count - 2]->origin - pos);
+            maxDist = vecLengthSquared(photons[count - 1]->origin - pos);
 			res /= (M_PI*maxDist);
         }
 
@@ -561,7 +561,7 @@ class RayTracer
 						glm::dvec3 pos = l->getPointInRange(sx, sy);
 						glm::dvec3 dir = sphereCapSample_cos(glm::normalize(pos - l->pos), fmod(drand() + 5 * i, 1), fmod(drand() + 13 * i, 1), 2, l->angle);
 
-						Ray r(pos + SHADOW_BIAS*glm::normalize(pos - l->pos), dir);
+						Ray r(pos, dir);
 
 						glm::dvec3 hit, norm;
 						glm::dvec3 col = (1.0/count)*.5*l->angle*l->col;
@@ -671,6 +671,9 @@ class RayTracer
 
 	int photons = PHOTONS;
 	int photon_depth = PHOTON_DEPTH;
+	int min_samples = MIN_SAMPLES;
+	int max_samples = SAMPLES;
+	double noise_thresh = NOISE_THRESH;
 
     std::shared_ptr<Image> getImage() const { return _image; }
 
