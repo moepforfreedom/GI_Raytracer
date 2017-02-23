@@ -48,7 +48,7 @@ void loadScene(Octree* o, RayTracer& r, const char* fname)
 		if (std::strcmp(lineHeader, "imTex") == 0)
 		{
 			char fn[100];
-			std::string filePath = dir;
+			std::string filePath = dir + "/";
 			int utile, vtile;
 			fscanf(f, "%s %d %d\n", fn, &utile, &vtile);
 			filePath += fn;
@@ -75,11 +75,11 @@ void loadScene(Octree* o, RayTracer& r, const char* fname)
 		else if (std::strcmp(lineHeader, "mat") == 0)
 		{
 			int dif, em;
-			double r, o;
-			fscanf(f, "%d %d %lf %lf\n", &dif, &em, &r, &o);
+			double r, o, IOR;
+			fscanf(f, "%d %d %lf %lf %lf\n", &dif, &em, &r, &o, &IOR);
 			std::cout << "creating mat: " << dif << ", " << em << ", " << r << "\n";
 
-			mats.push_back(new Material(tex[dif], tex[em], r, o));
+			mats.push_back(new Material(tex[dif], tex[em], r, o, IOR));
 		}
 		else if (std::strcmp(lineHeader, "multiMat") == 0)
 		{
@@ -164,6 +164,18 @@ void loadScene(Octree* o, RayTracer& r, const char* fname)
 		else if (std::strcmp(lineHeader, "samples") == 0)
 		{
 			fscanf(f, "%d %d %f\n", &r.min_samples, &r.max_samples, &r.noise_thresh);
+		}
+		else if (std::strcmp(lineHeader, "ambient") == 0)
+		{
+			fscanf(f, "%lf %lf %lf\n", &r.ambient.x, &r.ambient.y, &r.ambient.z);
+		}
+		else if (std::strcmp(lineHeader, "camera") == 0)
+		{
+			glm::dvec3 lookAt;
+
+			fscanf(f, "%lf %lf %lf %lf %lf %lf\n", &r._camera.pos.x, &r._camera.pos.y, &r._camera.pos.z, &lookAt.x, &lookAt.y, &lookAt.z);
+
+			r._camera.setDir(lookAt - r._camera.pos);
 		}
 	}
 

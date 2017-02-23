@@ -1,0 +1,19 @@
+# test scene
+colorTex 0 0 0
+colorTex 1 1 1
+colorTex 1 0 0
+colorTex 0.784 0.478 0.575
+colorTex 0.575 0.478 0.784
+mat 1 0 1 1
+mat 2 0 1 1
+mat 1 0 0 0
+mat 3 0 1 1
+mat 4 0 1 1
+mat 1 0 .0 1
+mesh test.obj 0 0 0 0 0 0 0
+mesh wall_left.obj 0 0 0 0 0 0 3
+mesh wall_right.obj 0 0 0 0 0 0 4
+mesh box.obj 0 0 0 0 0 0 1
+mesh dragon.obj 0 0 0 0 0 0 2
+mesh sphere.obj -3.5 0 3.35 0 0 0 5
+light 0 5 0 4 4 4 .05

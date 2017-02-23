@@ -14,6 +14,14 @@ struct Camera {
 		up = glm::cross(forward, right);
     }
 
+	void setDir(glm::dvec3 dir)
+	{
+		forward = glm::normalize(dir);
+		up = glm::dvec3(0, 1.0, 0);
+		right = glm::normalize(glm::cross(up, forward));
+		up = glm::cross(forward, right);
+	}
+
     glm::dvec3 pos;
     glm::dvec3 up;
     glm::dvec3 forward;              // normalized vector of the view direction

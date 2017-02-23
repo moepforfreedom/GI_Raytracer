@@ -62,8 +62,8 @@ struct imageTexture : texture
 	virtual glm::dvec3 get(glm::dvec2& uv)
 	{
 		auto p = image.pixelColor(std::abs((int)(uv.x * image.width() * tile.x) % image.width()), std::abs((int)(uv.y * image.height() * tile.y) % image.height()));
-
-		return{ p.red() / 255.0, p.green() / 255.0, p.blue() / 255.0 };
+		
+		return gamma({ p.red() / 255.0, p.green() / 255.0, p.blue() / 255.0 }, 1.0/GAMMA);
 	}
 
     virtual double getAlpha(glm::dvec2& uv)
@@ -82,13 +82,18 @@ struct imageTexture : texture
 /// Represents the material properties of an entity.
 struct Material
 {
-        Material(texture* dif, texture* em, double r, double o) : diffuse(dif), emissive(em), roughness(r), opacity(o)
+        Material(texture* dif, texture* em, double r, double o, double i=1) : diffuse(dif), emissive(em), roughness(r), opacity(o), IOR(i)
 		{
+		}
+
+		double getAlpha(glm::dvec2& uv)
+		{
+			return opacity*diffuse->getAlpha(uv);
 		}
 
     texture* diffuse;
 	texture* emissive;
 	double roughness;
 	double opacity;
-	double IOR = 1.5;
+	double IOR;
 };

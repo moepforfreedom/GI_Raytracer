@@ -60,7 +60,8 @@ void Octree::rebuild()
 		}
 	}
 
-	avgPos /= count;
+	if(count > 0)
+		avgPos /= count;
 
 	std::cout << "average pos: " << avgPos.x  << ", " << avgPos.y << ", " << avgPos.z << "\n";
 

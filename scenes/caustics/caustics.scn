@@ -1,4 +1,5 @@
-# test scene
+# caustics test scene
+photons 750000 5
 colorTex 0 0 0
 colorTex 1 1 1
 colorTex 1 0 0

@@ -69,12 +69,6 @@ class RayTracer
 			//_scene->rebuild();
 		}
 
-		_camera.forward = glm::normalize(glm::dvec3(0, 0, 0) - _camera.pos);
-
-		_camera.up = glm::dvec3(0, 1.0, 0);
-		_camera.right = glm::normalize(glm::cross(_camera.up, _camera.forward));
-		_camera.up = glm::cross(_camera.forward, _camera.right);
-
         double sensorHalfWidth = (_camera.sensorDiag*w)/(sqrt((double)w*w + h*h));
         double sensorHalfHeight = sensorHalfWidth * ((double)h/w);
 
@@ -154,7 +148,7 @@ class RayTracer
 
                 #pragma omp critical (im_update)
                 {
-                  _image->setPixel(x, y, glm::clamp(/*color*/1.0*(double)s / max_samples*glm::dvec3(1, 1, 1), 0.0, 1.0));
+                  _image->setPixel(x, y, glm::clamp(color/*1.0*(double)s / max_samples*glm::dvec3(1, 1, 1)*/, 0.0, 1.0));
                 }
             }
           }
@@ -227,7 +221,7 @@ class RayTracer
 			{
 				bool shadow = false;
 				glm::dvec3 lightDir = light->getPoint() - (minHit + SHADOW_BIAS*minNorm);
-				double maxt = glm::length(lightDir);
+				double maxt = vecLengthSquared(lightDir);
 
 				//double cos_alpha = (light->rad / sqrt(vecLengthSquared(lightDir) + std::pow(light->rad, 2)));
 
@@ -268,7 +262,7 @@ class RayTracer
 				return glm::dvec3(0, 0, 0);///*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ //current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
 		}
 		else
-			return /*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ glm::dvec3(0.04, 0.04, 0.04);
+			return /*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ ambient;
 	}
 
 
@@ -284,10 +278,12 @@ class RayTracer
 		{
 			Entity* t = *shadow_it;
 			double t_shadow;
+			glm::dvec3 pos, norm;
+			glm::dvec2 uv;
 
-			if (t->intersect(ray, t_shadow))
+			if (t->intersect(ray, pos, norm, uv) && (drand() < t->material.getAlpha(uv) || t->material.IOR != 1))
 			{
-				hit = (t_shadow < mt)&&(t_shadow > 0);
+				hit = (vecLengthSquared(pos - ray.origin) < mt)&&(t_shadow > 0);
 			}
 			++shadow_it;
 		}
@@ -399,7 +395,7 @@ class RayTracer
 			while (it != curNode->_entities.end())
 			{
 				Entity* tmp = *it;
-				if (tmp->intersect(ray, hit, norm, uv))
+				if (tmp->intersect(ray, hit, norm, uv) && (drand() < tmp->material.getAlpha(uv) || tmp->material.IOR != 1))
 				{
 					if ((!intersected || vecLengthSquared(hit - ray.origin) < vecLengthSquared(minHit - ray.origin)))
 					{
@@ -409,7 +405,7 @@ class RayTracer
 						minUV = uv;
 						intersected = true;
 
-						if (curNode->_bbox.contains(hit) && (vecLengthSquared(hit - ray.origin) < std::pow(*curNode->maxt, 2)))
+						if (curNode->_bbox.contains(hit))
 							term = true;
 					}
 				}
@@ -430,9 +426,7 @@ class RayTracer
 		int type = 2;
 
 		double IOR = entity->material.IOR;
-
 		double opacity = entity->material.diffuse->getAlpha(minUV) * entity->material.opacity;
-
 		double r0 = std::pow((1 - IOR) / (1 + IOR), 2);
 
 		//Schlicks approximation of the fresnel term
@@ -674,13 +668,14 @@ class RayTracer
 	int min_samples = MIN_SAMPLES;
 	int max_samples = SAMPLES;
 	double noise_thresh = NOISE_THRESH;
+	glm::dvec3 ambient = glm::dvec3(0, 0, 0);
 
     std::shared_ptr<Image> getImage() const { return _image; }
+	Camera _camera;
 
   private:
     bool _running = false;
     Octree* _scene;
-	PhotonMap* _photon_map;
-    Camera _camera;
+	PhotonMap* _photon_map;   
     glm::dvec3 _light;
     std::shared_ptr<Image> _image;};

@@ -1,6 +1,7 @@
 # test scene
-samples 8 64 0.0015
-photons 7500000 5
+samples 8 128 0.00015
+photons 750000 5
+ambient 0.04 0.04 0.04
 colorTex 0 0 0
 colorTex 0.784 0.784 0.784
 colorTex 1 0 0

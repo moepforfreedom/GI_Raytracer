@@ -9,9 +9,19 @@
 //imports a mesh from an OBJ file and adds it to the scene, based on http://www.opengl-tutorial.org/beginners-tutorials/tutorial-7-model-loading/
 void loadOBJ(Octree* o, const char* fname, glm::dvec3 pos, glm::dvec3 rotation, const Material& material)
 {
+	std::vector<const Material*> materials;
+	materials.push_back(&material);
+
+	loadOBJ(o, fname, pos, rotation, materials);
+}
+
+void loadOBJ(Octree* o, const char* fname, glm::dvec3 pos, glm::dvec3 rotation, std::vector<const Material*> materials)
+{
 	std::vector< glm::vec3 > verts;
 	std::vector< glm::vec2 > uvs;
 	std::vector< glm::vec3 > normals;
+	std::vector<std::string> mat_names;
+	int mat_index = 0;
 
 	glm::dmat3x3 rot = glm::eulerAngleXYZ(rotation.x, rotation.y, rotation.z);
 
@@ -77,7 +87,7 @@ void loadOBJ(Octree* o, const char* fname, glm::dvec3 pos, glm::dvec3 rotation, 
 
 			o->push_back(new triangle(new vertex(verts[vertIndex[0] - 1], normals[normIndex[0] - 1], uvs[uvIndex[0] - 1]),
 										  new vertex(verts[vertIndex[1] - 1], normals[normIndex[1] - 1], uvs[uvIndex[1] - 1]),
-										  new vertex(verts[vertIndex[2] - 1], normals[normIndex[2] - 1], uvs[uvIndex[2] - 1]), material));
+										  new vertex(verts[vertIndex[2] - 1], normals[normIndex[2] - 1], uvs[uvIndex[2] - 1]), *materials[mat_index]));
 
 			faces++;
 		}
