@@ -7,6 +7,7 @@
 #include <QImage>
 #include <iostream>
 
+//Struct for textures
 struct texture
 {
     texture(glm::dvec3 col) : color(col)
@@ -61,7 +62,7 @@ struct imageTexture : texture
 
 	virtual glm::dvec3 get(glm::dvec2& uv)
 	{
-		auto p = image.pixelColor(std::abs((int)(uv.x * image.width() * tile.x) % image.width()), std::abs((int)(uv.y * image.height() * tile.y) % image.height()));
+		auto p = image.pixelColor(std::abs((int)(uv.x * image.width() * tile.x) % image.width()), image.height() - std::abs((int)(uv.y * image.height() * tile.y) % image.height()) - 1);
 		
 		return gamma({ p.red() / 255.0, p.green() / 255.0, p.blue() / 255.0 }, 1.0/GAMMA);
 	}
@@ -71,7 +72,7 @@ struct imageTexture : texture
         if(!image.hasAlphaChannel())
             return 1;
 
-		auto p = image.pixelColor(std::abs((int)(uv.x * image.width() * tile.x) % image.width()), std::abs((int)(uv.y * image.height() * tile.y) % image.height()));
+		auto p = image.pixelColor(std::abs((int)(uv.x * image.width() * tile.x) % image.width()), image.height() - std::abs((int)(uv.y * image.height() * tile.y) % image.height()) - 1);
 
 		return p.alpha() / 255.0;
 	}

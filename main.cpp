@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 
 
     // Set up scene
-    Octree* scene = new Octree({-70, -70, -70}, {70, 70, 70});
+    Octree* scene = new Octree({-170, -170, -170}, {170, 170, 170});
 
 	//intersectSIMD(test0, test1, boxes, r.r, r.invD, 0, INFINITY);
 

@@ -1,5 +1,5 @@
 # test scene
-samples 8 32 0.0015
+samples 16 128 0.0012
 photons 0
 camera 12.66 3.25 0.15 0.25 2.25 0.9
 ambient 0.018 0.018 0.018
@@ -10,15 +10,21 @@ colorTex 0.784 0.353 0.404
 colorTex 0.404 0.353 0.784
 imTex T_FieldGrass_01_D.png 1 1
 imTex T_CliffRockTile_03_D_Red.png 1 1
+imTex terrain_color.png 1 1
+imTex T_LargePlainsBoulder002_D_Red.png 1 1
+imTex M_SM_MERGED_ScotsPine_01_26_Diffuse.png 1 1
 mat 1 0 1 1 1
 mat 5 0 1 1 1
 mat 6 0 1 1 1
-mat 4 0 1 1 1
+mat 7 0 1 1 1
+mat 8 0 1 1 1
+mat 9 0 1 1 1
 mat 1 0 .0 1 1
 mesh floor.obj 0 0 0 0 0 0 2
 mesh grass.obj 0 0 0 0 0 0 1
 mesh rocks.obj 0 0 0 0 0 0 2
-#mesh box.obj 0 0 0 0 0 0 1
-#mesh dragon.obj 0 0 0 0 0 0 2
+mesh terrain_red.obj 0 0 0 0 0 0 3
+mesh large_rock.obj 0 0 0 0 0 0 4
+mesh tree.obj 0 0 0 0 0 0 5
 #mesh sphere.obj -3.5 0 3.35 0 0 0 5
-light -15 25 -15 1220 1220 1220 1.5
+light -150 250 -150 232000 232000 232000 2.5
