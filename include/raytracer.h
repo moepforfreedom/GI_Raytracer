@@ -270,20 +270,20 @@ class RayTracer
 	bool visible(Ray& ray, double mt)
 	{
 		bool hit = false;
-		std::vector<Entity*> shadow_objects = _scene->intersect(ray, 0, mt-SHADOW_BIAS);
+		std::vector<Entity*> shadow_objects = _scene->intersect(ray, 0, sqrt(mt)-SHADOW_BIAS);
 
 		std::vector<Entity*>::iterator shadow_it = shadow_objects.begin();
 
 		while (!hit && shadow_it != shadow_objects.end())
 		{
 			Entity* t = *shadow_it;
-			double t_shadow;
 			glm::dvec3 pos, norm;
 			glm::dvec2 uv;
 
 			if (t->intersect(ray, pos, norm, uv) && (drand() < t->material.getAlpha(uv) || t->material.IOR != 1))
 			{
-				hit = (vecLengthSquared(pos - ray.origin) < mt)&&(t_shadow > 0);
+                double t_shadow = vecLengthSquared(pos - ray.origin);
+				hit = (t_shadow < mt)&&(t_shadow > 0);
 			}
 			++shadow_it;
 		}
@@ -676,6 +676,6 @@ class RayTracer
   private:
     bool _running = false;
     Octree* _scene;
-	PhotonMap* _photon_map;   
+	PhotonMap* _photon_map;
     glm::dvec3 _light;
     std::shared_ptr<Image> _image;};
