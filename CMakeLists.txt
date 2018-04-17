@@ -23,27 +23,13 @@ if(CLANG_FORMAT_TARGET)
     add_clang_format(TARGET global-illu STYLE "LLVM" FILES ${SOURCES} ${HEADERS})
 endif(CLANG_FORMAT_TARGET)
 
-
-
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag(-O3 HAS_O3)
-check_cxx_compiler_flag(/openmp HAS_MSVC_OMP)
-check_cxx_compiler_flag(-fopenmp HAS_GCC_OMP)
-
-if(HAS_O3 AND HAS_GCC_OMP)
-  target_compile_options(global-illu PRIVATE -fopenmp -O3 -g)
-  target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT} -fopenmp)
-
-elseif(HAS_O3)
-  target_compile_options(global-illu PRIVATE -O3)
-  target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})
-
-elseif(HAS_MSVC_OMP)  
-  target_compile_options(global-illu PRIVATE /openmp)
-  target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})
-
-else()
-  target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})
-
+find_package(OpenMP REQUIRED)
+if (OPENMP_FOUND)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
+
+#target_compile_options(global-illu PRIVATE -g)
+target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})
+
 

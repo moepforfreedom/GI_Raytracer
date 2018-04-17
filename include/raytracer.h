@@ -25,8 +25,8 @@ class RayTracer
 	int width, height;
 
     RayTracer() = delete;
-	RayTracer(const Camera& camera, glm::dvec3 light)
-		: _camera(camera), _light(light), _image(std::make_shared<Image>(0, 0))
+	RayTracer(const Camera& camera)
+		: _camera(camera), _image(std::make_shared<Image>(0, 0))
 	{
 
 	};
@@ -107,8 +107,13 @@ class RayTracer
 				{
 					lastCol = color;
 
-					double xr = 1*xrand[((x + w*y)*max_samples + s) % xrand.size()] + 0*drand();
-					double yr = 1*yrand[((x + w*y)*max_samples + s) % yrand.size()] + 0*drand();
+                    int idx = halton_enum.get_index(s, x, y);
+
+					double xr = sampler.sample(0, idx);
+					double yr = sampler.sample(1, idx);
+
+                    xr = .2*fmod(halton_enum.scale_x(xr), 1.0) + .8*1*xrand[((x + w*y)*max_samples + s) % xrand.size()] + 0*drand();
+                    yr = .2*fmod(halton_enum.scale_x(yr), 1.0) + .8*1*yrand[((x + w*y)*max_samples + s) % yrand.size()] + 0*drand();
 
 					//std::cout << (xr - yr) << "\n";
 
@@ -120,8 +125,6 @@ class RayTracer
 					glm::dvec3 eyePos = _camera.pos +FOCAL_BLUR*(xr - .5)*cameraRight + FOCAL_BLUR*(yr - .5) *_camera.up;
 
 					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));
-
-                    int idx = halton_enum.get_index(s, x, y);
 
 					if (s == 0)
 						color = radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx, glm::dvec3(1, 1, 1));
@@ -677,5 +680,4 @@ class RayTracer
     bool _running = false;
     Octree* _scene;
 	PhotonMap* _photon_map;
-    glm::dvec3 _light;
     std::shared_ptr<Image> _image;};

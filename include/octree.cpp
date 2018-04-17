@@ -285,11 +285,10 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 			//std::cout << t0 << "\n";
 			if (_entities.size() > 0)
 			{
-				int i = 0;
-				while (i < res.size() && t0 >= *res[i]->mint)
-					i++;
+				std::vector<const Node*>::iterator it = std::partition_point(res.begin(), res.end(),
+																			 [&t0](const Node* n){return t0 >= *n->mint;});
 
-				res.insert(res.begin() + i, this);
+				res.insert(it, this);
 			}
 		}
 		else
@@ -302,29 +301,6 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 			}
 		}
 	}
-
-	/*if (is_leaf() && _entities.size() > 0)
-	{
-		*mint = t0;
-		*maxt = t1;
-
-		//std::cout << t0 << "\n";
-		while (i < res.size() && t0 >= *res[i]->mint)
-			i++;
-
-		res.insert(res.begin() + i, this);
-	}
-	else
-	{
-		for (int i = 0; i < 8; i++)
-		{
-			if (_children[i]->_bbox.intersect(ray, tmin, tmax, t0, t1))
-			{
-				_children[i]->intersectSorted(ray, res, tmin, tmax);
-			}
-		}
-	}*/
-
 }
 
 /// Subdivides the current node into 8 children.
@@ -344,18 +320,6 @@ void Octree::Node::partition()
 
 	std::vector<Entity*>::iterator it = _entities.begin();
 
-	/*for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 3; j++)
-			boxes[3 * i + j] = _children[i]->_bbox.min[j];
-	}
-
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 3; j++)
-			boxes[3 * i + j + 24] = _children[i]->_bbox.max[j];
-	}*/
-
 	while (it != _entities.end())
 	{
 		Entity* current = *it;
@@ -367,7 +331,7 @@ void Octree::Node::partition()
 				_children[i]->_entities.push_back(current);
 			}
 		}
-		it++;
+		++it;
 	}
 
 	for (int i = 0; i < 8; i++)
@@ -394,7 +358,6 @@ void Octree::Node::partition()
 		{
 			//std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
 			_children[i]->partition();
-			//nodes++;
 		}
 	}
 

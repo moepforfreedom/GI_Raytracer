@@ -1,5 +1,5 @@
 # test scene
-samples 16 128 0.0012
+samples 16 32 0.0012
 photons 0
 camera 12.66 3.25 0.15 0.25 2.25 0.9
 ambient 0.018 0.018 0.018
