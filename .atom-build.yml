@@ -1,8 +1,0 @@
-cmd: "./build.sh"
-name: "dafault"
-args:
-sh: true,
-cwd: /media/philip/Data1/Zeugs/Uni/GI/GI_build_openMP_02
-targets:
-  run:
-      cmd: "global-illu"

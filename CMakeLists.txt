@@ -6,8 +6,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 14)
 
-set(CMAKE_PREFIX_PATH /media/philip/Data2/qt_linux/5.7/gcc_64)
-
 find_package(Qt5Widgets)
 find_package(Threads)
 
@@ -29,7 +27,4 @@ if (OPENMP_FOUND)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
-#target_compile_options(global-illu PRIVATE -g)
 target_link_libraries(global-illu Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})
-
-
