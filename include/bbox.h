@@ -22,9 +22,9 @@ struct BoundingBox
     double dy() const { return max.y - min.y; }
     double dz() const { return max.z - min.z; }
 
-	glm::dvec3 center(){ return min + 0.5*(max-min); }
+	glm::dvec3 center() const { return min + 0.5*(max-min); }
 
-	glm::dvec3 size() { return max - min; }
+	glm::dvec3 size() const { return max - min; }
 
     const glm::dvec3 min;
     const glm::dvec3 max;

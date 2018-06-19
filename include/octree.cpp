@@ -174,9 +174,9 @@ std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax)
 }
 
 //Returns a sorted list of nodes that intersect the given ray
-std::vector<const Octree::Node*> Octree::intersectSorted(const Ray& ray, double tmin, double tmax) const
+std::vector<std::pair<const Octree::Node*, double>> Octree::intersectSorted(const Ray& ray, double tmin, double tmax) const
 {
-	std::vector<const Octree::Node*> res;
+	std::vector<std::pair<const Node*, double>> res;
 
 	float t0[24];
 	float t1[24];
@@ -270,7 +270,7 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 }
 
 //inserts the node into a sorted list if it intersects the given ray
-void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const
+void Octree::Node::intersectSorted(const Ray& ray, std::vector<std::pair<const Node*, double>>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const
 {
 	double t0, t1;
 	float ta[24];
@@ -279,16 +279,13 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<const Node*>& res
 	{
 		if (is_leaf())
 		{
-			*mint = t0;
-			*maxt = t1;
-
 			//std::cout << t0 << "\n";
 			if (_entities.size() > 0)
 			{
-				std::vector<const Node*>::iterator it = std::partition_point(res.begin(), res.end(),
-																			 [&t0](const Node* n){return t0 >= *n->mint;});
+				std::vector<std::pair<const Node*, double>>::iterator it = std::partition_point(res.begin(), res.end(),
+																							    [&t0](std::pair<const Node*, double> n){return t0 >= n.second;});
 
-				res.insert(it, this);
+				res.insert(it, { this , t0});
 			}
 		}
 		else
@@ -309,14 +306,14 @@ void Octree::Node::partition()
 	glm::dvec3 mid = glm::mix(_bbox.min, _bbox.max, .5);
 	double avg_entities = 0;
 
-	_children[0] = std::unique_ptr<Node>(new Node(BoundingBox(_bbox.min, mid)));
-	_children[1] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y, _bbox.min.z), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y, mid.z))));
-	_children[2] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x , _bbox.min.y, _bbox.min.z+ .5*_bbox.dz()), glm::dvec3(mid.x, mid.y, mid.z + .5*_bbox.dz()))));
-	_children[3] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y, _bbox.min.z + .5*_bbox.dz()), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y, mid.z + .5*_bbox.dz()))));
-	_children[4] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x, _bbox.min.y + .5*_bbox.dy(), _bbox.min.z), glm::dvec3(mid.x, mid.y + .5*_bbox.dy(), mid.z))));
-	_children[5] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y + .5*_bbox.dy(), _bbox.min.z), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y + .5*_bbox.dy(), mid.z))));
-	_children[6] = std::unique_ptr<Node>(new Node(BoundingBox(glm::dvec3(_bbox.min.x, _bbox.min.y + .5*_bbox.dy(), _bbox.min.z + .5*_bbox.dz()), glm::dvec3(mid.x, mid.y + .5*_bbox.dy(), mid.z + .5*_bbox.dz()))));
-	_children[7] = std::unique_ptr<Node>(new Node(BoundingBox(mid, _bbox.max)));
+	_children[0] = std::make_unique<Node>(BoundingBox(_bbox.min, mid));
+	_children[1] = std::make_unique<Node>(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y, _bbox.min.z), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y, mid.z)));
+	_children[2] = std::make_unique<Node>(BoundingBox(glm::dvec3(_bbox.min.x , _bbox.min.y, _bbox.min.z+ .5*_bbox.dz()), glm::dvec3(mid.x, mid.y, mid.z + .5*_bbox.dz())));
+	_children[3] = std::make_unique<Node>(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y, _bbox.min.z + .5*_bbox.dz()), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y, mid.z + .5*_bbox.dz())));
+	_children[4] = std::make_unique<Node>(BoundingBox(glm::dvec3(_bbox.min.x, _bbox.min.y + .5*_bbox.dy(), _bbox.min.z), glm::dvec3(mid.x, mid.y + .5*_bbox.dy(), mid.z)));
+	_children[5] = std::make_unique<Node>(BoundingBox(glm::dvec3(_bbox.min.x + .5*_bbox.dx(), _bbox.min.y + .5*_bbox.dy(), _bbox.min.z), glm::dvec3(mid.x + .5*_bbox.dx(), mid.y + .5*_bbox.dy(), mid.z)));
+	_children[6] = std::make_unique<Node>(BoundingBox(glm::dvec3(_bbox.min.x, _bbox.min.y + .5*_bbox.dy(), _bbox.min.z + .5*_bbox.dz()), glm::dvec3(mid.x, mid.y + .5*_bbox.dy(), mid.z + .5*_bbox.dz())));
+	_children[7] = std::make_unique<Node>(BoundingBox(mid, _bbox.max));
 
 	std::vector<Entity*>::iterator it = _entities.begin();
 
