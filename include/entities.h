@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -8,7 +10,6 @@
 #include "bbox.h"
 #include "material.h"
 #include "ray.h"
-#include <iostream>
 #include "octree.h"
 //#include "util.h"
 
@@ -300,14 +301,16 @@ struct cone : Entity
 
 struct vertex
 {
-	glm::dvec3 pos;
-	glm::dvec3 norm = {0, 0, 0};
-	glm::dvec2 texCoord;
+    glm::dvec3 pos = {0, 0, 0};
+    glm::dvec3 norm = {0, 0, 0};
+    glm::dvec2 texCoord = {0, 0};
+
+	vertex(){}
 
 	vertex(glm::dvec3 position, glm::dvec3 normal, glm::dvec2 uv)
 	{
-		pos = position;
-		norm = glm::normalize(normal);
+	    pos = position;
+	    norm = glm::normalize(normal);
 		texCoord = uv;
 	}
 
@@ -325,24 +328,22 @@ struct vertex
 
 struct triangle: Entity
 {
-	vertex* vertices[3];
+    std::array<vertex, 3> vertices;
 	glm::dvec3 edges[3];
 	glm::dvec3 norm;
 	double inv_area;
 
-	triangle(vertex* v1, vertex* v2, vertex* v3, const Material& material) : Entity(material)
+	triangle(vertex v1, vertex v2, vertex v3, const Material& material) : Entity(material)
 	{
-		vertices[0] = v1;
-		vertices[1] = v2;
-		vertices[2] = v3;
+	    vertices = { { v1, v2, v3 } };
 
-		edges[0] = vertices[1]->pos - vertices[0]->pos;
-		edges[1] = vertices[2]->pos - vertices[1]->pos;
-		edges[2] = vertices[0]->pos - vertices[2]->pos;
+		edges[0] = vertices[1].pos - vertices[0].pos;
+		edges[1] = vertices[2].pos - vertices[1].pos;
+		edges[2] = vertices[0].pos - vertices[2].pos;
 
-		norm = glm::normalize(glm::cross((v2->pos - v1->pos), (v3->pos - v1->pos)));
+		norm = glm::normalize(glm::cross((v2.pos - v1.pos), (v3.pos - v1.pos)));
 
-		inv_area = 1.0 / glm::length(glm::cross(vertices[0]->pos - vertices[1]->pos, vertices[0]->pos - vertices[2]->pos));
+		inv_area = 1.0 / glm::length(glm::cross(vertices[0].pos - vertices[1].pos, vertices[0].pos - vertices[2].pos));
 	}
 
 	//Möller–Trumbore intersection test, based on https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
@@ -407,7 +408,7 @@ struct triangle: Entity
 		if (dot <= EPSILON && dot >= -EPSILON)
 			return false;
 
-		double t = glm::dot((vertices[0]->pos - ray.origin), norm) / dot;
+		double t = glm::dot((vertices[0].pos - ray.origin), norm) / dot;
 
 		if (t < 0)
 			return false;
@@ -418,13 +419,13 @@ struct triangle: Entity
 
 		intersect = ray.origin + t*ray.dir;
 
-		d1 = intersect - vertices[0]->pos;
+		d1 = intersect - vertices[0].pos;
 		if (glm::dot(glm::cross(edges[0], d1), norm) < 0) return false;
 
-		d2 = (intersect - vertices[1]->pos);
+		d2 = (intersect - vertices[1].pos);
 		if (glm::dot(glm::cross(edges[1], d2), norm) < 0) return false;
 
-		d3 = (intersect - vertices[2]->pos);
+		d3 = (intersect - vertices[2].pos);
 		if (glm::dot(glm::cross(edges[2], d3), norm) < 0) return false;
 
 		/*if (dot > 0)
@@ -433,7 +434,7 @@ struct triangle: Entity
 			hitNorm = norm;*/		
 
 		//Interpolate normal if vertex normals are set
-		if (vecLengthSquared(vertices[0]->norm) > 0 && vecLengthSquared(vertices[1]->norm) > 0 && vecLengthSquared(vertices[2]->norm) > 0)
+		if (vecLengthSquared(vertices[0].norm) > 0 && vecLengthSquared(vertices[1].norm) > 0 && vecLengthSquared(vertices[2].norm) > 0)
 		{			
 
 			double a1 = glm::length(glm::cross(d2, d3)) * inv_area;
@@ -441,14 +442,14 @@ struct triangle: Entity
 			double a3 = glm::length(glm::cross(d1, d2)) * inv_area;
 
 
-			normal = a1*vertices[0]->norm + a2*vertices[1]->norm + a3*vertices[2]->norm;
+			normal = a1*vertices[0].norm + a2*vertices[1].norm + a3*vertices[2].norm;
 
 			/*if (glm::dot(hitNorm, normal) < 0)
 				normal = -1.0*normal;*/
 
 			//normal = tmpNorm;
 
-			uv = a1*vertices[0]->texCoord + a2*vertices[1]->texCoord + a3*vertices[2]->texCoord;
+			uv = a1*vertices[0].texCoord + a2*vertices[1].texCoord + a3*vertices[2].texCoord;
 		}
 		else
 			normal = norm;
@@ -466,20 +467,20 @@ struct triangle: Entity
 		if (dot <= EPSILON && dot >= -EPSILON)
 			return false;
 
-		double t0 = glm::dot((vertices[0]->pos - ray.origin), norm) / dot;
+		double t0 = glm::dot((vertices[0].pos - ray.origin), norm) / dot;
 
 		if (t0 < 0)
 			return false;
 
 		glm::dvec3 intersect = ray.origin + t0*ray.dir;
 
-		d1 = intersect - vertices[0]->pos;
+		d1 = intersect - vertices[0].pos;
 		if (glm::dot(glm::cross(edges[0], d1), norm) < 0) return false;
 
-		d2 = (intersect - vertices[1]->pos);
+		d2 = (intersect - vertices[1].pos);
 		if (glm::dot(glm::cross(edges[1], d2), norm) < 0) return false;
 
-		d3 = (intersect - vertices[2]->pos);
+		d3 = (intersect - vertices[2].pos);
 		if (glm::dot(glm::cross(edges[2], d3), norm) < 0) return false;
 
 		t = t0;
@@ -490,7 +491,7 @@ struct triangle: Entity
 	virtual bool intersect(BoundingBox bbox)
 	{
 		BoundingBox tmpBox = BoundingBox(bbox.min - EPSILON, bbox.max + EPSILON);
-		glm::dvec3 verts[3] = { vertices[0]->pos, vertices[1]->pos , vertices[2]->pos };
+		glm::dvec3 verts[3] = { vertices[0].pos, vertices[1].pos , vertices[2].pos };
 
 		return triBoxOverlap(tmpBox.center(), glm::dvec3(tmpBox.dx() / 2, tmpBox.dy() / 2, tmpBox.dz() / 2), verts);
 	}
@@ -502,7 +503,7 @@ struct triangle: Entity
 		{
 			//vertices[i] = verts[i] * glm::inverse(rot) + pos;
 
-			glm::dvec3 vpos = vertices[i]->pos;
+			glm::dvec3 vpos = vertices[i].pos;
 
 			if (vpos.x < min.x)	min.x = vpos.x;
 			if (vpos.x > max.x)	max.x = vpos.x;
@@ -588,9 +589,9 @@ struct sphereMesh : Entity
 		{
 			/*double u = .5*acos((intersect.y - pos.y) / rad) / (M_PI)+.5;
 			double v = .5*atan((intersect.z - pos.z) / (intersect.x - pos.x)) / (2 * M_PI) + .5;*/
-			scene->push_back(new triangle(new vertex(rad*tris[i][0] + pos, tris[i][0], glm::dvec2(.5*acos((tris[i][0]).y) / (M_PI)+.5, .5*atan((tris[i][0]).z / (tris[i][0]).x) / (2 * M_PI) + .5)),
-										  new vertex(rad*tris[i][1] + pos, tris[i][1], glm::dvec2(.5*acos((tris[i][1]).y) / (M_PI)+.5, .5*atan((tris[i][1]).z / (tris[i][1]).x) / (2 * M_PI) + .5)),
-										  new vertex(rad*tris[i][2] + pos, tris[i][2], glm::dvec2(.5*acos((tris[i][2]).y) / (M_PI)+.5, .5*atan((tris[i][2] ).z / (tris[i][2]).x) / (2 * M_PI) + .5)), material));
+			scene->push_back(new triangle(vertex(rad*tris[i][0] + pos, tris[i][0], glm::dvec2(.5*acos((tris[i][0]).y) / (M_PI)+.5, .5*atan((tris[i][0]).z / (tris[i][0]).x) / (2 * M_PI) + .5)),
+										  vertex(rad*tris[i][1] + pos, tris[i][1], glm::dvec2(.5*acos((tris[i][1]).y) / (M_PI)+.5, .5*atan((tris[i][1]).z / (tris[i][1]).x) / (2 * M_PI) + .5)),
+										  vertex(rad*tris[i][2] + pos, tris[i][2], glm::dvec2(.5*acos((tris[i][2]).y) / (M_PI)+.5, .5*atan((tris[i][2] ).z / (tris[i][2]).x) / (2 * M_PI) + .5)), material));
 			count++;
 		}
 
@@ -633,8 +634,8 @@ struct coneMesh : Entity
 		{
             glm::dvec3 next = baseRot*last;
 
-			scene->push_back(new triangle(new vertex(rot*last + pos, rot*last), new vertex(rot*next + pos, rot*next), new vertex(rot*glm::dvec3(0, 0, height) + pos, rot*last), material));
-			scene->push_back(new triangle(new vertex(rot*last + pos, rot*glm::dvec3(0, 0, -1)), new vertex(rot*next + pos, rot*glm::dvec3(0, 0, -1)), new vertex(glm::dvec3(0, 0, 0) + pos, rot*glm::dvec3(0, 0, -1)), material));
+			scene->push_back(new triangle(vertex(rot*last + pos, rot*last), vertex(rot*next + pos, rot*next), vertex(rot*glm::dvec3(0, 0, height) + pos, rot*last), material));
+			scene->push_back(new triangle(vertex(rot*last + pos, rot*glm::dvec3(0, 0, -1)), vertex(rot*next + pos, rot*glm::dvec3(0, 0, -1)), vertex(glm::dvec3(0, 0, 0) + pos, rot*glm::dvec3(0, 0, -1)), material));
 
 			last = next;
 			count += 2;
@@ -690,8 +691,8 @@ struct quadMesh : Entity
 {
 	quadMesh(Octree* o, glm::dvec3 v1, glm::dvec3 v2, glm::dvec3 v3, glm::dvec3 v4, const Material& material)
 	{
-		o->push_back(new triangle(new vertex(v1), new vertex(v2), new vertex(v3), material));
-		o->push_back(new triangle(new vertex(v3), new vertex(v2), new vertex(v4), material));
+		o->push_back(new triangle(vertex(v1), vertex(v2), vertex(v3), material));
+		o->push_back(new triangle(vertex(v3), vertex(v2), vertex(v4), material));
 	}
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
@@ -737,7 +738,7 @@ struct boxMesh : Entity
 
 		for (int i = 0; i < 12; i++)
 		{
-			o->push_back(new triangle(new vertex(rot*(glm::normalize(tris[i][0])*size) + pos), new vertex(rot*(glm::normalize(tris[i][1])*size) + pos), new vertex(rot*(glm::normalize(tris[i][2])*size) + pos), material));
+			o->push_back(new triangle(vertex(rot*(glm::normalize(tris[i][0])*size) + pos), vertex(rot*(glm::normalize(tris[i][1])*size) + pos), vertex(rot*(glm::normalize(tris[i][2])*size) + pos), material));
 		}
 	}
 

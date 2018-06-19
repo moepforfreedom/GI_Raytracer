@@ -85,9 +85,9 @@ void loadOBJ(Octree* o, const char* fname, glm::dvec3 pos, glm::dvec3 rotation, 
 				return;
 			}
 
-			o->push_back(new triangle(new vertex(verts[vertIndex[0] - 1], normals[normIndex[0] - 1], uvs[uvIndex[0] - 1]),
-										  new vertex(verts[vertIndex[1] - 1], normals[normIndex[1] - 1], uvs[uvIndex[1] - 1]),
-										  new vertex(verts[vertIndex[2] - 1], normals[normIndex[2] - 1], uvs[uvIndex[2] - 1]), *materials[mat_index]));
+			o->push_back(new triangle(vertex(verts[vertIndex[0] - 1], normals[normIndex[0] - 1], uvs[uvIndex[0] - 1]),
+									  vertex(verts[vertIndex[1] - 1], normals[normIndex[1] - 1], uvs[uvIndex[1] - 1]),
+									  vertex(verts[vertIndex[2] - 1], normals[normIndex[2] - 1], uvs[uvIndex[2] - 1]), *materials[mat_index]));
 
 			faces++;
 		}
