@@ -18,6 +18,8 @@
 #include "halton_sampler.h"
 #include "photonMap.h"
 
+//#define DEBUG_OCTREE
+
 class RayTracer
 {
   public:
@@ -183,10 +185,20 @@ class RayTracer
 		Entity* current;
         bool backface = false;
 
+		texture debugTex(glm::dvec3(.5, .5, .5));
+		texture debugTexEm(glm::dvec3(0, 0, 0));
+
+		Material dummyMat(&debugTex, &debugTexEm, 1, 1);
+
+		sphere debugSphere(glm::dvec3(0, 0, 0), 1, dummyMat);
+
 		bool intersected = trace(ray, minHit, minNorm, minUV, current);
 
 		if (intersected)
 		{
+			if (!current)
+			  current = &debugSphere;
+
 			glm::dvec3 i(0, 0, 0);
 
 			glm::dvec3 refDir;
@@ -276,6 +288,10 @@ class RayTracer
 		std::vector<Entity*> shadow_objects = _scene->intersect(ray, 0, sqrt(mt)-SHADOW_BIAS);
 
 		std::vector<Entity*>::iterator shadow_it = shadow_objects.begin();
+
+#ifdef DEBUG_OCTREE
+		return shadow_it == shadow_objects.end();
+#endif
 
 		while (!hit && shadow_it != shadow_objects.end())
 		{
@@ -375,9 +391,52 @@ class RayTracer
 
 		bool intersected = false;
 
-		std::vector<const Octree::Node*> nodes = _scene->intersectSorted(ray, 0, INFINITY);
+		std::vector<std::pair<const Octree::Node*, double>> nodes = _scene->intersectSorted(ray, 0, INFINITY);
 
-		std::vector<const Octree::Node*>::iterator nd = nodes.begin();
+		std::vector<std::pair<const Octree::Node*, double>>::iterator nd = nodes.begin();
+
+#ifdef DEBUG_OCTREE
+		if(nd != nodes.end())
+		{
+		  const Octree::Node* curNode = nd->first;
+
+		  double tmin, tmax;
+
+		  auto snap = [](glm::dvec3& in) {return in / std::max(in[0], std::max(in[1], in[2])); };
+
+		  curNode->_bbox.intersect(ray, 0, INFINITY, tmin, tmax);
+
+		  minHit = ray.origin + tmin * ray.dir;
+		  glm::dvec3 p = minHit - curNode->_bbox.center();
+		  glm::dvec3 d = .5 * curNode->_bbox.size();
+		  glm::dvec3 n = (p / d) * (1.0001);
+		  auto absMax = [](double a, double b){ return (std::max(std::abs(a), std::abs(b)) == std::abs(a)) ? a : b; };
+		  double max = absMax(n[0], absMax(n[1], n[2]));
+		  glm::dvec3 n_ = glm::dvec3(max == n[0], max == n[1], max == n[2]);
+
+		  if (glm::length(n_) < .1 || glm::length(n_) > 2)
+		  {
+
+			std::cout << "normal length out of tolerance: " << n_[0] << ", "
+															<< n_[1] << ", "
+															<< n_[2] << ", "
+															<< n[0] << ", "
+															<< n[1] << ", "
+															<< n[2] << ", " << "\n";
+			n_ = n;
+		  }
+
+		  minNorm = glm::normalize(n_);
+
+		  minUV = glm::dvec2(0, 0);
+
+		  obj = NULL;
+
+		  return true;
+		}
+
+		return false;
+#endif
 
 		//avgTests += objects.size();
 
@@ -391,7 +450,7 @@ class RayTracer
 
 		while (nd != nodes.end() && !term)
 		{
-			const Octree::Node* curNode = *nd;
+			const Octree::Node* curNode = nd->first;
 
 			std::vector<Entity*>::const_iterator it = curNode->_entities.begin();
 
@@ -512,7 +571,7 @@ class RayTracer
 
             lastDist = vecLengthSquared(p->origin - pos);*/
 			//if (vecLengthSquared(p->origin - pos) < .01 && visible(Ray(pos + SHADOW_BIAS*dir, p->origin - pos - SHADOW_BIAS*dir), glm::length(p->origin - pos - SHADOW_BIAS*dir)))
-				res += p->col*glm::dot(p->dir, dir);
+			res += p->col*glm::dot(p->dir, dir);
 		}
 
 		if(photons.size() > 0)

@@ -8,7 +8,7 @@
 #include "raytracer.h"
 #include <cstring>
 
-//imports a scene frm a file
+//imports a scene from a file
 void loadScene(Octree* o, RayTracer& r, const char* fname)
 {
 	//std::cout << "loading scene: " << fname << "\n";
@@ -163,7 +163,7 @@ void loadScene(Octree* o, RayTracer& r, const char* fname)
 		}
 		else if (std::strcmp(lineHeader, "samples") == 0)
 		{
-			fscanf(f, "%d %d %f\n", &r.min_samples, &r.max_samples, &r.noise_thresh);
+			fscanf(f, "%d %d %lf\n", &r.min_samples, &r.max_samples, &r.noise_thresh);
 		}
 		else if (std::strcmp(lineHeader, "ambient") == 0)
 		{
