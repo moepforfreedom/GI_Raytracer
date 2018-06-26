@@ -164,7 +164,7 @@ class RayTracer
 		std::cout << "average intersection tests: " << avgTests << "\n";
     }
 
-	glm::dvec3 radiance(Ray ray, int depth, Halton_sampler& halton_sampler, Halton_enum& halton_enum, int sample, glm::dvec3 contrib)
+	glm::dvec3 radiance(const Ray& ray, int depth, const Halton_sampler& halton_sampler, const Halton_enum& halton_enum, int sample, glm::dvec3 contrib)
 	{
 		if (depth > MAX_DEPTH)
 			return glm::dvec3(0, 0, 0);
@@ -282,7 +282,7 @@ class RayTracer
 
 
 	//checks if the given ray is visible, meaning that nothing overlaps it
-	bool visible(Ray& ray, double mt)
+	bool visible(const Ray& ray, double mt)
 	{
 		bool hit = false;
 		std::vector<Entity*> shadow_objects = _scene->intersect(ray, 0, sqrt(mt)-SHADOW_BIAS);
@@ -323,7 +323,7 @@ class RayTracer
 		return true;
 	}
 
-	void secondaryRay(Ray& ray, Entity* current, glm::dvec3& norm, glm::dvec2& UV, double sx, double sy, glm::dvec3& refDir, glm::dvec3& f, double& roughness, glm::dvec3& contrib, double& offset)
+	void secondaryRay(const Ray& ray, const Entity* current, glm::dvec3& norm, glm::dvec2& UV, double sx, double sy, glm::dvec3& refDir, glm::dvec3& f, double& roughness, glm::dvec3& contrib, double& offset)
 	{
 		bool backface = false;
 
@@ -384,7 +384,7 @@ class RayTracer
 	}
 
 	//traces a ray against the scene geometry, returns true on intersection
-	bool trace(Ray& ray, glm::dvec3& minHit, glm::dvec3& minNorm, glm::dvec2& minUV, Entity*& obj)
+	bool trace(const Ray& ray, glm::dvec3& minHit, glm::dvec3& minNorm, glm::dvec2& minUV, Entity*& obj)
 	{
 		glm::dvec3 hit, norm;
 		glm::dvec2 uv;
@@ -483,7 +483,7 @@ class RayTracer
 	}
 
 	//returns the type of the secondary ray, 0 for reflection, 1 for refraction, 2 for diffuse/glossy
-	int rayType(Entity* entity, Ray& ray, glm::dvec3& norm, glm::dvec2& minUV)
+	int rayType(const Entity* entity, const Ray& ray, glm::dvec3& norm, glm::dvec2& minUV)
 	{
 		int type = 2;
 
@@ -511,7 +511,7 @@ class RayTracer
 	}
 
 	//uses raymarching to determine the intersection point of a ray with the atmosphere
-	bool raymarch(Ray& r, glm::dvec3& hit, glm::dvec3& col, double mint, double maxt)
+	bool raymarch(const Ray& r, glm::dvec3& hit, glm::dvec3& col, double mint, double maxt)
 	{
 		double t = mint + SHADOW_BIAS;
 		double scatter;

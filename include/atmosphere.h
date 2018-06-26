@@ -7,7 +7,7 @@
 #include "bbox.h"
 #include <glm/glm.hpp>
 
-//Struct for atmosphere entities (fog, clouds etcs)
+//Struct for atmosphere entities (fog, clouds etc)
 struct AtmosphereEntity
 {
 		
@@ -16,7 +16,7 @@ struct AtmosphereEntity
 	}
 
 	//returns the density at the specified position, defined as intersection probability per unit length
-	virtual double density(glm::dvec3& pos)
+	virtual double density(const glm::dvec3& pos)
 	{
 		return 0;
 	}
@@ -47,7 +47,7 @@ struct HeightFog : AtmosphereEntity
 	}
 
 	//returns the density at the specified position, defined as intersection probability per unit length
-	virtual double density(glm::dvec3& p)
+	virtual double density(const glm::dvec3& p)
 	{
 		double ymax = pos.y + .5*s.y;
 
