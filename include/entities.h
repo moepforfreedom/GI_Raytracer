@@ -329,17 +329,12 @@ struct vertex
 struct triangle: Entity
 {
     std::array<vertex, 3> vertices;
-	glm::dvec3 edges[3];
 	glm::dvec3 norm;
 	double inv_area;
 
 	triangle(vertex v1, vertex v2, vertex v3, const Material& material) : Entity(material)
 	{
 	    vertices = { { v1, v2, v3 } };
-
-		edges[0] = vertices[1].pos - vertices[0].pos;
-		edges[1] = vertices[2].pos - vertices[1].pos;
-		edges[2] = vertices[0].pos - vertices[2].pos;
 
 		norm = glm::normalize(glm::cross((v2.pos - v1.pos), (v3.pos - v1.pos)));
 
@@ -365,7 +360,7 @@ struct triangle: Entity
 		//Begin calculating determinant - also used to calculate u parameter
 		P = glm::cross(D, e2);
 		//if determinant is near zero, ray lies in plane of triangle or ray is parallel to plane of triangle
-		det = glm::dot(edges[0], P);
+		det = glm::dot(vertices[1].pos - vertices[0].pos, P);
 		//NOT CULLING
 		if (det > -EPSILON && det < EPSILON) return 0;
 		inv_det = 1.f / det;
@@ -379,7 +374,7 @@ struct triangle: Entity
 		if (u < 0.f || u > 1.f) return 0;
 
 		//Prepare to test v parameter
-		Q = glm::cross(T, edges[0]);
+		Q = glm::cross(T, vertices[1].pos - vertices[0].pos);
 
 		//Calculate V parameter and test bound
 		v = glm::dot(D, Q) * inv_det;
@@ -401,7 +396,7 @@ struct triangle: Entity
 
 	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{		
-		glm::dvec3 d1, d2, d3;
+		//glm::dvec3 d1, d2, d3;
 
 		double dot = glm::dot(ray.dir, norm);
 
@@ -419,14 +414,14 @@ struct triangle: Entity
 
 		intersect = ray.origin + t*ray.dir;
 
-		d1 = intersect - vertices[0].pos;
-		if (glm::dot(glm::cross(edges[0], d1), norm) < 0) return false;
+        glm::dvec3 d1 = intersect - vertices[0].pos;
+		if (glm::dot(glm::cross(vertices[1].pos - vertices[0].pos, d1), norm) < 0) return false;
 
-		d2 = (intersect - vertices[1].pos);
-		if (glm::dot(glm::cross(edges[1], d2), norm) < 0) return false;
+        glm::dvec3 d2 = (intersect - vertices[1].pos);
+		if (glm::dot(glm::cross(vertices[2].pos - vertices[1].pos, d2), norm) < 0) return false;
 
-		d3 = (intersect - vertices[2].pos);
-		if (glm::dot(glm::cross(edges[2], d3), norm) < 0) return false;
+        glm::dvec3 d3 = (intersect - vertices[2].pos);
+		if (glm::dot(glm::cross(vertices[0].pos - vertices[2].pos, d3), norm) < 0) return false;
 
 		/*if (dot > 0)
 			hitNorm = -1.0*norm;
@@ -475,13 +470,13 @@ struct triangle: Entity
 		glm::dvec3 intersect = ray.origin + t0*ray.dir;
 
 		d1 = intersect - vertices[0].pos;
-		if (glm::dot(glm::cross(edges[0], d1), norm) < 0) return false;
+		if (glm::dot(glm::cross(vertices[1].pos - vertices[0].pos, d1), norm) < 0) return false;
 
 		d2 = (intersect - vertices[1].pos);
-		if (glm::dot(glm::cross(edges[1], d2), norm) < 0) return false;
+		if (glm::dot(glm::cross(vertices[2].pos - vertices[1].pos, d2), norm) < 0) return false;
 
 		d3 = (intersect - vertices[2].pos);
-		if (glm::dot(glm::cross(edges[2], d3), norm) < 0) return false;
+		if (glm::dot(glm::cross(vertices[0].pos - vertices[2].pos, d3), norm) < 0) return false;
 
 		t = t0;
 

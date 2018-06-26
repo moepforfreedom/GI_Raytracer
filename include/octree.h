@@ -28,7 +28,7 @@ class Octree {
 
 		void intersect(const Ray& ray, std::vector<Entity*>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const;
 
-		void intersectSorted(const Ray& ray, std::vector<std::pair<const Node*, double>>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const;
+		void intersectSorted(const Ray& ray, std::vector<std::pair<const Node*, double>>& res, double tmin, double tmax) const;
 
         BoundingBox _bbox;
 		//float boxes[48];
@@ -56,9 +56,9 @@ public:
 	std::vector<std::pair<const Octree::Node*, double>> intersectSorted(const Ray& ray, double tmin, double tmax) const;
 
 	// Returns density, color and scattering coefficient of the atmosphere at the specified position
-	double atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatter);
+	double atmosphereDensity(const glm::dvec3& pos, glm::dvec3&col, double& scatter);
 
-	bool atmosphereBounds(Ray r, double& mint, double& maxt);
+	bool atmosphereBounds(const Ray& r, double& mint, double& maxt);
 
 	bool valid;
     Node _root;

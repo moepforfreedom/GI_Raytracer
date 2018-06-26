@@ -178,7 +178,7 @@ std::vector<std::pair<const Octree::Node*, double>> Octree::intersectSorted(cons
 {
 	std::vector<std::pair<const Node*, double>> res;
 
-	float t0[24];
+	/*float t0[24];
 	float t1[24];
 
 	for (int i = 0; i < 3; i++)
@@ -192,15 +192,15 @@ std::vector<std::pair<const Octree::Node*, double>> Octree::intersectSorted(cons
 			t0[i] = t1[i];
 			t1[i] = tmp;
 		}
-	}
+	}*/
 
-	_root.intersectSorted(ray, res, tmin, tmax, t0, t1, 0);
+	_root.intersectSorted(ray, res, tmin, tmax);
 
 	return res;
 }
 
 //returns the atmosphere density, color and scattering coefficient at the specified position
-double Octree::atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatter)
+double Octree::atmosphereDensity(const glm::dvec3& pos, glm::dvec3&col, double& scatter)
 {
 	double d = 0;
 	for (AtmosphereEntity* current : at)
@@ -215,7 +215,7 @@ double Octree::atmosphereDensity(glm::dvec3& pos, glm::dvec3&col, double& scatte
 }
 
 //returns true if the ray intersects an atmosphere entity and determines the distance bounds
-bool Octree::atmosphereBounds(Ray r, double& mint,  double& maxt)
+bool Octree::atmosphereBounds(const Ray& r, double& mint,  double& maxt)
 {
 	double min = 0;
 	double max = 0;
@@ -270,11 +270,11 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 }
 
 //inserts the node into a sorted list if it intersects the given ray
-void Octree::Node::intersectSorted(const Ray& ray, std::vector<std::pair<const Node*, double>>& res, double tmin, double tmax, float* tval0, float* tval1, int n) const
+void Octree::Node::intersectSorted(const Ray& ray, std::vector<std::pair<const Node*, double>>& res, double tmin, double tmax) const
 {
 	double t0, t1;
-	float ta[24];
-	float tb[24];
+	/*float ta[24];
+	float tb[24];*/
 	if (_bbox.intersect(ray, tmin, tmax, t0, t1)/*_bbox.intersectMulti(ray, tmin, tmax, t0, t1, &(tval0[3*n]), &(tval1[3*n]))*/)
 	{
 		if (is_leaf())
@@ -293,7 +293,7 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<std::pair<const N
 			//intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz);
 			for (int i = 0; i < 8; i++)
 			{
-				_children[i]->intersectSorted(ray, res, tmin, tmax, ta, tb, i);
+				_children[i]->intersectSorted(ray, res, tmin, tmax);
 
 			}
 		}
