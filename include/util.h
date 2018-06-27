@@ -31,7 +31,7 @@
 
 
 //squared vector length
-inline double vecLengthSquared(glm::dvec3 vec)
+inline double vecLengthSquared(const glm::dvec3& vec)
 {
 	return vec.x*vec.x + vec.y*vec.y + vec.z*vec.z;
 }
@@ -43,7 +43,7 @@ inline glm::dvec3 fastNorm(glm::dvec3& vec)
 	return l == 1 ? vec : vec / sqrt(l);
 }
 
-inline double compMax(glm::dvec3& vec)
+inline double compMax(const glm::dvec3& vec)
 {
 	return std::max(std::max(vec.x, vec.y), vec.z);
 }
@@ -65,7 +65,7 @@ inline double clamp(double val, double min, double max)
 }
 
 //gamma correction
-inline glm::dvec3 gamma(glm::dvec3 col, double g)
+inline glm::dvec3 gamma(const glm::dvec3& col, double g)
 {
 	return glm::dvec3(std::pow(col.x, 1.0 / g), std::pow(col.y, 1.0 / g), std::pow(col.z, 1.0 / g));
 }
@@ -144,7 +144,7 @@ inline float radicalInverse_VdC(unsigned int bits)
 }
 
 //computes refraction and total internal reflection for an input direction
-inline glm::dvec3 refr(glm::dvec3 inc, glm::dvec3 norm, double eta)
+inline glm::dvec3 refr(const glm::dvec3& inc, const glm::dvec3& norm, double eta)
 {
 	double d = glm::dot(norm, inc);
 	double k = 1.0 - eta * eta * (1.0 - d * d);
@@ -197,10 +197,10 @@ glm::dvec3 sample_phong(const glm::dvec3 &outdir, const glm::dvec3 &n, double po
 glm::dvec2 importance_sample_ggx(double x, double y, double a);
 
 //generates a sequence of subrandom numbers
-void subrand(std::vector<double>&out, int n);
+void subrand(std::vector<double>& out, int n);
 
 //generates a sequence of subrandom unit vectors
-void subrandUnitVec(std::vector<glm::dvec3>&out, int n);
+void subrandUnitVec(std::vector<glm::dvec3>& out, int n);
 
 bool triBoxOverlap(glm::dvec3 boxcenter, glm::dvec3 boxhalfsize, glm::dvec3 triverts[3]);
 

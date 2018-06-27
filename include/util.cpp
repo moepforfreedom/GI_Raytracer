@@ -88,7 +88,7 @@ double PowerCosHemispherePdfW(glm::dvec3  aNormal, glm::dvec3  aDirection, doubl
 	return (aPower + 1.0) * std::pow(cosTheta, aPower) * ((1.0 / M_PI) * 0.5);
 }
 
-glm::dvec3 sample_phong(const glm::dvec3 &outdir, const glm::dvec3 &n, double power, double sx, double sy)
+glm::dvec3 sample_phong(const glm::dvec3& outdir, const glm::dvec3& n, double power, double sx, double sy)
 {
 	double z = std::abs(outdir.z);
 
@@ -107,7 +107,7 @@ glm::dvec3 sample_phong(const glm::dvec3 &outdir, const glm::dvec3 &n, double po
 }
 
 //generates a sequence of subrandom numbers using additive recurrence
-void subrand(std::vector<double>&out, int n)
+void subrand(std::vector<double>& out, int n)
 {
 	double primes[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31 };
 
@@ -126,7 +126,7 @@ void subrand(std::vector<double>&out, int n)
 }
 
 //generates a sequence of subrandom unit vectors
-void subrandUnitVec(std::vector<glm::dvec3>&out, int n)
+void subrandUnitVec(std::vector<glm::dvec3>& out, int n)
 {
 	double primes[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31 };
 
@@ -184,7 +184,7 @@ glm::dvec2 importance_sample_ggx(double x, double y, double a)
   if(x2<min) min=x2;\
   if(x2>max) max=x2;
 
-int planeBoxOverlap(glm::dvec3 normal, float d, glm::dvec3 maxbox)
+int planeBoxOverlap(const glm::dvec3& normal, float d, const glm::dvec3& maxbox)
 {
 	int q;
 	glm::dvec3 vmin, vmax;
