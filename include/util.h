@@ -6,6 +6,7 @@
 #include <iostream>
 #include <ctime>
 #include <algorithm>
+#include <limits>
 
 #ifndef M_PI
 #define M_PI 3.1415926535897
@@ -48,9 +49,34 @@ inline double compMax(const glm::dvec3& vec)
 	return std::max(std::max(vec.x, vec.y), vec.z);
 }
 
+struct xorshift
+{
+  xorshift()
+  {
+    state = std::time(0);
+  }
+
+  double get_next()
+  {
+    return (double)xorshift64s(state) / std::numeric_limits<unsigned long long>::max();
+  }
+
+  unsigned long long xorshift64s(unsigned long long& x)
+  {
+    x ^= x >> 12;
+    x ^= x << 25;
+    x ^= x >> 27;
+
+    return x * 2685821657736338717ull;
+  }
+
+  unsigned long long state;
+};
+
 inline double drand()
 {
-	return (double)rand() / RAND_MAX;
+    thread_local xorshift rn;
+    return rn.get_next();
 }
 
 inline double clamp(double val, double min, double max)
