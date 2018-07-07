@@ -37,7 +37,7 @@ struct Entity
 
 	virtual inline bool intersect(BoundingBox bbox)
 	{
-		return true;
+		return false;
 	}
 
     /// Returns an axis-aligned bounding box of the entity.
@@ -394,7 +394,7 @@ struct triangle: Entity
 		return 0;
 	}
 
-	virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
+	virtual bool intersect_(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
 	{		
 		//glm::dvec3 d1, d2, d3;
 
@@ -452,6 +452,55 @@ struct triangle: Entity
 		return true;
 
 	}
+
+    virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
+    {
+      glm::dvec3 edge1 = vertices[1].pos - vertices[0].pos;
+      glm::dvec3 edge2 = vertices[2].pos - vertices[0].pos;
+
+      glm::dvec3 p = glm::cross(ray.dir, edge2);
+
+      double det = glm::dot(edge1, p);
+
+      if (det < EPSILON && det > -EPSILON)
+        return false;
+
+      double inv_det = 1.0 / det;
+
+      glm::dvec3 tvec = ray.origin - vertices[0].pos;
+
+      double u = glm::dot(tvec, p) * inv_det;
+
+      if (u < 0 || u > 1)
+        return false;
+
+      glm::dvec3 q = glm::cross(tvec, edge1);
+
+      double v = glm::dot(ray.dir, q) * inv_det;
+
+      if (v < 0 || u + v > 1)
+        return false;
+
+      double t = glm::dot(edge2, q) * inv_det;
+
+      if (t <= 0)
+        return false;
+
+      //std::cout << "passed, t: " << t <<"\n";
+
+      intersect = ray.origin + t * ray.dir;
+
+      if (vecLengthSquared(vertices[0].norm) > 0 && vecLengthSquared(vertices[1].norm) > 0 && vecLengthSquared(vertices[2].norm) > 0)
+      {
+        normal = (1 - u - v)*vertices[0].norm + u*vertices[1].norm + v*vertices[2].norm;
+
+        uv = (1 - u - v)*vertices[0].texCoord + u*vertices[1].texCoord + v*vertices[2].texCoord;
+      }
+      else
+        normal = norm;
+
+      return true;
+    }
 
 	virtual bool intersect(const Ray& ray, double& t)
 	{
