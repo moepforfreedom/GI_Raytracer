@@ -30,7 +30,6 @@ class RayTracer
 	RayTracer(const Camera& camera)
 		: _camera(camera), _image(std::make_shared<Image>(0, 0))
 	{
-
 	};
 
     void setScene(Octree* scene)
@@ -114,8 +113,8 @@ class RayTracer
 					double xr = sampler.sample(0, idx);
 					double yr = sampler.sample(1, idx);
 
-                    xr = .2*fmod(halton_enum.scale_x(xr), 1.0) + .8*1*xrand[((x + w*y)*max_samples + s) % xrand.size()] + 0*drand();
-                    yr = .2*fmod(halton_enum.scale_x(yr), 1.0) + .8*1*yrand[((x + w*y)*max_samples + s) % yrand.size()] + 0*drand();
+                    xr = .2*fmod(halton_enum.scale_x(xr), 1.0) + .8*1*xrand[((x + w*y)*max_samples + s) % xrand.size()];// + 0*drand();
+                    yr = .2*fmod(halton_enum.scale_x(yr), 1.0) + .8*1*yrand[((x + w*y)*max_samples + s) % yrand.size()];// + 0*drand();
 
 					//std::cout << (xr - yr) << "\n";
 
@@ -267,14 +266,14 @@ class RayTracer
 			// continuation probability
 			double q = compMax(contrib);
 
-			if (depth <= MIN_DEPTH || drand() < q)
-			{
-				f *= depth <= MIN_DEPTH ? 1.0 : (1.0 / q);
-				//diffuse*direct_light + diffuse*brdf*radiance + emmissive
-				return color*i + f*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib) + current->material.emissive->get(minUV) + color*caustic;
-			}
-			else
-				return glm::dvec3(0, 0, 0);///*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ //current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
+            if (depth <= MIN_DEPTH || drand() < q)
+            {
+              f *= depth <= MIN_DEPTH ? 1.0 : (1.0 / q);
+              //diffuse*direct_light + diffuse*brdf*radiance + emmissive
+              return color*i + f*radiance(Ray(minHit + offset*minNorm, refDir), ++depth, halton_sampler, halton_enum, sample, contrib) + current->material.emissive->get(minUV) + color*caustic;
+            }
+            else
+              return color*i;// glm::dvec3(0, 0, 0);///*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ //current->material.diffuse->get(minUV)*i + current->material.emissive->get(minUV);
 		}
 		else
 			return /*1.0*depth / MAX_DEPTH * glm::dvec3(1, 1, 1);//*/ ambient;
@@ -719,7 +718,6 @@ class RayTracer
 
         std::cout << "total photon tests: " << total << "\n";
 	}
-
 
     bool running() const { return _running; }
     void stop() { _running = false; }
