@@ -261,7 +261,8 @@ void Octree::Node::intersect(const Ray& ray, std::vector<Entity*>& res, double t
 			//intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz);
 			for (int i = 0; i < 8; i++)
 			{
-				_children[i]->intersect(ray, res, tmin, tmax, ta, tb, i);
+              if(_children[i])
+                _children[i]->intersect(ray, res, tmin, tmax, ta, tb, i);
 
 			}
 		}
@@ -293,8 +294,8 @@ void Octree::Node::intersectSorted(const Ray& ray, std::vector<std::pair<const N
 			//intersectSIMD(ta, tb, boxes, ray.r, ray.invD, ray.invlz);
 			for (int i = 0; i < 8; i++)
 			{
-				_children[i]->intersectSorted(ray, res, tmin, tmax);
-
+              if(_children[i])
+                _children[i]->intersectSorted(ray, res, tmin, tmax);
 			}
 		}
 	}
@@ -331,12 +332,21 @@ void Octree::Node::partition()
 		++it;
 	}
 
+    for (int i = 0; i < 8; i++)
+    {
+      if(_children[i]->_entities.empty())
+        _children[i] = NULL;
+    }
+
 	for (int i = 0; i < 8; i++)
 	{
-		avg_entities += (double)_children[i]->_entities.size();
+      if (_children[i])
+      {
+        avg_entities += (double)_children[i]->_entities.size();
+      }
 	}
 
-	avg_entities /= 8;
+    avg_entities /= 8;
 
 	//stop subdividing if the last subdivision didn't improve the entity counts
 	if (avg_entities > MAX_SUBDIV_RATIO * _entities.size())
@@ -351,14 +361,22 @@ void Octree::Node::partition()
 
 	for (int i = 0; i < 8; i++)
 	{
-		if (_children[i]->_entities.size() > MAX_ENTITIES_PER_LEAF && _children[i]->_bbox.dx() > MIN_LEAF_SIZE)// && avg_entities < MAX_SUBDIV_RATIO * _entities.size())
+		if (_children[i] && _children[i]->_entities.size() > MAX_ENTITIES_PER_LEAF && _children[i]->_bbox.dx() > MIN_LEAF_SIZE)// && avg_entities < MAX_SUBDIV_RATIO * _entities.size())
 		{
 			//std::cout << "subdividing node, size: " << _children[i]->_bbox.dx() << ", entities: " << _children[i]->_entities.size() << "\n";
 			_children[i]->partition();
+            ++nodes;
 		}
 	}
 
-	nodes += 8;
+	//nodes += 8;
 };
 
-bool Octree::Node::is_leaf() const { return _children[0] == nullptr; }
+bool Octree::Node::is_leaf() const
+{
+  for (int i = 0; i < 8; ++i)
+    if (_children[i])
+      return false;
+
+  return true;
+}

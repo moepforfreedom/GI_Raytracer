@@ -259,7 +259,7 @@ class RayTracer
 				}
 			}
 
-			glm::dvec3 caustic = depth == 0 ? samplePhotons(minHit, minNorm, 32) : glm::dvec3(0, 0, 0);
+			glm::dvec3 caustic = depth <= 10 ? samplePhotons(minHit, refDir, 32) : glm::dvec3(0, 0, 0);
 
 			//return color*caustic;
 
@@ -601,7 +601,7 @@ class RayTracer
 					int tries = 0;
 					bool stored = false;
 
-					srand(i);
+					//srand(i);
 
 					while (!stored && tries < 500)
 					{
@@ -671,10 +671,10 @@ class RayTracer
 									if (raymarch(r, ahit, color, tmin, tmax))
 									{
 										hit = ahit;
-										refDir = randomUnitVec(fmod(rand() + 13 * i, 1), fmod(drand() + 7 * i, 1));
+										refDir = randomUnitVec(fmod(drand() + 13 * i, 1), fmod(drand() + 7 * i, 1));
 										f = 1.0*color;
 										roughness = 1;
-										//std::cout << "atmosphere hit\n";
+										//std::cout << "atmosphere hit by photon\n";
 									}
 								}
 
@@ -693,8 +693,6 @@ class RayTracer
 								tmp.push_back(new Photon(hit, r.dir, col));
 								term = true;
 								stored = true;
-
-								//_scene->push_back(new sphere(hit, 0.01, Material(new texture(col), new texture(glm::dvec3(0, 0, 0)), 1, 1)));
 							}
 
 							depth++;
@@ -710,6 +708,7 @@ class RayTracer
     			for (Photon* p : tmp)
     			{
     				_photon_map->push_back(p);
+                    //_scene->push_back(new sphere(p->origin, 0.01, Material(new texture(p->col), new texture(glm::dvec3(0, 0, 0)), 1, 1)));
     			}
 
                 total += tmpCount;
