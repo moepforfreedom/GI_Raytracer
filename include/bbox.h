@@ -13,9 +13,9 @@ struct BoundingBox
 {
     BoundingBox(glm::dvec3 min, glm::dvec3 max) : min(min), max(max)
 	{
-        assert(min.x < max.x);
-        assert(min.y < max.y);
-        assert(min.z < max.z);
+        assert(min.x <= max.x);
+        assert(min.y <= max.y);
+        assert(min.z <= max.z);
     }
 
 	double dx() const { return max.x - min.x; }
@@ -26,10 +26,10 @@ struct BoundingBox
 
 	glm::dvec3 size() const { return max - min; }
 
-    const glm::dvec3 min;
-    const glm::dvec3 max;
+    glm::dvec3 min;
+    glm::dvec3 max;
 
-    /// Check if another bounding box intersects the current bounding box.
+    //Check if another bounding box intersects the current bounding box.
     bool intersect(const BoundingBox& other) const
 	{
 		return (min.x <= other.max.x && max.x >= other.min.x) &&
@@ -37,7 +37,7 @@ struct BoundingBox
 			(min.z <= other.max.z && max.z >= other.min.z);
     }
 
-    /// Check if a point lies within the bounding box.
+    //Check if a point lies within the bounding box.
     inline bool contains(glm::dvec3 point) const
 	{
 		return point.x >= min.x && point.y >= min.y && point.z >= min.z && point.x < max.x && point.y < max.y && point.z < max.z;

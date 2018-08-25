@@ -38,7 +38,7 @@ class Octree {
 
 public:
 
-	Octree(glm::dvec3 min, glm::dvec3 max);
+	Octree(glm::dvec3 min = glm::dvec3(0, 0, 0), glm::dvec3 max = glm::dvec3(0, 0, 0));
 
 	std::vector<Light*> lights;
 	std::vector<AtmosphereEntity*> at;

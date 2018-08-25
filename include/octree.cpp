@@ -21,10 +21,19 @@ Octree::Octree(glm::dvec3 min, glm::dvec3 max) : _root(Node({ min, max }))
 int nodes = 0;
 int skipped_subdiv = 0;
 
-/// Store an entity in the root node
+//Store an entity in the root node
 void Octree::push_back(Entity* object)
 {
+    //bbox of first object is used to initialize root bbox
+    if (_root._entities.empty())
+    {
+      _root._bbox.max = object->boundingBox().max;
+      _root._bbox.min = object->boundingBox().min;
+    }
+
 	_root._entities.push_back(object);
+    _root._bbox.max = glm::max(_root._bbox.max, object->boundingBox().max);
+    _root._bbox.min = glm::min(_root._bbox.min, object->boundingBox().min);
 	valid = false;
 }
 
@@ -44,6 +53,8 @@ void Octree::push_back(AtmosphereEntity* entity)
 void Octree::rebuild()
 {
 	std::cout << "total entities: " << _root._entities.size() << "\n";
+    std::cout << "octree bounds: " << _root._bbox.min.x << ", " << _root._bbox.min.y << ", " << _root._bbox.min.z << "\n"
+                                   << _root._bbox.max.x << ", " << _root._bbox.max.y << ", " << _root._bbox.max.z << "\n";
 	std::cout << "precomputing photon bounds...\n";
 
 	glm::dvec3 avgPos(0, 0, 0);
@@ -135,7 +146,7 @@ void Octree::Node::debugVis(Node* root, Node* current)
 	}
 }
 
-/// Returns list of entities that have the possibility to be intersected by the ray.
+//Returns all entities that have the possibility to be intersected by the ray.
 std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax) const
 {
 	std::vector<Entity*> res;
@@ -173,7 +184,7 @@ std::vector<Entity*> Octree::intersect(const Ray& ray, double tmin, double tmax)
 	return res;
 }
 
-//Returns a sorted list of nodes that intersect the given ray
+//Returns a sorted vector of nodes that intersect the given ray
 std::vector<std::pair<const Octree::Node*, double>> Octree::intersectSorted(const Ray& ray, double tmin, double tmax) const
 {
 	std::vector<std::pair<const Node*, double>> res;

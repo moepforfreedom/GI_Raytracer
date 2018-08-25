@@ -395,7 +395,7 @@ struct triangle: Entity
 	}
 
 	virtual bool intersect_(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
-	{		
+	{
 		//glm::dvec3 d1, d2, d3;
 
 		double dot = glm::dot(ray.dir, norm);
@@ -408,10 +408,6 @@ struct triangle: Entity
 		if (t < 0)
 			return false;
 
-		/*double t;
-		if (!intersectMT(vertices[0]->pos, vertices[1]->pos, vertices[2]->pos, ray.origin, ray.dir, t))
-			return false;*/
-
 		intersect = ray.origin + t*ray.dir;
 
         glm::dvec3 d1 = intersect - vertices[0].pos;
@@ -422,11 +418,6 @@ struct triangle: Entity
 
         glm::dvec3 d3 = (intersect - vertices[2].pos);
 		if (glm::dot(glm::cross(vertices[0].pos - vertices[2].pos, d3), norm) < 0) return false;
-
-		/*if (dot > 0)
-			hitNorm = -1.0*norm;
-		else
-			hitNorm = norm;*/		
 
 		//Interpolate normal if vertex normals are set
 		if (vecLengthSquared(vertices[0].norm) > 0 && vecLengthSquared(vertices[1].norm) > 0 && vecLengthSquared(vertices[2].norm) > 0)
@@ -439,9 +430,6 @@ struct triangle: Entity
 
 			normal = a1*vertices[0].norm + a2*vertices[1].norm + a3*vertices[2].norm;
 
-			/*if (glm::dot(hitNorm, normal) < 0)
-				normal = -1.0*normal;*/
-
 			//normal = tmpNorm;
 
 			uv = a1*vertices[0].texCoord + a2*vertices[1].texCoord + a3*vertices[2].texCoord;
@@ -450,7 +438,6 @@ struct triangle: Entity
 			normal = norm;
 
 		return true;
-
 	}
 
     virtual bool intersect(const Ray& ray, glm::dvec3& intersect, glm::dvec3& normal, glm::dvec2& uv)
