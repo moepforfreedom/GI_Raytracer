@@ -17,7 +17,11 @@
 
 int main(int argc, char** argv)
 {
+    std::cout << "RAND_MAX: " << RAND_MAX << "\n";
 	srand(std::time(0));
+
+    std::cout << "triangle size: " << sizeof(triangle) << "\n";
+    std::cout << "octree node size: " << sizeof(Octree::Node) << "\n";
 
     QApplication app(argc, argv);
 
@@ -26,8 +30,8 @@ int main(int argc, char** argv)
     RayTracer raytracer(camera);
 
 
-    // Set up scene, TODO: determine octree bounds from scene geometry
-    Octree* scene = new Octree({-170, -170, -170}, {170, 170, 170});
+    //Set up scene
+    Octree* scene = new Octree();
 
 	if(argc > 1)
 		loadScene(scene, raytracer, argv[1]);

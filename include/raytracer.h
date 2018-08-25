@@ -40,6 +40,7 @@ class RayTracer
 
     void run(int w, int h)
 	{
+        std::cout << "starting raytracer with frame size: " << w << ", " << h << "\n";
 		srand(std::time(0));
 
 		Halton_sampler sampler;
@@ -113,24 +114,24 @@ class RayTracer
 					double xr = sampler.sample(0, idx);
 					double yr = sampler.sample(1, idx);
 
-                    xr = .2*fmod(halton_enum.scale_x(xr), 1.0) + .8*1*xrand[((x + w*y)*max_samples + s) % xrand.size()];// + 0*drand();
-                    yr = .2*fmod(halton_enum.scale_x(yr), 1.0) + .8*1*yrand[((x + w*y)*max_samples + s) % yrand.size()];// + 0*drand();
+                    //xr = .2*fmod(halton_enum.scale_x(xr), 1.0) + .8*1*xrand[((x + w*y)*max_samples + s) % xrand.size()];// + 0*drand();
+                    //yr = .2*fmod(halton_enum.scale_y(yr), 1.0) + .8*1*yrand[((x + w*y)*max_samples + s) % yrand.size()];// + 0*drand();
 
 					//std::cout << (xr - yr) << "\n";
 
-					double dx = (double)x + AA_JITTER*xrand[((x + w*y)*max_samples + s) % xrand.size()];
-					double dy = (double)y + AA_JITTER*yrand[((x + w*y)*max_samples + s) % yrand.size()];
+                    double dx = halton_enum.scale_x(xr);// (double)x + AA_JITTER*xrand[((x + w*y)*max_samples + s) % xrand.size()];
+                    double dy = halton_enum.scale_y(yr);// (double)y + AA_JITTER*yrand[((x + w*y)*max_samples + s) % yrand.size()];
 
 					glm::dvec3 pixelPos = screenCenter + (sensorHalfWidth*(dx / w - .5))*cameraRight - (sensorHalfHeight*(dy / h - .5))*_camera.up;
 
-					glm::dvec3 eyePos = _camera.pos +FOCAL_BLUR*(xr - .5)*cameraRight + FOCAL_BLUR*(yr - .5) *_camera.up;
+					glm::dvec3 eyePos = _camera.pos + FOCAL_BLUR*(xr - .5)*cameraRight + FOCAL_BLUR*(yr - .5) *_camera.up;
 
 					Ray ray(eyePos, glm::normalize(pixelPos - eyePos));
 
 					if (s == 0)
 						color = radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx, glm::dvec3(1, 1, 1));
 					else
-					color = (1.0*s*color + radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx, glm::dvec3(1, 1, 1)))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
+					    color = (1.0*s*color + radiance(ray, 0, sampler, halton_enum, /*(x + w*y)*SAMPLES + s*/ idx, glm::dvec3(1, 1, 1)))*(1.0 / (s + 1));// (1.0 / SAMPLES)*radiance(ray, 0);
 
 					if (s > 0)
 					{
@@ -168,15 +169,10 @@ class RayTracer
 		if (depth > MAX_DEPTH)
 			return glm::dvec3(0, 0, 0);
 
-
-        float sx = halton_sampler.sample(0 + 2*depth, sample);
-        float sy = halton_sampler.sample(1 + 2*depth, sample);
+        float sx = halton_sampler.sample(2 + 2*depth, sample);
+        float sy = halton_sampler.sample(3 + 2*depth, sample);
 
 		double offset = SHADOW_BIAS;
-
-        sx = fmod(halton_enum.scale_x(sx), 1.0);
-        sy = fmod(halton_enum.scale_y(sy), 1.0);
-
 
 		glm::dvec3 minHit, minNorm;
 		glm::dvec2 minUV;
@@ -234,7 +230,7 @@ class RayTracer
 			for (Light* light : _scene->lights)
 			{
 				bool shadow = false;
-				glm::dvec3 lightDir = light->getPoint() - (minHit + SHADOW_BIAS*minNorm);
+				glm::dvec3 lightDir = light->getPoint(drand(), drand()) - (minHit + SHADOW_BIAS*minNorm);
 				double maxt = vecLengthSquared(lightDir);
 
 				//double cos_alpha = (light->rad / sqrt(vecLengthSquared(lightDir) + std::pow(light->rad, 2)));
